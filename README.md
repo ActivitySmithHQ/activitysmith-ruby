@@ -31,6 +31,9 @@ response = activitysmith.notifications.send(
     message: "CI pipeline failed on main branch"
   }
 )
+
+puts response.success
+puts response.devices_notified
 ```
 
 ### Start a Live Activity
@@ -39,10 +42,12 @@ response = activitysmith.notifications.send(
 start = activitysmith.live_activities.start(
   {
     content_state: {
-      title: "Deploy",
+      title: "ActivitySmith API Deployment",
+      subtitle: "start",
       number_of_steps: 4,
       current_step: 1,
-      type: "segmented_progress"
+      type: "segmented_progress",
+      color: "yellow"
     }
   }
 )
@@ -57,11 +62,14 @@ update = activitysmith.live_activities.update(
   {
     activity_id: activity_id,
     content_state: {
-      title: "Deploy",
+      title: "ActivitySmith API Deployment",
+      subtitle: "npm i & pm2",
       current_step: 3
     }
   }
 )
+
+puts update.devices_notified
 ```
 
 ### End a Live Activity
@@ -71,12 +79,15 @@ finish = activitysmith.live_activities.end(
   {
     activity_id: activity_id,
     content_state: {
-      title: "Deploy Complete",
+      title: "ActivitySmith API Deployment",
+      subtitle: "done",
       current_step: 4,
       auto_dismiss_minutes: 3
     }
   }
 )
+
+puts finish.success
 ```
 
 ## Error Handling
@@ -86,8 +97,8 @@ begin
   activitysmith.notifications.send(
     { title: "Build Failed" }
   )
-rescue OpenapiClient::ApiError => e
-  puts "Request failed: #{e.code} #{e.message}"
+rescue OpenapiClient::ApiError => err
+  puts "Request failed: #{err.code} #{err.message}"
 end
 ```
 

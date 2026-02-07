@@ -1,0 +1,56 @@
+name: Publish to RubyGems
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Verify tag matches gem version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          GEM_VERSION="$(ruby -e 'require "./lib/activitysmith/version"; puts ActivitySmith::VERSION')"
+          if [ "$TAG_VERSION" != "$GEM_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match gem version ($GEM_VERSION)."
+            exit 1
+          fi
+
+      - name: Configure RubyGems credentials (OIDC)
+        if: ${{ vars.RUBYGEMS_OIDC_ROLE != '' }}
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        with:
+          role-to-assume: ${{ vars.RUBYGEMS_OIDC_ROLE }}
+
+      - name: Configure RubyGems credentials (API token)
+        if: ${{ vars.RUBYGEMS_OIDC_ROLE == '' && secrets.RUBYGEMS_API_TOKEN != '' }}
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        with:
+          api-token: ${{ secrets.RUBYGEMS_API_TOKEN }}
+
+      - name: Require publish credentials
+        if: ${{ vars.RUBYGEMS_OIDC_ROLE == '' && secrets.RUBYGEMS_API_TOKEN == '' }}
+        run: |
+          echo "Missing RubyGems credentials."
+          echo "Set repository variable RUBYGEMS_OIDC_ROLE for OIDC, or secret RUBYGEMS_API_TOKEN."
+          exit 1
+
+      - name: Build and publish gem
+        run: |
+          GEM_VERSION="$(ruby -e 'require "./lib/activitysmith/version"; puts ActivitySmith::VERSION')"
+          gem build activitysmith.gemspec
+          gem push "activitysmith-${GEM_VERSION}.gem"

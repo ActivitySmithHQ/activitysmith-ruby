@@ -4,14 +4,13 @@ module ActivitySmith
   class Client
     attr_reader :notifications, :live_activities
 
-    def initialize(api_key:, base_url: nil)
+    def initialize(api_key:)
       raise ArgumentError, "ActivitySmith: api_key is required" if api_key.to_s.strip.empty?
 
       load_generated_client!
 
       config = OpenapiClient::Configuration.new
       config.access_token = api_key
-      config.host = base_url.to_s.sub(%r{/+$}, "") unless base_url.to_s.strip.empty?
 
       api_client = OpenapiClient::ApiClient.new(config)
       @notifications = Notifications.new(OpenapiClient::PushNotificationsApi.new(api_client))

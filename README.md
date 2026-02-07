@@ -17,16 +17,7 @@ gem install activitysmith
 ```ruby
 require "activitysmith"
 
-client = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
-```
-
-You can also override the API host:
-
-```ruby
-client = ActivitySmith::Client.new(
-  api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"),
-  base_url: "https://activitysmith.com/api"
-)
+activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_KEY"))
 ```
 
 ## Usage
@@ -34,7 +25,7 @@ client = ActivitySmith::Client.new(
 ### Send a Push Notification
 
 ```ruby
-response = client.notifications.send(
+response = activitysmith.notifications.send(
   {
     title: "Build Failed",
     message: "CI pipeline failed on main branch"
@@ -45,7 +36,7 @@ response = client.notifications.send(
 ### Start a Live Activity
 
 ```ruby
-start = client.live_activities.start(
+start = activitysmith.live_activities.start(
   {
     content_state: {
       title: "Deploy",
@@ -62,7 +53,7 @@ activity_id = start.activity_id
 ### Update a Live Activity
 
 ```ruby
-update = client.live_activities.update(
+update = activitysmith.live_activities.update(
   {
     activity_id: activity_id,
     content_state: {
@@ -76,7 +67,7 @@ update = client.live_activities.update(
 ### End a Live Activity
 
 ```ruby
-finish = client.live_activities.end(
+finish = activitysmith.live_activities.end(
   {
     activity_id: activity_id,
     content_state: {
@@ -92,7 +83,7 @@ finish = client.live_activities.end(
 
 ```ruby
 begin
-  client.notifications.send(
+  activitysmith.notifications.send(
     { title: "Build Failed" }
   )
 rescue OpenapiClient::ApiError => e
@@ -102,8 +93,8 @@ end
 
 ## API Surface
 
-- `client.notifications`
-- `client.live_activities`
+- `activitysmith.notifications`
+- `activitysmith.live_activities`
 
 ## Requirements
 

@@ -34,7 +34,7 @@ client = ActivitySmith::Client.new(
 ### Send a Push Notification
 
 ```ruby
-response = client.notifications.send_push_notification(
+response = client.notifications.send(
   {
     title: "Build Failed",
     message: "CI pipeline failed on main branch"
@@ -45,7 +45,7 @@ response = client.notifications.send_push_notification(
 ### Start a Live Activity
 
 ```ruby
-start = client.live_activities.start_live_activity(
+start = client.live_activities.start(
   {
     content_state: {
       title: "Deploy",
@@ -62,7 +62,7 @@ activity_id = start.activity_id
 ### Update a Live Activity
 
 ```ruby
-update = client.live_activities.update_live_activity(
+update = client.live_activities.update(
   {
     activity_id: activity_id,
     content_state: {
@@ -76,7 +76,7 @@ update = client.live_activities.update_live_activity(
 ### End a Live Activity
 
 ```ruby
-finish = client.live_activities.end_live_activity(
+finish = client.live_activities.end(
   {
     activity_id: activity_id,
     content_state: {
@@ -92,7 +92,7 @@ finish = client.live_activities.end_live_activity(
 
 ```ruby
 begin
-  client.notifications.send_push_notification(
+  client.notifications.send(
     { title: "Build Failed" }
   )
 rescue OpenapiClient::ApiError => e

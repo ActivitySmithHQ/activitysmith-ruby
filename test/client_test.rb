@@ -16,6 +16,10 @@ class ClientTest < Minitest::Test
 
     refute_nil client.notifications
     refute_nil client.live_activities
+    assert_respond_to client.notifications, :send
+    assert_respond_to client.live_activities, :start
+    assert_respond_to client.live_activities, :update
+    assert_respond_to client.live_activities, :end
   rescue RuntimeError => error
     skip "Generated OpenAPI client is not present yet." if error.message.include?("Generated Ruby client not found")
 

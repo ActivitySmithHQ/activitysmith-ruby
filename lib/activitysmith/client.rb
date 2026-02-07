@@ -14,8 +14,8 @@ module ActivitySmith
       config.host = base_url.to_s.sub(%r{/+$}, "") unless base_url.to_s.strip.empty?
 
       api_client = OpenapiClient::ApiClient.new(config)
-      @notifications = OpenapiClient::PushNotificationsApi.new(api_client)
-      @live_activities = OpenapiClient::LiveActivitiesApi.new(api_client)
+      @notifications = Notifications.new(OpenapiClient::PushNotificationsApi.new(api_client))
+      @live_activities = LiveActivities.new(OpenapiClient::LiveActivitiesApi.new(api_client))
     end
 
     private

@@ -66,6 +66,23 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_notifications_map_channels_to_target
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    resource.send({ title: "Build Failed", channels: %w[devs ops] })
+    resource.send_push_notification({ title: "Build Failed", channels: "devs,ops" })
+
+    expected = { title: "Build Failed", target: { channels: %w[devs ops] } }
+    assert_equal(
+      [
+        [:send_push_notification, expected, {}],
+        [:send_push_notification, expected, {}]
+      ],
+      api.calls
+    )
+  end
+
   def test_live_activities_short_and_legacy_methods
     api = FakeLiveApi.new
     resource = ActivitySmith::LiveActivities.new(api)
@@ -102,6 +119,42 @@ class ResourcesTest < Minitest::Test
         [:start_live_activity, start_payload, {}],
         [:update_live_activity, update_payload, {}],
         [:end_live_activity, end_payload, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_live_activities_start_maps_channels_to_target
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    payload = {
+      content_state: {
+        title: "Deploy",
+        number_of_steps: 4,
+        current_step: 1,
+        type: "segmented_progress"
+      },
+      channels: %w[devs ops]
+    }
+
+    resource.start(payload)
+    resource.start_live_activity(payload)
+
+    expected = {
+      content_state: {
+        title: "Deploy",
+        number_of_steps: 4,
+        current_step: 1,
+        type: "segmented_progress"
+      },
+      target: { channels: %w[devs ops] }
+    }
+
+    assert_equal(
+      [
+        [:start_live_activity, expected, {}],
+        [:start_live_activity, expected, {}]
       ],
       api.calls
     )

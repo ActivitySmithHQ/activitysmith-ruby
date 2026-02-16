@@ -14,19 +14,19 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  class LiveActivityStartRequest
-    attr_accessor :content_state
+  class NoRecipientsError
+    attr_accessor :error
 
-    attr_accessor :alert
+    attr_accessor :message
 
-    attr_accessor :target
+    attr_accessor :effective_channel_slugs
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'content_state' => :'content_state',
-        :'alert' => :'alert',
-        :'target' => :'target'
+        :'error' => :'error',
+        :'message' => :'message',
+        :'effective_channel_slugs' => :'effective_channel_slugs'
       }
     end
 
@@ -38,9 +38,9 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'content_state' => :'ContentStateStart',
-        :'alert' => :'AlertPayload',
-        :'target' => :'ChannelTarget'
+        :'error' => :'String',
+        :'message' => :'String',
+        :'effective_channel_slugs' => :'Array<String>'
       }
     end
 
@@ -54,29 +54,33 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityStartRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::NoRecipientsError` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityStartRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::NoRecipientsError`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'content_state')
-        self.content_state = attributes[:'content_state']
+      if attributes.key?(:'error')
+        self.error = attributes[:'error']
       else
-        self.content_state = nil
+        self.error = nil
       end
 
-      if attributes.key?(:'alert')
-        self.alert = attributes[:'alert']
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      else
+        self.message = nil
       end
 
-      if attributes.key?(:'target')
-        self.target = attributes[:'target']
+      if attributes.key?(:'effective_channel_slugs')
+        if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
+          self.effective_channel_slugs = value
+        end
       end
     end
 
@@ -85,8 +89,12 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @content_state.nil?
-        invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
+      if @error.nil?
+        invalid_properties.push('invalid value for "error", error cannot be nil.')
+      end
+
+      if @message.nil?
+        invalid_properties.push('invalid value for "message", message cannot be nil.')
       end
 
       invalid_properties
@@ -96,7 +104,8 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @content_state.nil?
+      return false if @error.nil?
+      return false if @message.nil?
       true
     end
 
@@ -105,9 +114,9 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          content_state == o.content_state &&
-          alert == o.alert &&
-          target == o.target
+          error == o.error &&
+          message == o.message &&
+          effective_channel_slugs == o.effective_channel_slugs
     end
 
     # @see the `==` method
@@ -119,7 +128,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [content_state, alert, target].hash
+      [error, message, effective_channel_slugs].hash
     end
 
     # Builds the object from hash

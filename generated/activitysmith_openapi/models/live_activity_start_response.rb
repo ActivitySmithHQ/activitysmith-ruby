@@ -23,6 +23,8 @@ module OpenapiClient
 
     attr_accessor :activity_id
 
+    attr_accessor :effective_channel_slugs
+
     attr_accessor :timestamp
 
     # Attribute mapping from ruby-style variable name to JSON key.
@@ -32,6 +34,7 @@ module OpenapiClient
         :'devices_notified' => :'devices_notified',
         :'users_notified' => :'users_notified',
         :'activity_id' => :'activity_id',
+        :'effective_channel_slugs' => :'effective_channel_slugs',
         :'timestamp' => :'timestamp'
       }
     end
@@ -48,6 +51,7 @@ module OpenapiClient
         :'devices_notified' => :'Integer',
         :'users_notified' => :'Integer',
         :'activity_id' => :'String',
+        :'effective_channel_slugs' => :'Array<String>',
         :'timestamp' => :'Time'
       }
     end
@@ -91,6 +95,12 @@ module OpenapiClient
         self.activity_id = attributes[:'activity_id']
       else
         self.activity_id = nil
+      end
+
+      if attributes.key?(:'effective_channel_slugs')
+        if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
+          self.effective_channel_slugs = value
+        end
       end
 
       if attributes.key?(:'timestamp')
@@ -139,6 +149,7 @@ module OpenapiClient
           devices_notified == o.devices_notified &&
           users_notified == o.users_notified &&
           activity_id == o.activity_id &&
+          effective_channel_slugs == o.effective_channel_slugs &&
           timestamp == o.timestamp
     end
 
@@ -151,7 +162,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, devices_notified, users_notified, activity_id, timestamp].hash
+      [success, devices_notified, users_notified, activity_id, effective_channel_slugs, timestamp].hash
     end
 
     # Builds the object from hash

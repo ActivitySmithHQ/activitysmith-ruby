@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # Send a push notification
-    # Sends a push notification to every paired device in your account.
+    # Sends a push notification to devices matched by API key scope and optional target channels.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [PushNotificationResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # Send a push notification
-    # Sends a push notification to every paired device in your account.
+    # Sends a push notification to devices matched by API key scope and optional target channels.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(PushNotificationResponse, Integer, Hash)>] PushNotificationResponse data, response status code and response headers

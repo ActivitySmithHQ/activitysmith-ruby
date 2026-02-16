@@ -21,12 +21,24 @@ module OpenapiClient
 
     attr_accessor :subtitle
 
+    attr_accessor :payload
+
+    attr_accessor :badge
+
+    attr_accessor :sound
+
+    attr_accessor :target
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'title' => :'title',
         :'message' => :'message',
-        :'subtitle' => :'subtitle'
+        :'subtitle' => :'subtitle',
+        :'payload' => :'payload',
+        :'badge' => :'badge',
+        :'sound' => :'sound',
+        :'target' => :'target'
       }
     end
 
@@ -40,7 +52,11 @@ module OpenapiClient
       {
         :'title' => :'String',
         :'message' => :'String',
-        :'subtitle' => :'String'
+        :'subtitle' => :'String',
+        :'payload' => :'Hash<String, Object>',
+        :'badge' => :'Integer',
+        :'sound' => :'String',
+        :'target' => :'ChannelTarget'
       }
     end
 
@@ -78,6 +94,24 @@ module OpenapiClient
       if attributes.key?(:'subtitle')
         self.subtitle = attributes[:'subtitle']
       end
+
+      if attributes.key?(:'payload')
+        if (value = attributes[:'payload']).is_a?(Hash)
+          self.payload = value
+        end
+      end
+
+      if attributes.key?(:'badge')
+        self.badge = attributes[:'badge']
+      end
+
+      if attributes.key?(:'sound')
+        self.sound = attributes[:'sound']
+      end
+
+      if attributes.key?(:'target')
+        self.target = attributes[:'target']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -107,7 +141,11 @@ module OpenapiClient
       self.class == o.class &&
           title == o.title &&
           message == o.message &&
-          subtitle == o.subtitle
+          subtitle == o.subtitle &&
+          payload == o.payload &&
+          badge == o.badge &&
+          sound == o.sound &&
+          target == o.target
     end
 
     # @see the `==` method
@@ -119,7 +157,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, message, subtitle].hash
+      [title, message, subtitle, payload, badge, sound, target].hash
     end
 
     # Builds the object from hash

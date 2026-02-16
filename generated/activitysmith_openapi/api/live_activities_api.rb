@@ -88,7 +88,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on all registered devices and returns an activity_id.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityStartResponse]
@@ -98,7 +98,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on all registered devices and returns an activity_id.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityStartResponse, Integer, Hash)>] LiveActivityStartResponse data, response status code and response headers

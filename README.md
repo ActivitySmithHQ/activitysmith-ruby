@@ -27,8 +27,8 @@ activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_
 ```ruby
 response = activitysmith.notifications.send(
   {
-    title: "Build Failed",
-    message: "CI pipeline failed on main branch",
+    title: "New subscription 💸",
+    message: "Customer upgraded to Pro plan",
     channels: ["devs", "ops"] # Optional
   }
 )
@@ -43,9 +43,9 @@ puts response.devices_notified
 start = activitysmith.live_activities.start(
   {
     content_state: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "start",
-      number_of_steps: 4,
+      title: "Nightly database backup",
+      subtitle: "create snapshot",
+      number_of_steps: 3,
       current_step: 1,
       type: "segmented_progress",
       color: "yellow"
@@ -64,9 +64,9 @@ update = activitysmith.live_activities.update(
   {
     activity_id: activity_id,
     content_state: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "npm i & pm2",
-      current_step: 3
+      title: "Nightly database backup",
+      subtitle: "upload archive",
+      current_step: 2
     }
   }
 )
@@ -81,10 +81,10 @@ finish = activitysmith.live_activities.end(
   {
     activity_id: activity_id,
     content_state: {
-      title: "ActivitySmith API Deployment",
-      subtitle: "done",
-      current_step: 4,
-      auto_dismiss_minutes: 3
+      title: "Nightly database backup",
+      subtitle: "verify restore",
+      current_step: 3,
+      auto_dismiss_minutes: 2
     }
   }
 )
@@ -97,7 +97,7 @@ puts finish.success
 ```ruby
 begin
   activitysmith.notifications.send(
-    { title: "Build Failed" }
+    { title: "New subscription 💸" }
   )
 rescue OpenapiClient::ApiError => err
   puts "Request failed: #{err.code} #{err.message}"

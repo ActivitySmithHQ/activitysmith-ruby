@@ -24,6 +24,10 @@ activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_
 
 ### Send a Push Notification
 
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/new-subscription-push-notification.png" alt="Push notification example" width="680" />
+</p>
+
 ```ruby
 response = activitysmith.notifications.send(
   {
@@ -38,6 +42,10 @@ puts response.devices_notified
 ```
 
 ### Start a Live Activity
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/start-live-activity.png" alt="Start live activity example" width="680" />
+</p>
 
 ```ruby
 start = activitysmith.live_activities.start(
@@ -59,6 +67,10 @@ activity_id = start.activity_id
 
 ### Update a Live Activity
 
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/update-live-activity.png" alt="Update live activity example" width="680" />
+</p>
+
 ```ruby
 update = activitysmith.live_activities.update(
   {
@@ -75,6 +87,10 @@ puts update.devices_notified
 ```
 
 ### End a Live Activity
+
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/end-live-activity.png" alt="End live activity example" width="680" />
+</p>
 
 ```ruby
 finish = activitysmith.live_activities.end(

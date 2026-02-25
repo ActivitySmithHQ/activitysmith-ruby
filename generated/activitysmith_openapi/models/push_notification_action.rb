@@ -14,39 +14,51 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  class PushNotificationRequest
+  class PushNotificationAction
+    # Button title displayed in iOS expanded notification UI.
     attr_accessor :title
 
-    attr_accessor :message
+    attr_accessor :type
 
-    attr_accessor :subtitle
+    # HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend.
+    attr_accessor :url
 
-    # Optional HTTPS URL opened when user taps the notification body.
-    attr_accessor :redirection
+    # Webhook HTTP method. Used only when type=webhook.
+    attr_accessor :method
 
-    # Optional interactive actions shown on iOS long-press.
-    attr_accessor :actions
+    # Optional webhook payload body. Used only when type=webhook.
+    attr_accessor :body
 
-    attr_accessor :payload
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
 
-    attr_accessor :badge
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
 
-    attr_accessor :sound
-
-    attr_accessor :target
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'title' => :'title',
-        :'message' => :'message',
-        :'subtitle' => :'subtitle',
-        :'redirection' => :'redirection',
-        :'actions' => :'actions',
-        :'payload' => :'payload',
-        :'badge' => :'badge',
-        :'sound' => :'sound',
-        :'target' => :'target'
+        :'type' => :'type',
+        :'url' => :'url',
+        :'method' => :'method',
+        :'body' => :'body'
       }
     end
 
@@ -59,14 +71,10 @@ module OpenapiClient
     def self.openapi_types
       {
         :'title' => :'String',
-        :'message' => :'String',
-        :'subtitle' => :'String',
-        :'redirection' => :'String',
-        :'actions' => :'Array<PushNotificationAction>',
-        :'payload' => :'Hash<String, Object>',
-        :'badge' => :'Integer',
-        :'sound' => :'String',
-        :'target' => :'ChannelTarget'
+        :'type' => :'PushNotificationActionType',
+        :'url' => :'String',
+        :'method' => :'PushNotificationWebhookMethod',
+        :'body' => :'Hash<String, Object>'
       }
     end
 
@@ -80,13 +88,13 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::PushNotificationRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::PushNotificationAction` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::PushNotificationRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::PushNotificationAction`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
@@ -97,40 +105,28 @@ module OpenapiClient
         self.title = nil
       end
 
-      if attributes.key?(:'message')
-        self.message = attributes[:'message']
+      if attributes.key?(:'type')
+        self.type = attributes[:'type']
+      else
+        self.type = nil
       end
 
-      if attributes.key?(:'subtitle')
-        self.subtitle = attributes[:'subtitle']
+      if attributes.key?(:'url')
+        self.url = attributes[:'url']
+      else
+        self.url = nil
       end
 
-      if attributes.key?(:'redirection')
-        self.redirection = attributes[:'redirection']
+      if attributes.key?(:'method')
+        self.method = attributes[:'method']
+      else
+        self.method = 'POST'
       end
 
-      if attributes.key?(:'actions')
-        if (value = attributes[:'actions']).is_a?(Array)
-          self.actions = value
+      if attributes.key?(:'body')
+        if (value = attributes[:'body']).is_a?(Hash)
+          self.body = value
         end
-      end
-
-      if attributes.key?(:'payload')
-        if (value = attributes[:'payload']).is_a?(Hash)
-          self.payload = value
-        end
-      end
-
-      if attributes.key?(:'badge')
-        self.badge = attributes[:'badge']
-      end
-
-      if attributes.key?(:'sound')
-        self.sound = attributes[:'sound']
-      end
-
-      if attributes.key?(:'target')
-        self.target = attributes[:'target']
       end
     end
 
@@ -143,13 +139,17 @@ module OpenapiClient
         invalid_properties.push('invalid value for "title", title cannot be nil.')
       end
 
-      pattern = Regexp.new(/^https:\/\//)
-      if !@redirection.nil? && @redirection !~ pattern
-        invalid_properties.push("invalid value for \"redirection\", must conform to the pattern #{pattern}.")
+      if @type.nil?
+        invalid_properties.push('invalid value for "type", type cannot be nil.')
       end
 
-      if !@actions.nil? && @actions.length > 4
-        invalid_properties.push('invalid value for "actions", number of items must be less than or equal to 4.')
+      if @url.nil?
+        invalid_properties.push('invalid value for "url", url cannot be nil.')
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
+      if @url !~ pattern
+        invalid_properties.push("invalid value for \"url\", must conform to the pattern #{pattern}.")
       end
 
       invalid_properties
@@ -160,38 +160,25 @@ module OpenapiClient
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
-      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^https:\/\//)
-      return false if !@actions.nil? && @actions.length > 4
+      return false if @type.nil?
+      return false if @url.nil?
+      return false if @url !~ Regexp.new(/^https:\/\//)
       true
     end
 
     # Custom attribute writer method with validation
-    # @param [Object] redirection Value to be assigned
-    def redirection=(redirection)
-      if redirection.nil?
-        fail ArgumentError, 'redirection cannot be nil'
+    # @param [Object] url Value to be assigned
+    def url=(url)
+      if url.nil?
+        fail ArgumentError, 'url cannot be nil'
       end
 
       pattern = Regexp.new(/^https:\/\//)
-      if redirection !~ pattern
-        fail ArgumentError, "invalid value for \"redirection\", must conform to the pattern #{pattern}."
+      if url !~ pattern
+        fail ArgumentError, "invalid value for \"url\", must conform to the pattern #{pattern}."
       end
 
-      @redirection = redirection
-    end
-
-    # Custom attribute writer method with validation
-    # @param [Object] actions Value to be assigned
-    def actions=(actions)
-      if actions.nil?
-        fail ArgumentError, 'actions cannot be nil'
-      end
-
-      if actions.length > 4
-        fail ArgumentError, 'invalid value for "actions", number of items must be less than or equal to 4.'
-      end
-
-      @actions = actions
+      @url = url
     end
 
     # Checks equality by comparing each attribute.
@@ -200,14 +187,10 @@ module OpenapiClient
       return true if self.equal?(o)
       self.class == o.class &&
           title == o.title &&
-          message == o.message &&
-          subtitle == o.subtitle &&
-          redirection == o.redirection &&
-          actions == o.actions &&
-          payload == o.payload &&
-          badge == o.badge &&
-          sound == o.sound &&
-          target == o.target
+          type == o.type &&
+          url == o.url &&
+          method == o.method &&
+          body == o.body
     end
 
     # @see the `==` method
@@ -219,7 +202,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, message, subtitle, redirection, actions, payload, badge, sound, target].hash
+      [title, type, url, method, body].hash
     end
 
     # Builds the object from hash

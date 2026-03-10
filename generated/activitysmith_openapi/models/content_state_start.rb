@@ -14,22 +14,33 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Start payload requires title, number_of_steps, current_step, and type.
+  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit.
   class ContentStateStart
     attr_accessor :title
 
     attr_accessor :subtitle
 
+    # Total number of steps. Use for type=segmented_progress.
     attr_accessor :number_of_steps
 
+    # Current step. Use for type=segmented_progress.
     attr_accessor :current_step
+
+    # Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
+    attr_accessor :percentage
+
+    # Current progress value. Use with upper_limit for type=progress.
+    attr_accessor :value
+
+    # Maximum progress value. Use with value for type=progress.
+    attr_accessor :upper_limit
 
     attr_accessor :type
 
     # Optional. Accent color for the Live Activity. Defaults to blue.
     attr_accessor :color
 
-    # Optional. Overrides color for the current step.
+    # Optional. Overrides color for the current step. Only applies to type=segmented_progress.
     attr_accessor :step_color
 
     class EnumAttributeValidator
@@ -61,6 +72,9 @@ module OpenapiClient
         :'subtitle' => :'subtitle',
         :'number_of_steps' => :'number_of_steps',
         :'current_step' => :'current_step',
+        :'percentage' => :'percentage',
+        :'value' => :'value',
+        :'upper_limit' => :'upper_limit',
         :'type' => :'type',
         :'color' => :'color',
         :'step_color' => :'step_color'
@@ -79,6 +93,9 @@ module OpenapiClient
         :'subtitle' => :'String',
         :'number_of_steps' => :'Integer',
         :'current_step' => :'Integer',
+        :'percentage' => :'Float',
+        :'value' => :'Float',
+        :'upper_limit' => :'Float',
         :'type' => :'String',
         :'color' => :'String',
         :'step_color' => :'String'
@@ -118,14 +135,22 @@ module OpenapiClient
 
       if attributes.key?(:'number_of_steps')
         self.number_of_steps = attributes[:'number_of_steps']
-      else
-        self.number_of_steps = nil
       end
 
       if attributes.key?(:'current_step')
         self.current_step = attributes[:'current_step']
-      else
-        self.current_step = nil
+      end
+
+      if attributes.key?(:'percentage')
+        self.percentage = attributes[:'percentage']
+      end
+
+      if attributes.key?(:'value')
+        self.value = attributes[:'value']
+      end
+
+      if attributes.key?(:'upper_limit')
+        self.upper_limit = attributes[:'upper_limit']
       end
 
       if attributes.key?(:'type')
@@ -154,20 +179,20 @@ module OpenapiClient
         invalid_properties.push('invalid value for "title", title cannot be nil.')
       end
 
-      if @number_of_steps.nil?
-        invalid_properties.push('invalid value for "number_of_steps", number_of_steps cannot be nil.')
-      end
-
-      if @number_of_steps < 1
+      if !@number_of_steps.nil? && @number_of_steps < 1
         invalid_properties.push('invalid value for "number_of_steps", must be greater than or equal to 1.')
       end
 
-      if @current_step.nil?
-        invalid_properties.push('invalid value for "current_step", current_step cannot be nil.')
+      if !@current_step.nil? && @current_step < 1
+        invalid_properties.push('invalid value for "current_step", must be greater than or equal to 1.')
       end
 
-      if @current_step < 1
-        invalid_properties.push('invalid value for "current_step", must be greater than or equal to 1.')
+      if !@percentage.nil? && @percentage > 100
+        invalid_properties.push('invalid value for "percentage", must be smaller than or equal to 100.')
+      end
+
+      if !@percentage.nil? && @percentage < 0
+        invalid_properties.push('invalid value for "percentage", must be greater than or equal to 0.')
       end
 
       if @type.nil?
@@ -182,12 +207,12 @@ module OpenapiClient
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
-      return false if @number_of_steps.nil?
-      return false if @number_of_steps < 1
-      return false if @current_step.nil?
-      return false if @current_step < 1
+      return false if !@number_of_steps.nil? && @number_of_steps < 1
+      return false if !@current_step.nil? && @current_step < 1
+      return false if !@percentage.nil? && @percentage > 100
+      return false if !@percentage.nil? && @percentage < 0
       return false if @type.nil?
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
@@ -224,10 +249,28 @@ module OpenapiClient
       @current_step = current_step
     end
 
+    # Custom attribute writer method with validation
+    # @param [Object] percentage Value to be assigned
+    def percentage=(percentage)
+      if percentage.nil?
+        fail ArgumentError, 'percentage cannot be nil'
+      end
+
+      if percentage > 100
+        fail ArgumentError, 'invalid value for "percentage", must be smaller than or equal to 100.'
+      end
+
+      if percentage < 0
+        fail ArgumentError, 'invalid value for "percentage", must be greater than or equal to 0.'
+      end
+
+      @percentage = percentage
+    end
+
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end
@@ -263,6 +306,9 @@ module OpenapiClient
           subtitle == o.subtitle &&
           number_of_steps == o.number_of_steps &&
           current_step == o.current_step &&
+          percentage == o.percentage &&
+          value == o.value &&
+          upper_limit == o.upper_limit &&
           type == o.type &&
           color == o.color &&
           step_color == o.step_color
@@ -277,7 +323,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, type, color, step_color].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, type, color, step_color].hash
     end
 
     # Builds the object from hash

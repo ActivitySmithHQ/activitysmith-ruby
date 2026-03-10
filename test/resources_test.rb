@@ -160,6 +160,30 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_live_activities_support_progress_payloads
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    payload = {
+      content_state: {
+        title: "Render export",
+        subtitle: "encoding frames",
+        type: "progress",
+        percentage: 67,
+        color: "purple"
+      }
+    }
+
+    resource.start(payload)
+
+    assert_equal(
+      [
+        [:start_live_activity, payload, {}]
+      ],
+      api.calls
+    )
+  end
+
   def test_passthrough_methods
     push_api = FakePushApi.new
     notifications = ActivitySmith::Notifications.new(push_api)

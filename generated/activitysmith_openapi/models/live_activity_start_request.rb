@@ -14,6 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
+  # Start a new Live Activity. The response includes activity_id for later update and end calls.
   class LiveActivityStartRequest
     attr_accessor :content_state
 

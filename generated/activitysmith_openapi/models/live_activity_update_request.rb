@@ -14,6 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
+  # Update an existing Live Activity by activity_id.
   class LiveActivityUpdateRequest
     attr_accessor :activity_id
 

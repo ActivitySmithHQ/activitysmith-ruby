@@ -14,6 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
+  # End an existing Live Activity by activity_id.
   class LiveActivityEndRequest
     attr_accessor :activity_id
 

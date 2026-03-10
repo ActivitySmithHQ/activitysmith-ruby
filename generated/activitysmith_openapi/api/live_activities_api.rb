@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # End a Live Activity
-    # Ends a Live Activity and archives its lifecycle.
+    # Ends a Live Activity and archives its lifecycle. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityEndResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # End a Live Activity
-    # Ends a Live Activity and archives its lifecycle.
+    # Ends a Live Activity and archives its lifecycle. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityEndResponse, Integer, Hash)>] LiveActivityEndResponse data, response status code and response headers
@@ -88,7 +88,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on devices matched by API key scope and optional target channels.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityStartResponse]
@@ -98,7 +98,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on devices matched by API key scope and optional target channels.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityStartResponse, Integer, Hash)>] LiveActivityStartResponse data, response status code and response headers
@@ -156,7 +156,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity
-    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued.
+    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityUpdateResponse]
@@ -166,7 +166,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity
-    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued.
+    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityUpdateResponse, Integer, Hash)>] LiveActivityUpdateResponse data, response status code and response headers

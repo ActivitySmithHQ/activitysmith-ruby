@@ -14,6 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
+  # Returned after a Live Activity end event is sent or queued.
   class LiveActivityEndResponse
     attr_accessor :success
 

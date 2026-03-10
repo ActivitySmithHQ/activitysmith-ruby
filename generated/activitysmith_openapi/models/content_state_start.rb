@@ -14,13 +14,13 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit.
+  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
   class ContentStateStart
     attr_accessor :title
 
     attr_accessor :subtitle
 
-    # Total number of steps. Use for type=segmented_progress.
+    # Total number of steps. Use for type=segmented_progress. This value can be increased or decreased later when updating or ending the same activity.
     attr_accessor :number_of_steps
 
     # Current step. Use for type=segmented_progress.

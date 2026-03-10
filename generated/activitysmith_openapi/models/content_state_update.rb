@@ -14,13 +14,13 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when updating an existing activity.
+  # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
   class ContentStateUpdate
     attr_accessor :title
 
     attr_accessor :subtitle
 
-    # Total number of steps. Use for type=segmented_progress.
+    # Total number of steps. Use for type=segmented_progress. Optional on update, and safe to change if the workflow gains or loses steps.
     attr_accessor :number_of_steps
 
     # Current step. Use for type=segmented_progress.

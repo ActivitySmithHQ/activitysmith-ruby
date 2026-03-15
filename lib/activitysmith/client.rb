@@ -11,6 +11,7 @@ module ActivitySmith
 
       config = OpenapiClient::Configuration.new
       config.access_token = api_key
+      config.user_agent = VersionedUserAgent.value if config.respond_to?(:user_agent=)
 
       api_client = OpenapiClient::ApiClient.new(config)
       @notifications = Notifications.new(OpenapiClient::PushNotificationsApi.new(api_client))

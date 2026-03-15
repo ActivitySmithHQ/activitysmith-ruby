@@ -21,10 +21,13 @@ module OpenapiClient
 
     attr_accessor :subtitle
 
-    # Optional HTTPS URL opened when user taps the notification body.
+    # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
+    attr_accessor :media
+
+    # Optional HTTPS URL opened when user taps the notification body. Overrides the default tap target from `media` when both are provided.
     attr_accessor :redirection
 
-    # Optional interactive actions shown on iOS long-press.
+    # Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
     attr_accessor :actions
 
     attr_accessor :payload
@@ -41,6 +44,7 @@ module OpenapiClient
         :'title' => :'title',
         :'message' => :'message',
         :'subtitle' => :'subtitle',
+        :'media' => :'media',
         :'redirection' => :'redirection',
         :'actions' => :'actions',
         :'payload' => :'payload',
@@ -61,6 +65,7 @@ module OpenapiClient
         :'title' => :'String',
         :'message' => :'String',
         :'subtitle' => :'String',
+        :'media' => :'String',
         :'redirection' => :'String',
         :'actions' => :'Array<PushNotificationAction>',
         :'payload' => :'Hash<String, Object>',
@@ -105,6 +110,10 @@ module OpenapiClient
         self.subtitle = attributes[:'subtitle']
       end
 
+      if attributes.key?(:'media')
+        self.media = attributes[:'media']
+      end
+
       if attributes.key?(:'redirection')
         self.redirection = attributes[:'redirection']
       end
@@ -144,6 +153,11 @@ module OpenapiClient
       end
 
       pattern = Regexp.new(/^https:\/\//)
+      if !@media.nil? && @media !~ pattern
+        invalid_properties.push("invalid value for \"media\", must conform to the pattern #{pattern}.")
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
       if !@redirection.nil? && @redirection !~ pattern
         invalid_properties.push("invalid value for \"redirection\", must conform to the pattern #{pattern}.")
       end
@@ -160,9 +174,25 @@ module OpenapiClient
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
+      return false if !@media.nil? && @media !~ Regexp.new(/^https:\/\//)
       return false if !@redirection.nil? && @redirection !~ Regexp.new(/^https:\/\//)
       return false if !@actions.nil? && @actions.length > 4
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] media Value to be assigned
+    def media=(media)
+      if media.nil?
+        fail ArgumentError, 'media cannot be nil'
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
+      if media !~ pattern
+        fail ArgumentError, "invalid value for \"media\", must conform to the pattern #{pattern}."
+      end
+
+      @media = media
     end
 
     # Custom attribute writer method with validation
@@ -202,6 +232,7 @@ module OpenapiClient
           title == o.title &&
           message == o.message &&
           subtitle == o.subtitle &&
+          media == o.media &&
           redirection == o.redirection &&
           actions == o.actions &&
           payload == o.payload &&
@@ -219,7 +250,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, message, subtitle, redirection, actions, payload, badge, sound, target].hash
+      [title, message, subtitle, media, redirection, actions, payload, badge, sound, target].hash
     end
 
     # Builds the object from hash

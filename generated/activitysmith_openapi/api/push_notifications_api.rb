@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # Send a push notification
-    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL (tap) and up to 4 interactive actions (long-press on iOS).
+    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [PushNotificationResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # Send a push notification
-    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL (tap) and up to 4 interactive actions (long-press on iOS).
+    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. &#x60;media&#x60; cannot be combined with &#x60;actions&#x60;.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(PushNotificationResponse, Integer, Hash)>] PushNotificationResponse data, response status code and response headers

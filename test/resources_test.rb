@@ -83,6 +83,44 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_notifications_preserve_media_and_redirection
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    payload = {
+      title: "Voice Over Generated",
+      media: "https://cdn.activitysmith.com/voice_over.mp3",
+      redirection: "https://studio.acme.com/voice-overs/482/review"
+    }
+
+    resource.send(payload)
+
+    assert_equal(
+      [
+        [:send_push_notification, payload, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_notifications_reject_media_and_actions
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    error = assert_raises(ArgumentError) do
+      resource.send(
+        {
+          title: "Voice Over Generated",
+          media: "https://cdn.activitysmith.com/voice_over.mp3",
+          actions: [{ title: "Open", type: "open_url", url: "https://example.com" }]
+        }
+      )
+    end
+
+    assert_equal "ActivitySmith: media cannot be combined with actions", error.message
+    assert_empty api.calls
+  end
+
   def test_live_activities_short_and_legacy_methods
     api = FakeLiveApi.new
     resource = ActivitySmith::LiveActivities.new(api)

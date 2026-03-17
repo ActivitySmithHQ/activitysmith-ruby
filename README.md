@@ -29,15 +29,12 @@ activitysmith = ActivitySmith::Client.new(api_key: ENV.fetch("ACTIVITYSMITH_API_
 </p>
 
 ```ruby
-response = activitysmith.notifications.send(
+activitysmith.notifications.send(
   {
     title: "New subscription 💸",
     message: "Customer upgraded to Pro plan"
   }
 )
-
-puts response.success
-puts response.devices_notified
 ```
 
 ## Live Activities
@@ -95,7 +92,7 @@ activity_id = start.activity_id
 </p>
 
 ```ruby
-update = activitysmith.live_activities.update(
+activitysmith.live_activities.update(
   {
     activity_id: activity_id,
     content_state: {
@@ -106,8 +103,6 @@ update = activitysmith.live_activities.update(
     }
   }
 )
-
-puts update.devices_notified
 ```
 
 #### End
@@ -117,7 +112,7 @@ puts update.devices_notified
 </p>
 
 ```ruby
-finish = activitysmith.live_activities.end(
+activitysmith.live_activities.end(
   {
     activity_id: activity_id,
     content_state: {
@@ -129,8 +124,6 @@ finish = activitysmith.live_activities.end(
     }
   }
 )
-
-puts finish.success
 ```
 
 ### Progress Type
@@ -205,7 +198,7 @@ activitysmith.live_activities.end(
 Channels are used to target specific team members or devices. Can be used for both push notifications and live activities.
 
 ```ruby
-response = activitysmith.notifications.send(
+activitysmith.notifications.send(
   {
     title: "New subscription 💸",
     message: "Customer upgraded to Pro plan",
@@ -221,7 +214,7 @@ response = activitysmith.notifications.send(
 </p>
 
 ```ruby
-response = activitysmith.notifications.send(
+activitysmith.notifications.send(
   {
     title: "Homepage ready",
     message: "Your agent finished the redesign.",
@@ -244,13 +237,17 @@ What will work:
 - direct video file URL: `.mp4`, `.mov`, etc.
 - URL that responds with a proper media `Content-Type`, even if the path has no extension
 
-## Push Notification Redirection and Actions
+## Actionable Push Notifications
 
-Push notification redirection and actions are optional and can be used to redirect the user to a specific URL when they tap the notification or to trigger a specific action when they long-press the notification.
-Webhooks are executed by ActivitySmith backend.
+<p align="center">
+  <img src="https://cdn.activitysmith.com/features/actionable-push-notifications-2.png" alt="Actionable push notification example" width="680" />
+</p>
+
+Actionable push notifications can open a URL on tap or trigger actions when someone long-presses the notification.
+Webhooks are executed by the ActivitySmith backend.
 
 ```ruby
-response = activitysmith.notifications.send(
+activitysmith.notifications.send(
   {
     title: "New subscription 💸",
     message: "Customer upgraded to Pro plan",

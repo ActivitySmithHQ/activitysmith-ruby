@@ -14,20 +14,52 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Update an existing Live Activity by activity_id.
-  class LiveActivityUpdateRequest
-    attr_accessor :activity_id
+  # Optional single action button shown in the Live Activity UI.
+  class LiveActivityAction
+    # Button title displayed in the Live Activity UI.
+    attr_accessor :title
 
-    attr_accessor :content_state
+    attr_accessor :type
 
-    attr_accessor :action
+    # HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend.
+    attr_accessor :url
+
+    # Webhook HTTP method. Used only when type=webhook.
+    attr_accessor :method
+
+    # Optional webhook payload body. Used only when type=webhook.
+    attr_accessor :body
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'activity_id' => :'activity_id',
-        :'content_state' => :'content_state',
-        :'action' => :'action'
+        :'title' => :'title',
+        :'type' => :'type',
+        :'url' => :'url',
+        :'method' => :'method',
+        :'body' => :'body'
       }
     end
 
@@ -39,9 +71,11 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'activity_id' => :'String',
-        :'content_state' => :'ContentStateUpdate',
-        :'action' => :'LiveActivityAction'
+        :'title' => :'String',
+        :'type' => :'LiveActivityActionType',
+        :'url' => :'String',
+        :'method' => :'LiveActivityWebhookMethod',
+        :'body' => :'Hash<String, Object>'
       }
     end
 
@@ -55,31 +89,45 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityUpdateRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityAction` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityUpdateRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityAction`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'activity_id')
-        self.activity_id = attributes[:'activity_id']
+      if attributes.key?(:'title')
+        self.title = attributes[:'title']
       else
-        self.activity_id = nil
+        self.title = nil
       end
 
-      if attributes.key?(:'content_state')
-        self.content_state = attributes[:'content_state']
+      if attributes.key?(:'type')
+        self.type = attributes[:'type']
       else
-        self.content_state = nil
+        self.type = nil
       end
 
-      if attributes.key?(:'action')
-        self.action = attributes[:'action']
+      if attributes.key?(:'url')
+        self.url = attributes[:'url']
+      else
+        self.url = nil
+      end
+
+      if attributes.key?(:'method')
+        self.method = attributes[:'method']
+      else
+        self.method = 'POST'
+      end
+
+      if attributes.key?(:'body')
+        if (value = attributes[:'body']).is_a?(Hash)
+          self.body = value
+        end
       end
     end
 
@@ -88,12 +136,21 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @activity_id.nil?
-        invalid_properties.push('invalid value for "activity_id", activity_id cannot be nil.')
+      if @title.nil?
+        invalid_properties.push('invalid value for "title", title cannot be nil.')
       end
 
-      if @content_state.nil?
-        invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
+      if @type.nil?
+        invalid_properties.push('invalid value for "type", type cannot be nil.')
+      end
+
+      if @url.nil?
+        invalid_properties.push('invalid value for "url", url cannot be nil.')
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
+      if @url !~ pattern
+        invalid_properties.push("invalid value for \"url\", must conform to the pattern #{pattern}.")
       end
 
       invalid_properties
@@ -103,9 +160,26 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @activity_id.nil?
-      return false if @content_state.nil?
+      return false if @title.nil?
+      return false if @type.nil?
+      return false if @url.nil?
+      return false if @url !~ Regexp.new(/^https:\/\//)
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] url Value to be assigned
+    def url=(url)
+      if url.nil?
+        fail ArgumentError, 'url cannot be nil'
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
+      if url !~ pattern
+        fail ArgumentError, "invalid value for \"url\", must conform to the pattern #{pattern}."
+      end
+
+      @url = url
     end
 
     # Checks equality by comparing each attribute.
@@ -113,9 +187,11 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          activity_id == o.activity_id &&
-          content_state == o.content_state &&
-          action == o.action
+          title == o.title &&
+          type == o.type &&
+          url == o.url &&
+          method == o.method &&
+          body == o.body
     end
 
     # @see the `==` method
@@ -127,7 +203,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [activity_id, content_state, action].hash
+      [title, type, url, method, body].hash
     end
 
     # Builds the object from hash

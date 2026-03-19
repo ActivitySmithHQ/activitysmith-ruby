@@ -20,11 +20,14 @@ module OpenapiClient
 
     attr_accessor :content_state
 
+    attr_accessor :action
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'activity_id' => :'activity_id',
-        :'content_state' => :'content_state'
+        :'content_state' => :'content_state',
+        :'action' => :'action'
       }
     end
 
@@ -37,7 +40,8 @@ module OpenapiClient
     def self.openapi_types
       {
         :'activity_id' => :'String',
-        :'content_state' => :'ContentStateEnd'
+        :'content_state' => :'ContentStateEnd',
+        :'action' => :'LiveActivityAction'
       }
     end
 
@@ -73,6 +77,10 @@ module OpenapiClient
       else
         self.content_state = nil
       end
+
+      if attributes.key?(:'action')
+        self.action = attributes[:'action']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -106,7 +114,8 @@ module OpenapiClient
       return true if self.equal?(o)
       self.class == o.class &&
           activity_id == o.activity_id &&
-          content_state == o.content_state
+          content_state == o.content_state &&
+          action == o.action
     end
 
     # @see the `==` method
@@ -118,7 +127,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [activity_id, content_state].hash
+      [activity_id, content_state, action].hash
     end
 
     # Builds the object from hash

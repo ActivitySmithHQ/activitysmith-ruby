@@ -18,6 +18,8 @@ module OpenapiClient
   class LiveActivityStartRequest
     attr_accessor :content_state
 
+    attr_accessor :action
+
     attr_accessor :alert
 
     attr_accessor :target
@@ -26,6 +28,7 @@ module OpenapiClient
     def self.attribute_map
       {
         :'content_state' => :'content_state',
+        :'action' => :'action',
         :'alert' => :'alert',
         :'target' => :'target'
       }
@@ -40,6 +43,7 @@ module OpenapiClient
     def self.openapi_types
       {
         :'content_state' => :'ContentStateStart',
+        :'action' => :'LiveActivityAction',
         :'alert' => :'AlertPayload',
         :'target' => :'ChannelTarget'
       }
@@ -70,6 +74,10 @@ module OpenapiClient
         self.content_state = attributes[:'content_state']
       else
         self.content_state = nil
+      end
+
+      if attributes.key?(:'action')
+        self.action = attributes[:'action']
       end
 
       if attributes.key?(:'alert')
@@ -107,6 +115,7 @@ module OpenapiClient
       return true if self.equal?(o)
       self.class == o.class &&
           content_state == o.content_state &&
+          action == o.action &&
           alert == o.alert &&
           target == o.target
     end
@@ -120,7 +129,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [content_state, alert, target].hash
+      [content_state, action, alert, target].hash
     end
 
     # Builds the object from hash

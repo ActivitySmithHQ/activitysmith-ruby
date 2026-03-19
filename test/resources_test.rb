@@ -222,6 +222,73 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_live_activities_pass_action_payloads_through
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    start_payload = {
+      content_state: {
+        title: "Deploying payments-api",
+        subtitle: "Running database migrations",
+        number_of_steps: 5,
+        current_step: 3,
+        type: "segmented_progress"
+      },
+      action: {
+        title: "Open Workflow",
+        type: "open_url",
+        url: "https://github.com/acme/payments-api/actions/runs/1234567890"
+      }
+    }
+
+    update_payload = {
+      activity_id: "act-1",
+      content_state: {
+        title: "Reindexing product search",
+        subtitle: "Shard 7 of 12",
+        number_of_steps: 12,
+        current_step: 7
+      },
+      action: {
+        title: "Pause Reindex",
+        type: "webhook",
+        url: "https://ops.example.com/hooks/search/reindex/pause",
+        method: "POST",
+        body: {
+          job_id: "reindex-2026-03-19"
+        }
+      }
+    }
+
+    end_payload = {
+      activity_id: "act-1",
+      content_state: {
+        title: "Deploying payments-api",
+        subtitle: "Production rollout complete",
+        number_of_steps: 5,
+        current_step: 5
+      },
+      action: {
+        title: "Open Workflow",
+        type: "open_url",
+        url: "https://github.com/acme/payments-api/actions/runs/1234567890"
+      }
+    }
+
+    resource.start(start_payload)
+    resource.update(update_payload)
+    resource.end(end_payload)
+
+    assert_equal(
+      [
+        [:start_live_activity, start_payload, {}],
+        [:update_live_activity, update_payload, {}],
+        [:end_live_activity, end_payload, {}]
+      ],
+      api.calls
+    )
+  end
+
   def test_passthrough_methods
     push_api = FakePushApi.new
     notifications = ActivitySmith::Notifications.new(push_api)

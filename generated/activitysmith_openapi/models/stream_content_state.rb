@@ -14,43 +14,46 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
-  class ContentStateEnd
+  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based types.
+  class StreamContentState
     attr_accessor :title
 
     attr_accessor :subtitle
 
-    # Total number of steps. Use for type=segmented_progress. Optional on end, and safe to change if the final workflow used more or fewer steps than originally planned.
+    # Use for segmented_progress, counter, timer, and countdown.
     attr_accessor :number_of_steps
 
-    # Current step. Use for type=segmented_progress.
+    # Use for segmented_progress, counter, timer, and countdown.
     attr_accessor :current_step
 
-    # Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
+    # Use for progress. Takes precedence over value/upper_limit if both are provided.
     attr_accessor :percentage
 
-    # Current progress value. Use with upper_limit for type=progress.
+    # Current progress value. Use with upper_limit for progress.
     attr_accessor :value
 
-    # Maximum progress value. Use with value for type=progress.
+    # Maximum progress value. Use with value for progress.
     attr_accessor :upper_limit
 
-    # Use for type=metrics.
-    attr_accessor :metrics
-
-    # Optional. When omitted, the API uses the existing Live Activity type.
+    # Required on the first PUT or whenever the stream cannot infer the current activity type.
     attr_accessor :type
 
     # Optional. Accent color for the Live Activity. Defaults to blue.
     attr_accessor :color
 
-    # Optional. Overrides color for the current step. Only applies to type=segmented_progress.
+    # Optional. Overrides color for the current step. Only applies to segmented_progress.
     attr_accessor :step_color
 
     # Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
     attr_accessor :step_colors
 
-    # Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.
+    # Use for metrics activities.
+    attr_accessor :metrics
+
+    # Optional. Seconds before the ended Live Activity is dismissed.
+    attr_accessor :auto_dismiss_seconds
+
+    # Optional. Minutes before the ended Live Activity is dismissed.
     attr_accessor :auto_dismiss_minutes
 
     class EnumAttributeValidator
@@ -85,11 +88,12 @@ module OpenapiClient
         :'percentage' => :'percentage',
         :'value' => :'value',
         :'upper_limit' => :'upper_limit',
-        :'metrics' => :'metrics',
         :'type' => :'type',
         :'color' => :'color',
         :'step_color' => :'step_color',
         :'step_colors' => :'step_colors',
+        :'metrics' => :'metrics',
+        :'auto_dismiss_seconds' => :'auto_dismiss_seconds',
         :'auto_dismiss_minutes' => :'auto_dismiss_minutes'
       }
     end
@@ -109,11 +113,12 @@ module OpenapiClient
         :'percentage' => :'Float',
         :'value' => :'Float',
         :'upper_limit' => :'Float',
-        :'metrics' => :'Array<ActivityMetric>',
         :'type' => :'String',
         :'color' => :'String',
         :'step_color' => :'String',
         :'step_colors' => :'Array<String>',
+        :'metrics' => :'Array<ActivityMetric>',
+        :'auto_dismiss_seconds' => :'Integer',
         :'auto_dismiss_minutes' => :'Integer'
       }
     end
@@ -128,13 +133,13 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::ContentStateEnd` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::StreamContentState` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::ContentStateEnd`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::StreamContentState`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
@@ -169,12 +174,6 @@ module OpenapiClient
         self.upper_limit = attributes[:'upper_limit']
       end
 
-      if attributes.key?(:'metrics')
-        if (value = attributes[:'metrics']).is_a?(Array)
-          self.metrics = value
-        end
-      end
-
       if attributes.key?(:'type')
         self.type = attributes[:'type']
       end
@@ -195,10 +194,18 @@ module OpenapiClient
         end
       end
 
+      if attributes.key?(:'metrics')
+        if (value = attributes[:'metrics']).is_a?(Array)
+          self.metrics = value
+        end
+      end
+
+      if attributes.key?(:'auto_dismiss_seconds')
+        self.auto_dismiss_seconds = attributes[:'auto_dismiss_seconds']
+      end
+
       if attributes.key?(:'auto_dismiss_minutes')
         self.auto_dismiss_minutes = attributes[:'auto_dismiss_minutes']
-      else
-        self.auto_dismiss_minutes = 3
       end
     end
 
@@ -231,6 +238,10 @@ module OpenapiClient
         invalid_properties.push('invalid value for "metrics", number of items must be greater than or equal to 1.')
       end
 
+      if !@auto_dismiss_seconds.nil? && @auto_dismiss_seconds < 0
+        invalid_properties.push('invalid value for "auto_dismiss_seconds", must be greater than or equal to 0.')
+      end
+
       if !@auto_dismiss_minutes.nil? && @auto_dismiss_minutes < 0
         invalid_properties.push('invalid value for "auto_dismiss_minutes", must be greater than or equal to 0.')
       end
@@ -247,13 +258,14 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 1
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
-      return false if !@metrics.nil? && @metrics.length < 1
       type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
       step_color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless step_color_validator.valid?(@step_color)
+      return false if !@metrics.nil? && @metrics.length < 1
+      return false if !@auto_dismiss_seconds.nil? && @auto_dismiss_seconds < 0
       return false if !@auto_dismiss_minutes.nil? && @auto_dismiss_minutes < 0
       true
     end
@@ -304,20 +316,6 @@ module OpenapiClient
       @percentage = percentage
     end
 
-    # Custom attribute writer method with validation
-    # @param [Object] metrics Value to be assigned
-    def metrics=(metrics)
-      if metrics.nil?
-        fail ArgumentError, 'metrics cannot be nil'
-      end
-
-      if metrics.length < 1
-        fail ArgumentError, 'invalid value for "metrics", number of items must be greater than or equal to 1.'
-      end
-
-      @metrics = metrics
-    end
-
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
@@ -349,6 +347,34 @@ module OpenapiClient
     end
 
     # Custom attribute writer method with validation
+    # @param [Object] metrics Value to be assigned
+    def metrics=(metrics)
+      if metrics.nil?
+        fail ArgumentError, 'metrics cannot be nil'
+      end
+
+      if metrics.length < 1
+        fail ArgumentError, 'invalid value for "metrics", number of items must be greater than or equal to 1.'
+      end
+
+      @metrics = metrics
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] auto_dismiss_seconds Value to be assigned
+    def auto_dismiss_seconds=(auto_dismiss_seconds)
+      if auto_dismiss_seconds.nil?
+        fail ArgumentError, 'auto_dismiss_seconds cannot be nil'
+      end
+
+      if auto_dismiss_seconds < 0
+        fail ArgumentError, 'invalid value for "auto_dismiss_seconds", must be greater than or equal to 0.'
+      end
+
+      @auto_dismiss_seconds = auto_dismiss_seconds
+    end
+
+    # Custom attribute writer method with validation
     # @param [Object] auto_dismiss_minutes Value to be assigned
     def auto_dismiss_minutes=(auto_dismiss_minutes)
       if auto_dismiss_minutes.nil?
@@ -374,11 +400,12 @@ module OpenapiClient
           percentage == o.percentage &&
           value == o.value &&
           upper_limit == o.upper_limit &&
-          metrics == o.metrics &&
           type == o.type &&
           color == o.color &&
           step_color == o.step_color &&
           step_colors == o.step_colors &&
+          metrics == o.metrics &&
+          auto_dismiss_seconds == o.auto_dismiss_seconds &&
           auto_dismiss_minutes == o.auto_dismiss_minutes
     end
 
@@ -391,7 +418,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, metrics, type, color, step_color, step_colors, auto_dismiss_minutes].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, type, color, step_color, step_colors, metrics, auto_dismiss_seconds, auto_dismiss_minutes].hash
     end
 
     # Builds the object from hash

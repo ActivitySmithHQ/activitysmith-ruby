@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
+  # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
   class ContentStateUpdate
     attr_accessor :title
 
@@ -35,6 +35,9 @@ module OpenapiClient
     # Maximum progress value. Use with value for type=progress.
     attr_accessor :upper_limit
 
+    # Use for type=metrics.
+    attr_accessor :metrics
+
     # Optional. When omitted, the API uses the existing Live Activity type.
     attr_accessor :type
 
@@ -43,6 +46,9 @@ module OpenapiClient
 
     # Optional. Overrides color for the current step. Only applies to type=segmented_progress.
     attr_accessor :step_color
+
+    # Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
+    attr_accessor :step_colors
 
     class EnumAttributeValidator
       attr_reader :datatype
@@ -76,9 +82,11 @@ module OpenapiClient
         :'percentage' => :'percentage',
         :'value' => :'value',
         :'upper_limit' => :'upper_limit',
+        :'metrics' => :'metrics',
         :'type' => :'type',
         :'color' => :'color',
-        :'step_color' => :'step_color'
+        :'step_color' => :'step_color',
+        :'step_colors' => :'step_colors'
       }
     end
 
@@ -97,9 +105,11 @@ module OpenapiClient
         :'percentage' => :'Float',
         :'value' => :'Float',
         :'upper_limit' => :'Float',
+        :'metrics' => :'Array<ActivityMetric>',
         :'type' => :'String',
         :'color' => :'String',
-        :'step_color' => :'String'
+        :'step_color' => :'String',
+        :'step_colors' => :'Array<String>'
       }
     end
 
@@ -154,6 +164,12 @@ module OpenapiClient
         self.upper_limit = attributes[:'upper_limit']
       end
 
+      if attributes.key?(:'metrics')
+        if (value = attributes[:'metrics']).is_a?(Array)
+          self.metrics = value
+        end
+      end
+
       if attributes.key?(:'type')
         self.type = attributes[:'type']
       end
@@ -166,6 +182,12 @@ module OpenapiClient
 
       if attributes.key?(:'step_color')
         self.step_color = attributes[:'step_color']
+      end
+
+      if attributes.key?(:'step_colors')
+        if (value = attributes[:'step_colors']).is_a?(Array)
+          self.step_colors = value
+        end
       end
     end
 
@@ -194,6 +216,10 @@ module OpenapiClient
         invalid_properties.push('invalid value for "percentage", must be greater than or equal to 0.')
       end
 
+      if !@metrics.nil? && @metrics.length < 1
+        invalid_properties.push('invalid value for "metrics", number of items must be greater than or equal to 1.')
+      end
+
       invalid_properties
     end
 
@@ -206,7 +232,8 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 1
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress"])
+      return false if !@metrics.nil? && @metrics.length < 1
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
@@ -261,10 +288,24 @@ module OpenapiClient
       @percentage = percentage
     end
 
+    # Custom attribute writer method with validation
+    # @param [Object] metrics Value to be assigned
+    def metrics=(metrics)
+      if metrics.nil?
+        fail ArgumentError, 'metrics cannot be nil'
+      end
+
+      if metrics.length < 1
+        fail ArgumentError, 'invalid value for "metrics", number of items must be greater than or equal to 1.'
+      end
+
+      @metrics = metrics
+    end
+
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end
@@ -303,9 +344,11 @@ module OpenapiClient
           percentage == o.percentage &&
           value == o.value &&
           upper_limit == o.upper_limit &&
+          metrics == o.metrics &&
           type == o.type &&
           color == o.color &&
-          step_color == o.step_color
+          step_color == o.step_color &&
+          step_colors == o.step_colors
     end
 
     # @see the `==` method
@@ -317,7 +360,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, type, color, step_color].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, metrics, type, color, step_color, step_colors].hash
     end
 
     # Builds the object from hash

@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # End a Live Activity
-    # Ends a Live Activity and archives its lifecycle. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+    # Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityEndResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # End a Live Activity
-    # Ends a Live Activity and archives its lifecycle. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+    # Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityEndResponse, Integer, Hash)>] LiveActivityEndResponse data, response status code and response headers
@@ -87,8 +87,170 @@ module OpenapiClient
       return data, status_code, headers
     end
 
+    # End a stream
+    # Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+    # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
+    # @param [Hash] opts the optional parameters
+    # @option opts [LiveActivityStreamDeleteRequest] :live_activity_stream_delete_request 
+    # @return [LiveActivityStreamDeleteResponse]
+    def end_live_activity_stream(stream_key, opts = {})
+      data, _status_code, _headers = end_live_activity_stream_with_http_info(stream_key, opts)
+      data
+    end
+
+    # End a stream
+    # Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+    # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
+    # @param [Hash] opts the optional parameters
+    # @option opts [LiveActivityStreamDeleteRequest] :live_activity_stream_delete_request 
+    # @return [Array<(LiveActivityStreamDeleteResponse, Integer, Hash)>] LiveActivityStreamDeleteResponse data, response status code and response headers
+    def end_live_activity_stream_with_http_info(stream_key, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: LiveActivitiesApi.end_live_activity_stream ...'
+      end
+      # verify the required parameter 'stream_key' is set
+      if @api_client.config.client_side_validation && stream_key.nil?
+        fail ArgumentError, "Missing the required parameter 'stream_key' when calling LiveActivitiesApi.end_live_activity_stream"
+      end
+      if @api_client.config.client_side_validation && stream_key.to_s.length > 255
+        fail ArgumentError, 'invalid value for "stream_key" when calling LiveActivitiesApi.end_live_activity_stream, the character length must be smaller than or equal to 255.'
+      end
+
+      pattern = Regexp.new(/^[A-Za-z0-9_-]+$/)
+      if @api_client.config.client_side_validation && stream_key !~ pattern
+        fail ArgumentError, "invalid value for 'stream_key' when calling LiveActivitiesApi.end_live_activity_stream, must conform to the pattern #{pattern}."
+      end
+
+      # resource path
+      local_var_path = '/live-activity/stream/{stream_key}'.sub('{' + 'stream_key' + '}', CGI.escape(stream_key.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(opts[:'live_activity_stream_delete_request'])
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'LiveActivityStreamDeleteResponse'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || ['apiKeyAuth']
+
+      new_options = opts.merge(
+        :operation => :"LiveActivitiesApi.end_live_activity_stream",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:DELETE, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: LiveActivitiesApi#end_live_activity_stream\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Send a stream update
+    # Use this endpoint when you want the easiest, stateless way to trigger Live Activities. You do not need to store activity_id or manage the Live Activity lifecycle yourself. Send the latest state for a stable stream_key and ActivitySmith will handle the rest for you: if there is no Live Activity yet, it starts one; if there is already one for this stream, it updates it. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+    # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
+    # @param live_activity_stream_request [LiveActivityStreamRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [LiveActivityStreamPutResponse]
+    def reconcile_live_activity_stream(stream_key, live_activity_stream_request, opts = {})
+      data, _status_code, _headers = reconcile_live_activity_stream_with_http_info(stream_key, live_activity_stream_request, opts)
+      data
+    end
+
+    # Send a stream update
+    # Use this endpoint when you want the easiest, stateless way to trigger Live Activities. You do not need to store activity_id or manage the Live Activity lifecycle yourself. Send the latest state for a stable stream_key and ActivitySmith will handle the rest for you: if there is no Live Activity yet, it starts one; if there is already one for this stream, it updates it. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+    # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
+    # @param live_activity_stream_request [LiveActivityStreamRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(LiveActivityStreamPutResponse, Integer, Hash)>] LiveActivityStreamPutResponse data, response status code and response headers
+    def reconcile_live_activity_stream_with_http_info(stream_key, live_activity_stream_request, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: LiveActivitiesApi.reconcile_live_activity_stream ...'
+      end
+      # verify the required parameter 'stream_key' is set
+      if @api_client.config.client_side_validation && stream_key.nil?
+        fail ArgumentError, "Missing the required parameter 'stream_key' when calling LiveActivitiesApi.reconcile_live_activity_stream"
+      end
+      if @api_client.config.client_side_validation && stream_key.to_s.length > 255
+        fail ArgumentError, 'invalid value for "stream_key" when calling LiveActivitiesApi.reconcile_live_activity_stream, the character length must be smaller than or equal to 255.'
+      end
+
+      pattern = Regexp.new(/^[A-Za-z0-9_-]+$/)
+      if @api_client.config.client_side_validation && stream_key !~ pattern
+        fail ArgumentError, "invalid value for 'stream_key' when calling LiveActivitiesApi.reconcile_live_activity_stream, must conform to the pattern #{pattern}."
+      end
+
+      # verify the required parameter 'live_activity_stream_request' is set
+      if @api_client.config.client_side_validation && live_activity_stream_request.nil?
+        fail ArgumentError, "Missing the required parameter 'live_activity_stream_request' when calling LiveActivitiesApi.reconcile_live_activity_stream"
+      end
+      # resource path
+      local_var_path = '/live-activity/stream/{stream_key}'.sub('{' + 'stream_key' + '}', CGI.escape(stream_key.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(live_activity_stream_request)
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'LiveActivityStreamPutResponse'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || ['apiKeyAuth']
+
+      new_options = opts.merge(
+        :operation => :"LiveActivitiesApi.reconcile_live_activity_stream",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:PUT, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: LiveActivitiesApi#reconcile_live_activity_stream\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Start a Live Activity
-    # Starts a Live Activity on devices matched by API key scope and optional target channels. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityStartResponse]
@@ -98,7 +260,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on devices matched by API key scope and optional target channels. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityStartResponse, Integer, Hash)>] LiveActivityStartResponse data, response status code and response headers
@@ -156,7 +318,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity
-    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
+    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityUpdateResponse]
@@ -166,7 +328,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity
-    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
+    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityUpdateResponse, Integer, Hash)>] LiveActivityUpdateResponse data, response status code and response headers

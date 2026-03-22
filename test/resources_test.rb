@@ -46,6 +46,16 @@ class FakeLiveApi
     @calls << [:end_live_activity_with_http_info, request, opts]
     [:ok, 200, {}]
   end
+
+  def reconcile_live_activity_stream(stream_key, request, opts = {})
+    @calls << [:reconcile_live_activity_stream, stream_key, request, opts]
+    { success: true, operation: "started", stream_key: stream_key }
+  end
+
+  def end_live_activity_stream(stream_key, opts = {})
+    @calls << [:end_live_activity_stream, stream_key, opts]
+    { success: true, operation: "ended", stream_key: stream_key }
+  end
 end
 
 class ResourcesTest < Minitest::Test
@@ -217,6 +227,63 @@ class ResourcesTest < Minitest::Test
     assert_equal(
       [
         [:start_live_activity, payload, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_live_activities_stream_short_and_legacy_methods
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    stream_payload = {
+      content_state: {
+        title: "Server Health",
+        subtitle: "prod-web-1",
+        type: "metrics",
+        metrics: [
+          { label: "CPU", value: 9, unit: "%" },
+          { label: "MEM", value: 45, unit: "%" }
+        ]
+      },
+      channels: ["ops"]
+    }
+    end_payload = {
+      content_state: {
+        title: "Server Health",
+        subtitle: "prod-web-1",
+        type: "metrics",
+        metrics: [
+          { label: "CPU", value: 7, unit: "%" },
+          { label: "MEM", value: 38, unit: "%" }
+        ]
+      }
+    }
+
+    resource.stream("prod-web-1", stream_payload)
+    resource.reconcile_live_activity_stream("prod-web-1", stream_payload)
+    resource.end_stream("prod-web-1", end_payload)
+    resource.end_live_activity_stream("prod-web-1", end_payload)
+
+    expected_stream_payload = {
+      content_state: stream_payload[:content_state],
+      target: { channels: ["ops"] }
+    }
+
+    assert_equal(
+      [
+        [:reconcile_live_activity_stream, "prod-web-1", expected_stream_payload, {}],
+        [:reconcile_live_activity_stream, "prod-web-1", expected_stream_payload, {}],
+        [
+          :end_live_activity_stream,
+          "prod-web-1",
+          { live_activity_stream_delete_request: end_payload }
+        ],
+        [
+          :end_live_activity_stream,
+          "prod-web-1",
+          { live_activity_stream_delete_request: end_payload }
+        ]
       ],
       api.calls
     )

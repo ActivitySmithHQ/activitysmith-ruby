@@ -18,6 +18,14 @@ module ActivitySmith
       @api.end_live_activity(request, opts)
     end
 
+    def stream(stream_key, request, opts = {})
+      @api.reconcile_live_activity_stream(stream_key, normalize_channels_target(request), opts)
+    end
+
+    def end_stream(stream_key, request = nil, opts = {})
+      @api.end_live_activity_stream(stream_key, { live_activity_stream_delete_request: request }.merge(opts))
+    end
+
     # Backward-compatible aliases.
     def start_live_activity(live_activity_start_request, opts = {})
       @api.start_live_activity(normalize_channels_target(live_activity_start_request), opts)
@@ -29,6 +37,17 @@ module ActivitySmith
 
     def end_live_activity(live_activity_end_request, opts = {})
       @api.end_live_activity(live_activity_end_request, opts)
+    end
+
+    def reconcile_live_activity_stream(stream_key, live_activity_stream_request, opts = {})
+      @api.reconcile_live_activity_stream(stream_key, normalize_channels_target(live_activity_stream_request), opts)
+    end
+
+    def end_live_activity_stream(stream_key, live_activity_stream_delete_request = nil, opts = {})
+      @api.end_live_activity_stream(
+        stream_key,
+        { live_activity_stream_delete_request: live_activity_stream_delete_request }.merge(opts)
+      )
     end
 
     def method_missing(name, *args, &block)

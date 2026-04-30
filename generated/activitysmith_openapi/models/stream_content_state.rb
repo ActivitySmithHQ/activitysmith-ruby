@@ -14,16 +14,16 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based types.
+  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, and metrics types.
   class StreamContentState
     attr_accessor :title
 
     attr_accessor :subtitle
 
-    # Use for segmented_progress, counter, timer, and countdown.
+    # Use for segmented_progress.
     attr_accessor :number_of_steps
 
-    # Use for segmented_progress, counter, timer, and countdown.
+    # Use for segmented_progress.
     attr_accessor :current_step
 
     # Use for progress. Takes precedence over value/upper_limit if both are provided.
@@ -258,7 +258,7 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 1
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
@@ -319,7 +319,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end

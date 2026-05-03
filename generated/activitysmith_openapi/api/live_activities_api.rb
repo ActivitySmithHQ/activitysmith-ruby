@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # End a Live Activity
-    # Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+    # Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityEndResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # End a Live Activity
-    # Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+    # Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityEndResponse, Integer, Hash)>] LiveActivityEndResponse data, response status code and response headers
@@ -250,7 +250,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityStartResponse]
@@ -260,7 +260,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity
-    # Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+    # Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityStartResponse, Integer, Hash)>] LiveActivityStartResponse data, response status code and response headers
@@ -318,7 +318,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity
-    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
+    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityUpdateResponse]
@@ -328,7 +328,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity
-    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, and the legacy counter/timer/countdown step-based activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
+    # Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, and metrics activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityUpdateResponse, Integer, Hash)>] LiveActivityUpdateResponse data, response status code and response headers

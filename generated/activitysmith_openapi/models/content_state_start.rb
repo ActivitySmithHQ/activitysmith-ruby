@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Legacy counter/timer/countdown types also use current_step and number_of_steps. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
+  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
   class ContentStateStart
     attr_accessor :title
 
@@ -239,7 +239,7 @@ module OpenapiClient
       return false if !@percentage.nil? && @percentage < 0
       return false if !@metrics.nil? && @metrics.length < 1
       return false if @type.nil?
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
@@ -311,7 +311,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "counter", "timer", "countdown"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end

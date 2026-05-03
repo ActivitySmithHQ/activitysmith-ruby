@@ -15,12 +15,12 @@ require 'time'
 
 module OpenapiClient
   class MetricValueUpdateResponse
-    attr_accessor :metric
+    attr_accessor :success
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'metric' => :'metric'
+        :'success' => :'success'
       }
     end
 
@@ -32,7 +32,7 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'metric' => :'WidgetMetric'
+        :'success' => :'Boolean'
       }
     end
 
@@ -57,10 +57,10 @@ module OpenapiClient
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'metric')
-        self.metric = attributes[:'metric']
+      if attributes.key?(:'success')
+        self.success = attributes[:'success']
       else
-        self.metric = nil
+        self.success = nil
       end
     end
 
@@ -69,8 +69,8 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @metric.nil?
-        invalid_properties.push('invalid value for "metric", metric cannot be nil.')
+      if @success.nil?
+        invalid_properties.push('invalid value for "success", success cannot be nil.')
       end
 
       invalid_properties
@@ -80,7 +80,7 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @metric.nil?
+      return false if @success.nil?
       true
     end
 
@@ -89,7 +89,7 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          metric == o.metric
+          success == o.success
     end
 
     # @see the `==` method
@@ -101,7 +101,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [metric].hash
+      [success].hash
     end
 
     # Builds the object from hash

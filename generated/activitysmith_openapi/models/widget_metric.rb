@@ -32,6 +32,7 @@ module OpenapiClient
 
     attr_accessor :format
 
+    # Latest metric value. Numeric formats return a number. String metrics return text.
     attr_accessor :latest_value
 
     attr_accessor :latest_value_at
@@ -94,7 +95,7 @@ module OpenapiClient
         :'unit' => :'String',
         :'unit_spacing' => :'MetricUnitSpacing',
         :'format' => :'MetricFormat',
-        :'latest_value' => :'WidgetMetricLatestValue',
+        :'latest_value' => :'Float',
         :'latest_value_at' => :'Time',
         :'created_at' => :'Time',
         :'updated_at' => :'Time'
@@ -104,10 +105,6 @@ module OpenapiClient
     # List of attributes with nullable: true
     def self.openapi_nullable
       Set.new([
-        :'currency_code',
-        :'unit',
-        :'latest_value',
-        :'latest_value_at',
       ])
     end
 
@@ -231,6 +228,10 @@ module OpenapiClient
         invalid_properties.push('invalid value for "label", the character length must be great than or equal to 1.')
       end
 
+      if @currency_code.nil?
+        invalid_properties.push('invalid value for "currency_code", currency_code cannot be nil.')
+      end
+
       if @currency_code.to_s.length > 3
         invalid_properties.push('invalid value for "currency_code", the character length must be smaller than or equal to 3.')
       end
@@ -244,6 +245,10 @@ module OpenapiClient
         invalid_properties.push("invalid value for \"currency_code\", must conform to the pattern #{pattern}.")
       end
 
+      if @unit.nil?
+        invalid_properties.push('invalid value for "unit", unit cannot be nil.')
+      end
+
       if @unit.to_s.length > 16
         invalid_properties.push('invalid value for "unit", the character length must be smaller than or equal to 16.')
       end
@@ -254,6 +259,14 @@ module OpenapiClient
 
       if @format.nil?
         invalid_properties.push('invalid value for "format", format cannot be nil.')
+      end
+
+      if @latest_value.nil?
+        invalid_properties.push('invalid value for "latest_value", latest_value cannot be nil.')
+      end
+
+      if @latest_value_at.nil?
+        invalid_properties.push('invalid value for "latest_value_at", latest_value_at cannot be nil.')
       end
 
       if @created_at.nil?
@@ -279,12 +292,16 @@ module OpenapiClient
       return false if @label.nil?
       return false if @label.to_s.length > 80
       return false if @label.to_s.length < 1
+      return false if @currency_code.nil?
       return false if @currency_code.to_s.length > 3
       return false if @currency_code.to_s.length < 3
       return false if @currency_code !~ Regexp.new(/^[A-Z]{3}$/)
+      return false if @unit.nil?
       return false if @unit.to_s.length > 16
       return false if @unit_spacing.nil?
       return false if @format.nil?
+      return false if @latest_value.nil?
+      return false if @latest_value_at.nil?
       return false if @created_at.nil?
       return false if @updated_at.nil?
       true
@@ -334,16 +351,20 @@ module OpenapiClient
     # Custom attribute writer method with validation
     # @param [Object] currency_code Value to be assigned
     def currency_code=(currency_code)
-      if !currency_code.nil? && currency_code.to_s.length > 3
+      if currency_code.nil?
+        fail ArgumentError, 'currency_code cannot be nil'
+      end
+
+      if currency_code.to_s.length > 3
         fail ArgumentError, 'invalid value for "currency_code", the character length must be smaller than or equal to 3.'
       end
 
-      if !currency_code.nil? && currency_code.to_s.length < 3
+      if currency_code.to_s.length < 3
         fail ArgumentError, 'invalid value for "currency_code", the character length must be great than or equal to 3.'
       end
 
       pattern = Regexp.new(/^[A-Z]{3}$/)
-      if !currency_code.nil? && currency_code !~ pattern
+      if currency_code !~ pattern
         fail ArgumentError, "invalid value for \"currency_code\", must conform to the pattern #{pattern}."
       end
 
@@ -353,7 +374,11 @@ module OpenapiClient
     # Custom attribute writer method with validation
     # @param [Object] unit Value to be assigned
     def unit=(unit)
-      if !unit.nil? && unit.to_s.length > 16
+      if unit.nil?
+        fail ArgumentError, 'unit cannot be nil'
+      end
+
+      if unit.to_s.length > 16
         fail ArgumentError, 'invalid value for "unit", the character length must be smaller than or equal to 16.'
       end
 

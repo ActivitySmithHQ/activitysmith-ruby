@@ -56,7 +56,6 @@ require 'activitysmith_openapi/models/rate_limit_error'
 require 'activitysmith_openapi/models/send_push_notification429_response'
 require 'activitysmith_openapi/models/stream_content_state'
 require 'activitysmith_openapi/models/widget_metric'
-require 'activitysmith_openapi/models/widget_metric_latest_value'
 
 # APIs
 require 'activitysmith_openapi/api/live_activities_api'

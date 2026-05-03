@@ -58,6 +58,19 @@ class FakeLiveApi
   end
 end
 
+class FakeMetricsApi
+  attr_reader :calls
+
+  def initialize
+    @calls = []
+  end
+
+  def update_metric_value(key, request, opts = {})
+    @calls << [:update_metric_value, key, request, opts]
+    { metric: { key: key } }
+  end
+end
+
 class ResourcesTest < Minitest::Test
   def test_notifications_short_and_legacy_methods
     api = FakePushApi.new
@@ -284,6 +297,29 @@ class ResourcesTest < Minitest::Test
           "prod-web-1",
           { live_activity_stream_delete_request: end_payload }
         ]
+      ],
+      api.calls
+    )
+  end
+
+  def test_metrics_short_and_legacy_methods
+    api = FakeMetricsApi.new
+    resource = ActivitySmith::Metrics.new(api)
+
+    resource.update("deploy.success_rate", 99.9, timestamp: "2026-05-03T12:30:00.000Z")
+    resource.update("prod.status", { value: "healthy" })
+    resource.update_metric_value("deploy.success_rate", { value: 42 })
+
+    assert_equal(
+      [
+        [
+          :update_metric_value,
+          "deploy.success_rate",
+          { value: 99.9, timestamp: "2026-05-03T12:30:00.000Z" },
+          {}
+        ],
+        [:update_metric_value, "prod.status", { value: "healthy" }, {}],
+        [:update_metric_value, "deploy.success_rate", { value: 42 }, {}]
       ],
       api.calls
     )

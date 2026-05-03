@@ -2,6 +2,50 @@
 
 require_relative "test_helper"
 
+module OpenapiClient
+  class Configuration
+    attr_accessor :access_token, :user_agent
+  end
+
+  class ApiClient
+    attr_reader :config
+    attr_accessor :default_headers
+
+    def initialize(config)
+      @config = config
+      @default_headers = { "User-Agent" => "OpenAPI-Generator/test" }
+    end
+
+    def user_agent=(user_agent)
+      @default_headers["User-Agent"] = user_agent
+    end
+  end
+
+  class PushNotificationsApi
+    attr_reader :api_client
+
+    def initialize(api_client)
+      @api_client = api_client
+    end
+  end
+
+  class LiveActivitiesApi
+    attr_reader :api_client
+
+    def initialize(api_client)
+      @api_client = api_client
+    end
+  end
+
+  class MetricsApi
+    attr_reader :api_client
+
+    def initialize(api_client)
+      @api_client = api_client
+    end
+  end
+end
+
 class ClientTest < Minitest::Test
   def test_requires_api_key
     error = assert_raises(ArgumentError) do
@@ -22,6 +66,12 @@ class ClientTest < Minitest::Test
     assert_respond_to client.live_activities, :end
     assert_respond_to client.live_activities, :stream
     assert_respond_to client.live_activities, :end_stream
+    refute_nil client.metrics
+    assert_respond_to client.metrics, :update
+
+    metrics_api = client.metrics.instance_variable_get(:@api)
+    assert_equal "ruby-v#{ActivitySmith::VERSION}", metrics_api.api_client.default_headers["X-ActivitySmith-SDK"]
+    assert_equal ActivitySmith::VersionedUserAgent.value, metrics_api.api_client.default_headers["User-Agent"]
   rescue RuntimeError => error
     skip "Generated OpenAPI client is not present yet." if error.message.include?("Generated Ruby client not found")
 

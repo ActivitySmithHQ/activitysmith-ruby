@@ -245,6 +245,33 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_live_activities_support_stats_payloads
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    payload = {
+      content_state: {
+        title: "Sales",
+        subtitle: "last hour",
+        type: ActivitySmith::LiveActivities::TYPE_STATS,
+        metrics: [
+          { label: "Revenue", value: "$2430", color: "blue" },
+          { label: "Orders", value: "37", color: "green" },
+          { label: "Conversion", value: "4.8%", color: "magenta" }
+        ]
+      }
+    }
+
+    resource.start(payload)
+
+    assert_equal(
+      [
+        [:start_live_activity, payload, {}]
+      ],
+      api.calls
+    )
+  end
+
   def test_live_activities_stream_short_and_legacy_methods
     api = FakeLiveApi.new
     resource = ActivitySmith::LiveActivities.new(api)

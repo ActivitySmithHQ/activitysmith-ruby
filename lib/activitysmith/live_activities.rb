@@ -2,6 +2,11 @@
 
 module ActivitySmith
   class LiveActivities
+    TYPE_SEGMENTED_PROGRESS = "segmented_progress"
+    TYPE_PROGRESS = "progress"
+    TYPE_METRICS = "metrics"
+    TYPE_STATS = "stats"
+
     def initialize(api)
       @api = api
     end

@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics include a non-empty metrics array. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
+  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
   class ContentStateEnd
     attr_accessor :title
 
@@ -35,7 +35,7 @@ module OpenapiClient
     # Maximum progress value. Use with value for type=progress.
     attr_accessor :upper_limit
 
-    # Use for type=metrics.
+    # Use for type=metrics or type=stats.
     attr_accessor :metrics
 
     # Optional. When omitted, the API uses the existing Live Activity type.
@@ -227,6 +227,10 @@ module OpenapiClient
         invalid_properties.push('invalid value for "percentage", must be greater than or equal to 0.')
       end
 
+      if !@metrics.nil? && @metrics.length > 8
+        invalid_properties.push('invalid value for "metrics", number of items must be less than or equal to 8.')
+      end
+
       if !@metrics.nil? && @metrics.length < 1
         invalid_properties.push('invalid value for "metrics", number of items must be greater than or equal to 1.')
       end
@@ -247,8 +251,9 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 1
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
+      return false if !@metrics.nil? && @metrics.length > 8
       return false if !@metrics.nil? && @metrics.length < 1
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
@@ -311,6 +316,10 @@ module OpenapiClient
         fail ArgumentError, 'metrics cannot be nil'
       end
 
+      if metrics.length > 8
+        fail ArgumentError, 'invalid value for "metrics", number of items must be less than or equal to 8.'
+      end
+
       if metrics.length < 1
         fail ArgumentError, 'invalid value for "metrics", number of items must be greater than or equal to 1.'
       end
@@ -321,7 +330,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end

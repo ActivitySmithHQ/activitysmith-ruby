@@ -18,6 +18,7 @@ require 'activitysmith_openapi/configuration'
 
 # Models
 require 'activitysmith_openapi/models/activity_metric'
+require 'activitysmith_openapi/models/activity_metric_value'
 require 'activitysmith_openapi/models/alert_payload'
 require 'activitysmith_openapi/models/bad_request_error'
 require 'activitysmith_openapi/models/channel_target'

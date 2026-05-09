@@ -21,12 +21,38 @@ module OpenapiClient
 
     attr_accessor :unit
 
+    # Optional per-metric accent color for metrics and stats activities.
+    attr_accessor :color
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'label' => :'label',
         :'value' => :'value',
-        :'unit' => :'unit'
+        :'unit' => :'unit',
+        :'color' => :'color'
       }
     end
 
@@ -39,8 +65,9 @@ module OpenapiClient
     def self.openapi_types
       {
         :'label' => :'String',
-        :'value' => :'Float',
-        :'unit' => :'String'
+        :'value' => :'ActivityMetricValue',
+        :'unit' => :'String',
+        :'color' => :'String'
       }
     end
 
@@ -80,6 +107,10 @@ module OpenapiClient
       if attributes.key?(:'unit')
         self.unit = attributes[:'unit']
       end
+
+      if attributes.key?(:'color')
+        self.color = attributes[:'color']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -99,14 +130,6 @@ module OpenapiClient
         invalid_properties.push('invalid value for "value", value cannot be nil.')
       end
 
-      if @value > 100
-        invalid_properties.push('invalid value for "value", must be smaller than or equal to 100.')
-      end
-
-      if @value < 0
-        invalid_properties.push('invalid value for "value", must be greater than or equal to 0.')
-      end
-
       invalid_properties
     end
 
@@ -117,8 +140,8 @@ module OpenapiClient
       return false if @label.nil?
       return false if @label.to_s.length < 1
       return false if @value.nil?
-      return false if @value > 100
-      return false if @value < 0
+      color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
+      return false unless color_validator.valid?(@color)
       true
     end
 
@@ -136,22 +159,14 @@ module OpenapiClient
       @label = label
     end
 
-    # Custom attribute writer method with validation
-    # @param [Object] value Value to be assigned
-    def value=(value)
-      if value.nil?
-        fail ArgumentError, 'value cannot be nil'
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] color Object to be assigned
+    def color=(color)
+      validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
+      unless validator.valid?(color)
+        fail ArgumentError, "invalid value for \"color\", must be one of #{validator.allowable_values}."
       end
-
-      if value > 100
-        fail ArgumentError, 'invalid value for "value", must be smaller than or equal to 100.'
-      end
-
-      if value < 0
-        fail ArgumentError, 'invalid value for "value", must be greater than or equal to 0.'
-      end
-
-      @value = value
+      @color = color
     end
 
     # Checks equality by comparing each attribute.
@@ -161,7 +176,8 @@ module OpenapiClient
       self.class == o.class &&
           label == o.label &&
           value == o.value &&
-          unit == o.unit
+          unit == o.unit &&
+          color == o.color
     end
 
     # @see the `==` method
@@ -173,7 +189,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [label, value, unit].hash
+      [label, value, unit, color].hash
     end
 
     # Builds the object from hash

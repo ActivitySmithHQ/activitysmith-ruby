@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, and metrics types.
+  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and stats types.
   class StreamContentState
     attr_accessor :title
 
@@ -47,7 +47,7 @@ module OpenapiClient
     # Optional. Colors for completed steps. When used with segmented_progress, the array length should match current_step.
     attr_accessor :step_colors
 
-    # Use for metrics activities.
+    # Use for metrics and stats activities.
     attr_accessor :metrics
 
     # Optional. Seconds before the ended Live Activity is dismissed.
@@ -234,6 +234,10 @@ module OpenapiClient
         invalid_properties.push('invalid value for "percentage", must be greater than or equal to 0.')
       end
 
+      if !@metrics.nil? && @metrics.length > 8
+        invalid_properties.push('invalid value for "metrics", number of items must be less than or equal to 8.')
+      end
+
       if !@metrics.nil? && @metrics.length < 1
         invalid_properties.push('invalid value for "metrics", number of items must be greater than or equal to 1.')
       end
@@ -258,12 +262,13 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 1
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless color_validator.valid?(@color)
       step_color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
       return false unless step_color_validator.valid?(@step_color)
+      return false if !@metrics.nil? && @metrics.length > 8
       return false if !@metrics.nil? && @metrics.length < 1
       return false if !@auto_dismiss_seconds.nil? && @auto_dismiss_seconds < 0
       return false if !@auto_dismiss_minutes.nil? && @auto_dismiss_minutes < 0
@@ -319,7 +324,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end
@@ -351,6 +356,10 @@ module OpenapiClient
     def metrics=(metrics)
       if metrics.nil?
         fail ArgumentError, 'metrics cannot be nil'
+      end
+
+      if metrics.length > 8
+        fail ArgumentError, 'invalid value for "metrics", number of items must be less than or equal to 8.'
       end
 
       if metrics.length < 1

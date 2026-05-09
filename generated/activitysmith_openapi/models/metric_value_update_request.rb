@@ -18,14 +18,10 @@ module OpenapiClient
   class MetricValueUpdateRequest
     attr_accessor :value
 
-    # Optional ISO timestamp for when the metric value was measured. Defaults to the server receive time.
-    attr_accessor :timestamp
-
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'value' => :'value',
-        :'timestamp' => :'timestamp'
+        :'value' => :'value'
       }
     end
 
@@ -37,8 +33,7 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'value' => :'MetricValueUpdateRequestValue',
-        :'timestamp' => :'Time'
+        :'value' => :'MetricValueUpdateRequestValue'
       }
     end
 
@@ -68,10 +63,6 @@ module OpenapiClient
       else
         self.value = nil
       end
-
-      if attributes.key?(:'timestamp')
-        self.timestamp = attributes[:'timestamp']
-      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -99,8 +90,7 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          value == o.value &&
-          timestamp == o.timestamp
+          value == o.value
     end
 
     # @see the `==` method
@@ -112,7 +102,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [value, timestamp].hash
+      [value].hash
     end
 
     # Builds the object from hash

@@ -6,52 +6,104 @@ module ActivitySmith
     TYPE_PROGRESS = "progress"
     TYPE_METRICS = "metrics"
     TYPE_STATS = "stats"
+    TYPE_ALERT = "alert"
+
+    class << self
+      def content_state(title:, type: nil, subtitle: nil, message: nil, icon: nil, badge: nil, color: nil, **fields)
+        normalize_alert_content_state(
+          {
+            title: title,
+            type: type,
+            subtitle: subtitle,
+            message: message,
+            icon: icon,
+            badge: badge,
+            color: color
+          }.merge(fields).compact
+        )
+      end
+
+      def alert_icon(symbol, color: nil)
+        { symbol: symbol, color: color }.compact
+      end
+
+      def alert_badge(title, color: nil)
+        { title: title, color: color }.compact
+      end
+
+      private
+
+      def normalize_alert_content_state(content_state)
+        return content_state unless content_state.is_a?(Hash)
+
+        state = content_state.dup
+        state.delete(:color) if state[:type] == TYPE_ALERT || state["type"] == TYPE_ALERT
+        state.delete("color") if state[:type] == TYPE_ALERT || state["type"] == TYPE_ALERT
+        state
+      end
+    end
 
     def initialize(api)
       @api = api
     end
 
     def start(request, opts = {})
-      @api.start_live_activity(normalize_channels_target(request), opts)
+      @api.start_live_activity(normalize_live_activity_request(normalize_channels_target(request)), opts)
     end
 
     def update(request, opts = {})
-      @api.update_live_activity(request, opts)
+      @api.update_live_activity(normalize_live_activity_request(request), opts)
     end
 
     def end(request, opts = {})
-      @api.end_live_activity(request, opts)
+      @api.end_live_activity(normalize_live_activity_request(request), opts)
     end
 
     def stream(stream_key, request, opts = {})
-      @api.reconcile_live_activity_stream(stream_key, normalize_channels_target(request), opts)
+      @api.reconcile_live_activity_stream(
+        stream_key,
+        normalize_live_activity_request(normalize_channels_target(request)),
+        opts
+      )
     end
 
     def end_stream(stream_key, request = nil, opts = {})
-      @api.end_live_activity_stream(stream_key, { live_activity_stream_delete_request: request }.merge(opts))
+      @api.end_live_activity_stream(
+        stream_key,
+        { live_activity_stream_delete_request: normalize_live_activity_request(request) }.merge(opts)
+      )
     end
 
     # Backward-compatible aliases.
     def start_live_activity(live_activity_start_request, opts = {})
-      @api.start_live_activity(normalize_channels_target(live_activity_start_request), opts)
+      @api.start_live_activity(
+        normalize_live_activity_request(normalize_channels_target(live_activity_start_request)),
+        opts
+      )
     end
 
     def update_live_activity(live_activity_update_request, opts = {})
-      @api.update_live_activity(live_activity_update_request, opts)
+      @api.update_live_activity(normalize_live_activity_request(live_activity_update_request), opts)
     end
 
     def end_live_activity(live_activity_end_request, opts = {})
-      @api.end_live_activity(live_activity_end_request, opts)
+      @api.end_live_activity(normalize_live_activity_request(live_activity_end_request), opts)
     end
 
     def reconcile_live_activity_stream(stream_key, live_activity_stream_request, opts = {})
-      @api.reconcile_live_activity_stream(stream_key, normalize_channels_target(live_activity_stream_request), opts)
+      @api.reconcile_live_activity_stream(
+        stream_key,
+        normalize_live_activity_request(normalize_channels_target(live_activity_stream_request)),
+        opts
+      )
     end
 
     def end_live_activity_stream(stream_key, live_activity_stream_delete_request = nil, opts = {})
       @api.end_live_activity_stream(
         stream_key,
-        { live_activity_stream_delete_request: live_activity_stream_delete_request }.merge(opts)
+        {
+          live_activity_stream_delete_request: normalize_live_activity_request(live_activity_stream_delete_request)
+        }.merge(opts)
       )
     end
 
@@ -66,6 +118,21 @@ module ActivitySmith
     end
 
     private
+
+    def normalize_live_activity_request(request)
+      return request unless request.is_a?(Hash)
+
+      hash = request.dup
+      content_state_key = if hash.key?(:content_state)
+                            :content_state
+                          elsif hash.key?("content_state")
+                            "content_state"
+                          end
+      if content_state_key
+        hash[content_state_key] = self.class.send(:normalize_alert_content_state, hash[content_state_key])
+      end
+      hash
+    end
 
     def normalize_channels_target(request)
       return request unless request.is_a?(Hash)

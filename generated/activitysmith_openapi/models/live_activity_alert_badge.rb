@@ -14,14 +14,11 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  class ActivityMetric
-    attr_accessor :label
+  # Optional badge for alert Live Activities.
+  class LiveActivityAlertBadge
+    attr_accessor :title
 
-    attr_accessor :value
-
-    attr_accessor :unit
-
-    # Optional per-metric accent color for metrics and stats activities.
+    # Optional badge color.
     attr_accessor :color
 
     class EnumAttributeValidator
@@ -49,9 +46,7 @@ module OpenapiClient
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'label' => :'label',
-        :'value' => :'value',
-        :'unit' => :'unit',
+        :'title' => :'title',
         :'color' => :'color'
       }
     end
@@ -64,10 +59,8 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'label' => :'String',
-        :'value' => :'ActivityMetricValue',
-        :'unit' => :'String',
-        :'color' => :'String'
+        :'title' => :'String',
+        :'color' => :'LiveActivityColor'
       }
     end
 
@@ -81,31 +74,21 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::ActivityMetric` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityAlertBadge` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::ActivityMetric`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityAlertBadge`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'label')
-        self.label = attributes[:'label']
+      if attributes.key?(:'title')
+        self.title = attributes[:'title']
       else
-        self.label = nil
-      end
-
-      if attributes.key?(:'value')
-        self.value = attributes[:'value']
-      else
-        self.value = nil
-      end
-
-      if attributes.key?(:'unit')
-        self.unit = attributes[:'unit']
+        self.title = nil
       end
 
       if attributes.key?(:'color')
@@ -118,16 +101,12 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @label.nil?
-        invalid_properties.push('invalid value for "label", label cannot be nil.')
+      if @title.nil?
+        invalid_properties.push('invalid value for "title", title cannot be nil.')
       end
 
-      if @label.to_s.length < 1
-        invalid_properties.push('invalid value for "label", the character length must be great than or equal to 1.')
-      end
-
-      if @value.nil?
-        invalid_properties.push('invalid value for "value", value cannot be nil.')
+      if @title.to_s.length < 1
+        invalid_properties.push('invalid value for "title", the character length must be great than or equal to 1.')
       end
 
       invalid_properties
@@ -137,36 +116,23 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @label.nil?
-      return false if @label.to_s.length < 1
-      return false if @value.nil?
-      color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
-      return false unless color_validator.valid?(@color)
+      return false if @title.nil?
+      return false if @title.to_s.length < 1
       true
     end
 
     # Custom attribute writer method with validation
-    # @param [Object] label Value to be assigned
-    def label=(label)
-      if label.nil?
-        fail ArgumentError, 'label cannot be nil'
+    # @param [Object] title Value to be assigned
+    def title=(title)
+      if title.nil?
+        fail ArgumentError, 'title cannot be nil'
       end
 
-      if label.to_s.length < 1
-        fail ArgumentError, 'invalid value for "label", the character length must be great than or equal to 1.'
+      if title.to_s.length < 1
+        fail ArgumentError, 'invalid value for "title", the character length must be great than or equal to 1.'
       end
 
-      @label = label
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] color Object to be assigned
-    def color=(color)
-      validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
-      unless validator.valid?(color)
-        fail ArgumentError, "invalid value for \"color\", must be one of #{validator.allowable_values}."
-      end
-      @color = color
+      @title = title
     end
 
     # Checks equality by comparing each attribute.
@@ -174,9 +140,7 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          label == o.label &&
-          value == o.value &&
-          unit == o.unit &&
+          title == o.title &&
           color == o.color
     end
 
@@ -189,7 +153,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [label, value, unit, color].hash
+      [title, color].hash
     end
 
     # Builds the object from hash

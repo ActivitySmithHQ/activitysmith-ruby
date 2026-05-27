@@ -280,13 +280,11 @@ class ResourcesTest < Minitest::Test
       title: "Reactivation",
       type: ActivitySmith::LiveActivities::TYPE_ALERT,
       message: "Lumen came back after 2 weeks",
-      icon: ActivitySmith::LiveActivities.alert_icon("sparkles", color: "yellow"),
+      icon: ActivitySmith::LiveActivities.alert_icon("cloud.sun", color: "yellow"),
       badge: ActivitySmith::LiveActivities.alert_badge("Customer", color: "magenta"),
       color: "red"
     )
     payload = { content_state: state }
-
-    refute state.key?(:color)
 
     resource.stream("customer-ops", payload)
 
@@ -300,7 +298,8 @@ class ResourcesTest < Minitest::Test
               title: "Reactivation",
               type: ActivitySmith::LiveActivities::TYPE_ALERT,
               message: "Lumen came back after 2 weeks",
-              icon: { symbol: "sparkles", color: "yellow" },
+              color: "red",
+              icon: { symbol: "cloud.sun", color: "yellow" },
               badge: { title: "Customer", color: "magenta" }
             }
           },

@@ -10,17 +10,15 @@ module ActivitySmith
 
     class << self
       def content_state(title:, type: nil, subtitle: nil, message: nil, icon: nil, badge: nil, color: nil, **fields)
-        normalize_alert_content_state(
-          {
-            title: title,
-            type: type,
-            subtitle: subtitle,
-            message: message,
-            icon: icon,
-            badge: badge,
-            color: color
-          }.merge(fields).compact
-        )
+        {
+          title: title,
+          type: type,
+          subtitle: subtitle,
+          message: message,
+          icon: icon,
+          badge: badge,
+          color: color
+        }.merge(fields).compact
       end
 
       def alert_icon(symbol, color: nil)
@@ -31,16 +29,6 @@ module ActivitySmith
         { title: title, color: color }.compact
       end
 
-      private
-
-      def normalize_alert_content_state(content_state)
-        return content_state unless content_state.is_a?(Hash)
-
-        state = content_state.dup
-        state.delete(:color) if state[:type] == TYPE_ALERT || state["type"] == TYPE_ALERT
-        state.delete("color") if state[:type] == TYPE_ALERT || state["type"] == TYPE_ALERT
-        state
-      end
     end
 
     def initialize(api)
@@ -123,14 +111,6 @@ module ActivitySmith
       return request unless request.is_a?(Hash)
 
       hash = request.dup
-      content_state_key = if hash.key?(:content_state)
-                            :content_state
-                          elsif hash.key?("content_state")
-                            "content_state"
-                          end
-      if content_state_key
-        hash[content_state_key] = self.class.send(:normalize_alert_content_state, hash[content_state_key])
-      end
       hash
     end
 

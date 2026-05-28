@@ -23,7 +23,7 @@ module OpenapiClient
     # Use for segmented_progress.
     attr_accessor :number_of_steps
 
-    # Use for segmented_progress.
+    # Use for segmented_progress. Set 0 when no segment is complete yet. Must be less than or equal to number_of_steps when number_of_steps is provided.
     attr_accessor :current_step
 
     # Use for progress. Takes precedence over value/upper_limit if both are provided.
@@ -247,8 +247,8 @@ module OpenapiClient
         invalid_properties.push('invalid value for "number_of_steps", must be greater than or equal to 1.')
       end
 
-      if !@current_step.nil? && @current_step < 1
-        invalid_properties.push('invalid value for "current_step", must be greater than or equal to 1.')
+      if !@current_step.nil? && @current_step < 0
+        invalid_properties.push('invalid value for "current_step", must be greater than or equal to 0.')
       end
 
       if !@percentage.nil? && @percentage > 100
@@ -288,7 +288,7 @@ module OpenapiClient
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
       return false if !@number_of_steps.nil? && @number_of_steps < 1
-      return false if !@current_step.nil? && @current_step < 1
+      return false if !@current_step.nil? && @current_step < 0
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
       type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
@@ -326,8 +326,8 @@ module OpenapiClient
         fail ArgumentError, 'current_step cannot be nil'
       end
 
-      if current_step < 1
-        fail ArgumentError, 'invalid value for "current_step", must be greater than or equal to 1.'
+      if current_step < 0
+        fail ArgumentError, 'invalid value for "current_step", must be greater than or equal to 0.'
       end
 
       @current_step = current_step

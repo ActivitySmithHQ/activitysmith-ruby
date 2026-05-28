@@ -23,7 +23,7 @@ module OpenapiClient
     # Total number of steps. Use for type=segmented_progress. This value can be increased or decreased later when updating or ending the same activity.
     attr_accessor :number_of_steps
 
-    # Current step. Use for type=segmented_progress.
+    # Current completed step count. Use for type=segmented_progress. Set 0 when the activity has started but no segment is complete yet. Must be less than or equal to number_of_steps.
     attr_accessor :current_step
 
     # Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
@@ -230,8 +230,8 @@ module OpenapiClient
         invalid_properties.push('invalid value for "number_of_steps", must be greater than or equal to 1.')
       end
 
-      if !@current_step.nil? && @current_step < 1
-        invalid_properties.push('invalid value for "current_step", must be greater than or equal to 1.')
+      if !@current_step.nil? && @current_step < 0
+        invalid_properties.push('invalid value for "current_step", must be greater than or equal to 0.')
       end
 
       if !@percentage.nil? && @percentage > 100
@@ -267,7 +267,7 @@ module OpenapiClient
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
       return false if !@number_of_steps.nil? && @number_of_steps < 1
-      return false if !@current_step.nil? && @current_step < 1
+      return false if !@current_step.nil? && @current_step < 0
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
       return false if !@metrics.nil? && @metrics.length > 8
@@ -304,8 +304,8 @@ module OpenapiClient
         fail ArgumentError, 'current_step cannot be nil'
       end
 
-      if current_step < 1
-        fail ArgumentError, 'invalid value for "current_step", must be greater than or equal to 1.'
+      if current_step < 0
+        fail ArgumentError, 'invalid value for "current_step", must be greater than or equal to 0.'
       end
 
       @current_step = current_step

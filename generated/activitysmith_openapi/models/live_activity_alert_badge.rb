@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Optional badge for alert Live Activities.
+  # Optional badge for Alert Live Activities.
   class LiveActivityAlertBadge
     attr_accessor :title
 

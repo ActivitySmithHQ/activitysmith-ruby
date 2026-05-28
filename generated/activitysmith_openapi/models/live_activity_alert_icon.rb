@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Optional SF Symbol icon for alert Live Activities.
+  # Optional SF Symbol icon for Alert Live Activities.
   class LiveActivityAlertIcon
     # Apple SF Symbol name.
     attr_accessor :symbol

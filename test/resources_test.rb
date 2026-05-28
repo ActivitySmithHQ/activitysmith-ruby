@@ -272,6 +272,44 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_live_activities_support_alert_helpers
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    state = ActivitySmith::LiveActivities.content_state(
+      title: "Reactivation",
+      type: ActivitySmith::LiveActivities::TYPE_ALERT,
+      message: "Lumen came back after 2 weeks",
+      icon: ActivitySmith::LiveActivities.alert_icon("cloud.sun", color: "yellow"),
+      badge: ActivitySmith::LiveActivities.alert_badge("Customer", color: "magenta"),
+      color: "red"
+    )
+    payload = { content_state: state }
+
+    resource.stream("customer-ops", payload)
+
+    assert_equal(
+      [
+        [
+          :reconcile_live_activity_stream,
+          "customer-ops",
+          {
+            content_state: {
+              title: "Reactivation",
+              type: ActivitySmith::LiveActivities::TYPE_ALERT,
+              message: "Lumen came back after 2 weeks",
+              color: "red",
+              icon: { symbol: "cloud.sun", color: "yellow" },
+              badge: { title: "Customer", color: "magenta" }
+            }
+          },
+          {}
+        ]
+      ],
+      api.calls
+    )
+  end
+
   def test_live_activities_stream_short_and_legacy_methods
     api = FakeLiveApi.new
     resource = ActivitySmith::LiveActivities.new(api)

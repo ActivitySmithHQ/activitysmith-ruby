@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, and stats types.
+  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, and alert types.
   class StreamContentState
     attr_accessor :title
 
@@ -38,7 +38,7 @@ module OpenapiClient
     # Required on the first PUT or whenever the stream cannot infer the current activity type.
     attr_accessor :type
 
-    # Optional. Accent color for the Live Activity. Defaults to blue.
+    # Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
     attr_accessor :color
 
     # Optional. Overrides color for the current step. Only applies to segmented_progress.
@@ -49,6 +49,15 @@ module OpenapiClient
 
     # Use for metrics and stats activities.
     attr_accessor :metrics
+
+    # Required for type=alert.
+    attr_accessor :message
+
+    # Optional SF Symbol icon for type=alert.
+    attr_accessor :icon
+
+    # Optional badge for type=alert.
+    attr_accessor :badge
 
     # Optional. Seconds before the ended Live Activity is dismissed.
     attr_accessor :auto_dismiss_seconds
@@ -93,6 +102,9 @@ module OpenapiClient
         :'step_color' => :'step_color',
         :'step_colors' => :'step_colors',
         :'metrics' => :'metrics',
+        :'message' => :'message',
+        :'icon' => :'icon',
+        :'badge' => :'badge',
         :'auto_dismiss_seconds' => :'auto_dismiss_seconds',
         :'auto_dismiss_minutes' => :'auto_dismiss_minutes'
       }
@@ -118,6 +130,9 @@ module OpenapiClient
         :'step_color' => :'String',
         :'step_colors' => :'Array<String>',
         :'metrics' => :'Array<ActivityMetric>',
+        :'message' => :'String',
+        :'icon' => :'LiveActivityAlertIcon',
+        :'badge' => :'LiveActivityAlertBadge',
         :'auto_dismiss_seconds' => :'Integer',
         :'auto_dismiss_minutes' => :'Integer'
       }
@@ -180,8 +195,6 @@ module OpenapiClient
 
       if attributes.key?(:'color')
         self.color = attributes[:'color']
-      else
-        self.color = 'blue'
       end
 
       if attributes.key?(:'step_color')
@@ -198,6 +211,18 @@ module OpenapiClient
         if (value = attributes[:'metrics']).is_a?(Array)
           self.metrics = value
         end
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      end
+
+      if attributes.key?(:'icon')
+        self.icon = attributes[:'icon']
+      end
+
+      if attributes.key?(:'badge')
+        self.badge = attributes[:'badge']
       end
 
       if attributes.key?(:'auto_dismiss_seconds')
@@ -242,6 +267,10 @@ module OpenapiClient
         invalid_properties.push('invalid value for "metrics", number of items must be greater than or equal to 1.')
       end
 
+      if !@message.nil? && @message.to_s.length < 1
+        invalid_properties.push('invalid value for "message", the character length must be great than or equal to 1.')
+      end
+
       if !@auto_dismiss_seconds.nil? && @auto_dismiss_seconds < 0
         invalid_properties.push('invalid value for "auto_dismiss_seconds", must be greater than or equal to 0.')
       end
@@ -262,14 +291,15 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 1
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
       return false unless type_validator.valid?(@type)
-      color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
+      color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       return false unless color_validator.valid?(@color)
-      step_color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
+      step_color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       return false unless step_color_validator.valid?(@step_color)
       return false if !@metrics.nil? && @metrics.length > 8
       return false if !@metrics.nil? && @metrics.length < 1
+      return false if !@message.nil? && @message.to_s.length < 1
       return false if !@auto_dismiss_seconds.nil? && @auto_dismiss_seconds < 0
       return false if !@auto_dismiss_minutes.nil? && @auto_dismiss_minutes < 0
       true
@@ -324,7 +354,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end
@@ -334,7 +364,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] color Object to be assigned
     def color=(color)
-      validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
+      validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       unless validator.valid?(color)
         fail ArgumentError, "invalid value for \"color\", must be one of #{validator.allowable_values}."
       end
@@ -344,7 +374,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] step_color Object to be assigned
     def step_color=(step_color)
-      validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow"])
+      validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       unless validator.valid?(step_color)
         fail ArgumentError, "invalid value for \"step_color\", must be one of #{validator.allowable_values}."
       end
@@ -367,6 +397,20 @@ module OpenapiClient
       end
 
       @metrics = metrics
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] message Value to be assigned
+    def message=(message)
+      if message.nil?
+        fail ArgumentError, 'message cannot be nil'
+      end
+
+      if message.to_s.length < 1
+        fail ArgumentError, 'invalid value for "message", the character length must be great than or equal to 1.'
+      end
+
+      @message = message
     end
 
     # Custom attribute writer method with validation
@@ -414,6 +458,9 @@ module OpenapiClient
           step_color == o.step_color &&
           step_colors == o.step_colors &&
           metrics == o.metrics &&
+          message == o.message &&
+          icon == o.icon &&
+          badge == o.badge &&
           auto_dismiss_seconds == o.auto_dismiss_seconds &&
           auto_dismiss_minutes == o.auto_dismiss_minutes
     end
@@ -427,7 +474,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, type, color, step_color, step_colors, metrics, auto_dismiss_seconds, auto_dismiss_minutes].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, type, color, step_color, step_colors, metrics, message, icon, badge, auto_dismiss_seconds, auto_dismiss_minutes].hash
     end
 
     # Builds the object from hash

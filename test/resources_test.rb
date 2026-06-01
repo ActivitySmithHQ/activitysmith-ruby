@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 require_relative "test_helper"
+require File.expand_path("../generated/activitysmith_openapi/models/live_activity_action", __dir__)
+require File.expand_path("../generated/activitysmith_openapi/models/live_activity_action_type", __dir__)
+require File.expand_path("../generated/activitysmith_openapi/models/push_notification_action", __dir__)
+require File.expand_path("../generated/activitysmith_openapi/models/push_notification_action_type", __dir__)
+require File.expand_path("../generated/activitysmith_openapi/models/push_notification_request", __dir__)
 
 class FakePushApi
   attr_reader :calls
@@ -117,10 +122,22 @@ class ResourcesTest < Minitest::Test
     }
 
     resource.send(payload)
+    resource.send(
+      title: "Run Shortcut",
+      redirection: "shortcuts://run-shortcut?name=Jarvis"
+    )
 
     assert_equal(
       [
-        [:send_push_notification, payload, {}]
+        [:send_push_notification, payload, {}],
+        [
+          :send_push_notification,
+          {
+            title: "Run Shortcut",
+            redirection: "shortcuts://run-shortcut?name=Jarvis"
+          },
+          {}
+        ]
       ],
       api.calls
     )
@@ -142,6 +159,80 @@ class ResourcesTest < Minitest::Test
 
     assert_equal "ActivitySmith: media cannot be combined with actions", error.message
     assert_empty api.calls
+  end
+
+  def test_notifications_preserve_shortcuts_open_url_actions
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    payload = {
+      title: "Task finished",
+      actions: [
+        {
+          title: "Run Shortcut",
+          type: "open_url",
+          url: "shortcuts://run-shortcut?name=Jarvis"
+        }
+      ]
+    }
+
+    resource.send(payload)
+
+    assert_equal(
+      [
+        [:send_push_notification, payload, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_generated_push_notification_open_url_allows_shortcuts
+    action = OpenapiClient::PushNotificationAction.new(
+      title: "Chat",
+      type: OpenapiClient::PushNotificationActionType::OPEN_URL,
+      url: "shortcuts://run-shortcut?name=JARVIS"
+    )
+
+    assert action.valid?
+  end
+
+  def test_generated_push_notification_webhook_rejects_shortcuts
+    assert_raises(ArgumentError) do
+      OpenapiClient::PushNotificationAction.new(
+        title: "Chat",
+        type: OpenapiClient::PushNotificationActionType::WEBHOOK,
+        url: "shortcuts://run-shortcut?name=JARVIS"
+      )
+    end
+  end
+
+  def test_generated_push_notification_redirection_allows_shortcuts
+    request = OpenapiClient::PushNotificationRequest.new(
+      title: "Task finished",
+      redirection: "shortcuts://run-shortcut?name=Jarvis"
+    )
+
+    assert request.valid?
+  end
+
+  def test_generated_live_activity_open_url_allows_shortcuts
+    action = OpenapiClient::LiveActivityAction.new(
+      title: "Chat",
+      type: OpenapiClient::LiveActivityActionType::OPEN_URL,
+      url: "shortcuts://run-shortcut?name=JARVIS"
+    )
+
+    assert action.valid?
+  end
+
+  def test_generated_live_activity_webhook_rejects_shortcuts
+    assert_raises(ArgumentError) do
+      OpenapiClient::LiveActivityAction.new(
+        title: "Chat",
+        type: OpenapiClient::LiveActivityActionType::WEBHOOK,
+        url: "shortcuts://run-shortcut?name=JARVIS"
+      )
+    end
   end
 
   def test_live_activities_short_and_legacy_methods
@@ -310,6 +401,66 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_live_activities_support_icon_and_badge_on_non_alert_types
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    resource.stream(
+      "prod-web-1",
+      content_state: ActivitySmith::LiveActivities.content_state(
+        title: "Server Health",
+        subtitle: "prod-web-1",
+        type: ActivitySmith::LiveActivities::TYPE_METRICS,
+        icon: ActivitySmith::LiveActivities.alert_icon("server.rack", color: "blue"),
+        metrics: [{ label: "CPU", value: 18, unit: "%" }]
+      )
+    )
+    resource.stream(
+      "nightly-database-backup",
+      content_state: ActivitySmith::LiveActivities.content_state(
+        title: "Nightly Database Backup",
+        subtitle: "verify restore",
+        type: ActivitySmith::LiveActivities::TYPE_PROGRESS,
+        badge: ActivitySmith::LiveActivities.alert_badge("S3", color: "cyan"),
+        percentage: 62
+      )
+    )
+
+    assert_equal(
+      [
+        [
+          :reconcile_live_activity_stream,
+          "prod-web-1",
+          {
+            content_state: {
+              title: "Server Health",
+              subtitle: "prod-web-1",
+              type: ActivitySmith::LiveActivities::TYPE_METRICS,
+              icon: { symbol: "server.rack", color: "blue" },
+              metrics: [{ label: "CPU", value: 18, unit: "%" }]
+            }
+          },
+          {}
+        ],
+        [
+          :reconcile_live_activity_stream,
+          "nightly-database-backup",
+          {
+            content_state: {
+              title: "Nightly Database Backup",
+              subtitle: "verify restore",
+              type: ActivitySmith::LiveActivities::TYPE_PROGRESS,
+              badge: { title: "S3", color: "cyan" },
+              percentage: 62
+            }
+          },
+          {}
+        ]
+      ],
+      api.calls
+    )
+  end
+
   def test_live_activities_stream_short_and_legacy_methods
     api = FakeLiveApi.new
     resource = ActivitySmith::LiveActivities.new(api)
@@ -405,7 +556,7 @@ class ResourcesTest < Minitest::Test
       action: {
         title: "Open Workflow",
         type: "open_url",
-        url: "https://github.com/acme/payments-api/actions/runs/1234567890"
+        url: "shortcuts://run-shortcut?name=Deploy%20Status"
       }
     }
 
@@ -439,7 +590,7 @@ class ResourcesTest < Minitest::Test
       action: {
         title: "Open Workflow",
         type: "open_url",
-        url: "https://github.com/acme/payments-api/actions/runs/1234567890"
+        url: "shortcuts://run-shortcut?name=Deploy%20Status"
       }
     }
 

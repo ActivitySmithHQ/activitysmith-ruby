@@ -24,7 +24,7 @@ module OpenapiClient
     # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
     attr_accessor :media
 
-    # Optional HTTPS URL opened when user taps the notification body. Overrides the default tap target from `media` when both are provided.
+    # Optional HTTPS or shortcuts:// URL opened when user taps the notification body. Overrides the default tap target from `media` when both are provided.
     attr_accessor :redirection
 
     # Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
@@ -157,7 +157,7 @@ module OpenapiClient
         invalid_properties.push("invalid value for \"media\", must conform to the pattern #{pattern}.")
       end
 
-      pattern = Regexp.new(/^https:\/\//)
+      pattern = Regexp.new(/^(https|shortcuts):\/\//)
       if !@redirection.nil? && @redirection !~ pattern
         invalid_properties.push("invalid value for \"redirection\", must conform to the pattern #{pattern}.")
       end
@@ -175,7 +175,7 @@ module OpenapiClient
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
       return false if !@media.nil? && @media !~ Regexp.new(/^https:\/\//)
-      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^https:\/\//)
+      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^(https|shortcuts):\/\//)
       return false if !@actions.nil? && @actions.length > 4
       true
     end
@@ -202,7 +202,7 @@ module OpenapiClient
         fail ArgumentError, 'redirection cannot be nil'
       end
 
-      pattern = Regexp.new(/^https:\/\//)
+      pattern = Regexp.new(/^(https|shortcuts):\/\//)
       if redirection !~ pattern
         fail ArgumentError, "invalid value for \"redirection\", must conform to the pattern #{pattern}."
       end

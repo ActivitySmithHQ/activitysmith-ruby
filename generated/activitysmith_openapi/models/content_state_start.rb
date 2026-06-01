@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
+  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
   class ContentStateStart
     attr_accessor :title
 
@@ -41,10 +41,10 @@ module OpenapiClient
     # Required for type=alert.
     attr_accessor :message
 
-    # Optional SF Symbol icon for type=alert.
+    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
     attr_accessor :icon
 
-    # Optional badge for type=alert.
+    # Optional badge. Supported by alert, progress, and segmented_progress.
     attr_accessor :badge
 
     attr_accessor :type

@@ -20,7 +20,7 @@ module OpenapiClient
 
     attr_accessor :type
 
-    # HTTPS URL. For open_url it is opened in browser. For webhook it is called by ActivitySmith backend.
+    # Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
     attr_accessor :url
 
     # Webhook HTTP method. Used only when type=webhook.
@@ -28,28 +28,6 @@ module OpenapiClient
 
     # Optional webhook payload body. Used only when type=webhook.
     attr_accessor :body
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
@@ -116,6 +94,7 @@ module OpenapiClient
       else
         self.url = nil
       end
+      validate_action_url!
 
       if attributes.key?(:'method')
         self.method = attributes[:'method']
@@ -127,6 +106,16 @@ module OpenapiClient
         if (value = attributes[:'body']).is_a?(Hash)
           self.body = value
         end
+      end
+    end
+
+    def validate_action_url!
+      return if @url.nil? || @type.nil?
+      if @type == PushNotificationActionType::OPEN_URL && @url !~ /\A(https|shortcuts):\/\//
+        fail ArgumentError, 'invalid value for "url", open_url must use https or shortcuts.'
+      end
+      if @type == PushNotificationActionType::WEBHOOK && @url !~ /\Ahttps:\/\//
+        fail ArgumentError, 'invalid value for "url", webhook must use https.'
       end
     end
 
@@ -146,10 +135,11 @@ module OpenapiClient
       if @url.nil?
         invalid_properties.push('invalid value for "url", url cannot be nil.')
       end
-
-      pattern = Regexp.new(/^https:\/\//)
-      if @url !~ pattern
-        invalid_properties.push("invalid value for \"url\", must conform to the pattern #{pattern}.")
+      if !@url.nil? && @type == PushNotificationActionType::OPEN_URL && @url !~ /\A(https|shortcuts):\/\//
+        invalid_properties.push('invalid value for "url", open_url must use https or shortcuts.')
+      end
+      if !@url.nil? && @type == PushNotificationActionType::WEBHOOK && @url !~ /\Ahttps:\/\//
+        invalid_properties.push('invalid value for "url", webhook must use https.')
       end
 
       invalid_properties
@@ -162,23 +152,9 @@ module OpenapiClient
       return false if @title.nil?
       return false if @type.nil?
       return false if @url.nil?
-      return false if @url !~ Regexp.new(/^https:\/\//)
+      return false if !@url.nil? && @type == PushNotificationActionType::OPEN_URL && @url !~ /\A(https|shortcuts):\/\//
+      return false if !@url.nil? && @type == PushNotificationActionType::WEBHOOK && @url !~ /\Ahttps:\/\//
       true
-    end
-
-    # Custom attribute writer method with validation
-    # @param [Object] url Value to be assigned
-    def url=(url)
-      if url.nil?
-        fail ArgumentError, 'url cannot be nil'
-      end
-
-      pattern = Regexp.new(/^https:\/\//)
-      if url !~ pattern
-        fail ArgumentError, "invalid value for \"url\", must conform to the pattern #{pattern}."
-      end
-
-      @url = url
     end
 
     # Checks equality by comparing each attribute.

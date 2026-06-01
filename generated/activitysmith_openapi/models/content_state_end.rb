@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message, with optional icon and badge. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
+  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
   class ContentStateEnd
     attr_accessor :title
 
@@ -41,10 +41,10 @@ module OpenapiClient
     # Alert message. Use for type=alert.
     attr_accessor :message
 
-    # Optional SF Symbol icon for type=alert.
+    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
     attr_accessor :icon
 
-    # Optional badge for type=alert.
+    # Optional badge. Supported by alert, progress, and segmented_progress.
     attr_accessor :badge
 
     # Optional. When omitted, the API uses the existing Live Activity type.

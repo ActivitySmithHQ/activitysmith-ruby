@@ -53,10 +53,10 @@ module OpenapiClient
     # Required for type=alert.
     attr_accessor :message
 
-    # Optional SF Symbol icon for type=alert.
+    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
     attr_accessor :icon
 
-    # Optional badge for type=alert.
+    # Optional badge. Supported by alert, progress, and segmented_progress.
     attr_accessor :badge
 
     # Optional. Seconds before the ended Live Activity is dismissed.

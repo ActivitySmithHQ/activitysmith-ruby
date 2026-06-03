@@ -20,7 +20,7 @@ module OpenapiClient
 
     attr_accessor :type
 
-    # Action URL. For open_url, use an HTTPS or shortcuts:// URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
+    # Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
     attr_accessor :url
 
     # Webhook HTTP method. Used only when type=webhook.

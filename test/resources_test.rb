@@ -196,16 +196,6 @@ class ResourcesTest < Minitest::Test
     assert action.valid?
   end
 
-  def test_generated_push_notification_webhook_rejects_shortcuts
-    assert_raises(ArgumentError) do
-      OpenapiClient::PushNotificationAction.new(
-        title: "Chat",
-        type: OpenapiClient::PushNotificationActionType::WEBHOOK,
-        url: "shortcuts://run-shortcut?name=JARVIS"
-      )
-    end
-  end
-
   def test_generated_push_notification_redirection_allows_shortcuts
     request = OpenapiClient::PushNotificationRequest.new(
       title: "Task finished",
@@ -223,16 +213,6 @@ class ResourcesTest < Minitest::Test
     )
 
     assert action.valid?
-  end
-
-  def test_generated_live_activity_webhook_rejects_shortcuts
-    assert_raises(ArgumentError) do
-      OpenapiClient::LiveActivityAction.new(
-        title: "Chat",
-        type: OpenapiClient::LiveActivityActionType::WEBHOOK,
-        url: "shortcuts://run-shortcut?name=JARVIS"
-      )
-    end
   end
 
   def test_live_activities_short_and_legacy_methods

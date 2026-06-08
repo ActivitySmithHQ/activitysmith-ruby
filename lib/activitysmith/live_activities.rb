@@ -7,9 +7,10 @@ module ActivitySmith
     TYPE_METRICS = "metrics"
     TYPE_STATS = "stats"
     TYPE_ALERT = "alert"
+    TYPE_TIMER = "timer"
 
     class << self
-      def content_state(title:, type: nil, subtitle: nil, message: nil, icon: nil, badge: nil, color: nil, **fields)
+      def content_state(title:, type: nil, subtitle: nil, message: nil, icon: nil, badge: nil, color: nil, duration_seconds: nil, counts_down: nil, **fields)
         {
           title: title,
           type: type,
@@ -17,7 +18,9 @@ module ActivitySmith
           message: message,
           icon: icon,
           badge: badge,
-          color: color
+          color: color,
+          duration_seconds: duration_seconds,
+          counts_down: counts_down
         }.merge(fields).compact
       end
 

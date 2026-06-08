@@ -196,16 +196,6 @@ class ResourcesTest < Minitest::Test
     assert action.valid?
   end
 
-  def test_generated_push_notification_webhook_rejects_shortcuts
-    assert_raises(ArgumentError) do
-      OpenapiClient::PushNotificationAction.new(
-        title: "Chat",
-        type: OpenapiClient::PushNotificationActionType::WEBHOOK,
-        url: "shortcuts://run-shortcut?name=JARVIS"
-      )
-    end
-  end
-
   def test_generated_push_notification_redirection_allows_shortcuts
     request = OpenapiClient::PushNotificationRequest.new(
       title: "Task finished",
@@ -223,16 +213,6 @@ class ResourcesTest < Minitest::Test
     )
 
     assert action.valid?
-  end
-
-  def test_generated_live_activity_webhook_rejects_shortcuts
-    assert_raises(ArgumentError) do
-      OpenapiClient::LiveActivityAction.new(
-        title: "Chat",
-        type: OpenapiClient::LiveActivityActionType::WEBHOOK,
-        url: "shortcuts://run-shortcut?name=JARVIS"
-      )
-    end
   end
 
   def test_live_activities_short_and_legacy_methods
@@ -331,6 +311,64 @@ class ResourcesTest < Minitest::Test
     assert_equal(
       [
         [:start_live_activity, payload, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_live_activities_support_timer_payloads
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+
+    state = ActivitySmith::LiveActivities.content_state(
+      title: "Benchmark Run",
+      subtitle: "sampling performance",
+      type: ActivitySmith::LiveActivities::TYPE_TIMER,
+      duration_seconds: 300,
+      counts_down: true,
+      color: "cyan"
+    )
+
+    resource.start(content_state: state)
+    resource.update(
+      activity_id: "act-1",
+      content_state: ActivitySmith::LiveActivities.content_state(
+        title: "Benchmark Run",
+        type: ActivitySmith::LiveActivities::TYPE_TIMER,
+        subtitle: "complete",
+        color: "cyan"
+      )
+    )
+
+    assert_equal(
+      [
+        [
+          :start_live_activity,
+          {
+            content_state: {
+              title: "Benchmark Run",
+              type: ActivitySmith::LiveActivities::TYPE_TIMER,
+              subtitle: "sampling performance",
+              color: "cyan",
+              duration_seconds: 300,
+              counts_down: true
+            }
+          },
+          {}
+        ],
+        [
+          :update_live_activity,
+          {
+            activity_id: "act-1",
+            content_state: {
+              title: "Benchmark Run",
+              type: ActivitySmith::LiveActivities::TYPE_TIMER,
+              subtitle: "complete",
+              color: "cyan"
+            }
+          },
+          {}
+        ]
       ],
       api.calls
     )

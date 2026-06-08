@@ -21,7 +21,7 @@ module OpenapiClient
 
     attr_accessor :type
 
-    # Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL. For webhook, use an HTTPS URL called by the ActivitySmith backend.
+    # Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS URL called by the ActivitySmith backend.
     attr_accessor :url
 
     # Webhook HTTP method. Used only when type=webhook.
@@ -95,7 +95,6 @@ module OpenapiClient
       else
         self.url = nil
       end
-      validate_action_url!
 
       if attributes.key?(:'method')
         self.method = attributes[:'method']
@@ -107,16 +106,6 @@ module OpenapiClient
         if (value = attributes[:'body']).is_a?(Hash)
           self.body = value
         end
-      end
-    end
-
-    def validate_action_url!
-      return if @url.nil? || @type.nil?
-      if @type == LiveActivityActionType::OPEN_URL && @url !~ /\A(https|shortcuts):\/\//
-        fail ArgumentError, 'invalid value for "url", open_url must use https or shortcuts.'
-      end
-      if @type == LiveActivityActionType::WEBHOOK && @url !~ /\Ahttps:\/\//
-        fail ArgumentError, 'invalid value for "url", webhook must use https.'
       end
     end
 
@@ -136,12 +125,6 @@ module OpenapiClient
       if @url.nil?
         invalid_properties.push('invalid value for "url", url cannot be nil.')
       end
-      if !@url.nil? && @type == LiveActivityActionType::OPEN_URL && @url !~ /\A(https|shortcuts):\/\//
-        invalid_properties.push('invalid value for "url", open_url must use https or shortcuts.')
-      end
-      if !@url.nil? && @type == LiveActivityActionType::WEBHOOK && @url !~ /\Ahttps:\/\//
-        invalid_properties.push('invalid value for "url", webhook must use https.')
-      end
 
       invalid_properties
     end
@@ -153,8 +136,6 @@ module OpenapiClient
       return false if @title.nil?
       return false if @type.nil?
       return false if @url.nil?
-      return false if !@url.nil? && @type == LiveActivityActionType::OPEN_URL && @url !~ /\A(https|shortcuts):\/\//
-      return false if !@url.nil? && @type == LiveActivityActionType::WEBHOOK && @url !~ /\Ahttps:\/\//
       true
     end
 

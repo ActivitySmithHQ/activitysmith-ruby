@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, and alert types.
+  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, and timer types. For timer, send duration_seconds to start or reset a bounded timer; omit duration_seconds on later updates to preserve the existing timer window.
   class StreamContentState
     attr_accessor :title
 
@@ -35,10 +35,19 @@ module OpenapiClient
     # Maximum progress value. Use with value for progress.
     attr_accessor :upper_limit
 
+    # Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window.
+    attr_accessor :duration_seconds
+
+    # Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
+    attr_accessor :counts_down
+
+    # Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume.
+    attr_accessor :is_running
+
     # Required on the first PUT or whenever the stream cannot infer the current activity type.
     attr_accessor :type
 
-    # Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
+    # Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included.
     attr_accessor :color
 
     # Optional. Overrides color for the current step. Only applies to segmented_progress.
@@ -53,7 +62,7 @@ module OpenapiClient
     # Required for type=alert.
     attr_accessor :message
 
-    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
+    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer.
     attr_accessor :icon
 
     # Optional badge. Supported by alert, progress, and segmented_progress.
@@ -97,6 +106,9 @@ module OpenapiClient
         :'percentage' => :'percentage',
         :'value' => :'value',
         :'upper_limit' => :'upper_limit',
+        :'duration_seconds' => :'duration_seconds',
+        :'counts_down' => :'counts_down',
+        :'is_running' => :'is_running',
         :'type' => :'type',
         :'color' => :'color',
         :'step_color' => :'step_color',
@@ -125,6 +137,9 @@ module OpenapiClient
         :'percentage' => :'Float',
         :'value' => :'Float',
         :'upper_limit' => :'Float',
+        :'duration_seconds' => :'Float',
+        :'counts_down' => :'Boolean',
+        :'is_running' => :'Boolean',
         :'type' => :'String',
         :'color' => :'String',
         :'step_color' => :'String',
@@ -187,6 +202,22 @@ module OpenapiClient
 
       if attributes.key?(:'upper_limit')
         self.upper_limit = attributes[:'upper_limit']
+      end
+
+      if attributes.key?(:'duration_seconds')
+        self.duration_seconds = attributes[:'duration_seconds']
+      end
+
+      if attributes.key?(:'counts_down')
+        self.counts_down = attributes[:'counts_down']
+      else
+        self.counts_down = true
+      end
+
+      if attributes.key?(:'is_running')
+        self.is_running = attributes[:'is_running']
+      else
+        self.is_running = true
       end
 
       if attributes.key?(:'type')
@@ -291,7 +322,7 @@ module OpenapiClient
       return false if !@current_step.nil? && @current_step < 0
       return false if !@percentage.nil? && @percentage > 100
       return false if !@percentage.nil? && @percentage < 0
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       return false unless color_validator.valid?(@color)
@@ -354,7 +385,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end
@@ -453,6 +484,9 @@ module OpenapiClient
           percentage == o.percentage &&
           value == o.value &&
           upper_limit == o.upper_limit &&
+          duration_seconds == o.duration_seconds &&
+          counts_down == o.counts_down &&
+          is_running == o.is_running &&
           type == o.type &&
           color == o.color &&
           step_color == o.step_color &&
@@ -474,7 +508,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, type, color, step_color, step_colors, metrics, message, icon, badge, auto_dismiss_seconds, auto_dismiss_minutes].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, duration_seconds, counts_down, is_running, type, color, step_color, step_colors, metrics, message, icon, badge, auto_dismiss_seconds, auto_dismiss_minutes].hash
     end
 
     # Builds the object from hash

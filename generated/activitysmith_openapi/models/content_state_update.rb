@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
+  # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer, omit duration_seconds to preserve the current timer window or send duration_seconds to reset the timer from the update request time. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
   class ContentStateUpdate
     attr_accessor :title
 
@@ -35,13 +35,22 @@ module OpenapiClient
     # Maximum progress value. Use with value for type=progress.
     attr_accessor :upper_limit
 
+    # Timer duration in seconds. For type=timer, sending duration_seconds resets the timer window from the update request time; omit it to preserve the existing timer window.
+    attr_accessor :duration_seconds
+
+    # Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
+    attr_accessor :counts_down
+
+    # Use with type=timer. Defaults to true. Set false to pause/freeze via API; set true on a paused timer to resume.
+    attr_accessor :is_running
+
     # Use for type=metrics or type=stats.
     attr_accessor :metrics
 
     # Alert message. Use for type=alert.
     attr_accessor :message
 
-    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, and stats.
+    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer.
     attr_accessor :icon
 
     # Optional badge. Supported by alert, progress, and segmented_progress.
@@ -50,7 +59,7 @@ module OpenapiClient
     # Optional. When omitted, the API uses the existing Live Activity type.
     attr_accessor :type
 
-    # Optional. Accent color for progress, segmented_progress, and metrics Live Activities. For Alert Live Activities, this tints the action button when action is included.
+    # Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints the action button when action is included.
     attr_accessor :color
 
     # Optional. Overrides color for the current step. Only applies to type=segmented_progress.
@@ -91,6 +100,9 @@ module OpenapiClient
         :'percentage' => :'percentage',
         :'value' => :'value',
         :'upper_limit' => :'upper_limit',
+        :'duration_seconds' => :'duration_seconds',
+        :'counts_down' => :'counts_down',
+        :'is_running' => :'is_running',
         :'metrics' => :'metrics',
         :'message' => :'message',
         :'icon' => :'icon',
@@ -117,6 +129,9 @@ module OpenapiClient
         :'percentage' => :'Float',
         :'value' => :'Float',
         :'upper_limit' => :'Float',
+        :'duration_seconds' => :'Float',
+        :'counts_down' => :'Boolean',
+        :'is_running' => :'Boolean',
         :'metrics' => :'Array<ActivityMetric>',
         :'message' => :'String',
         :'icon' => :'LiveActivityAlertIcon',
@@ -177,6 +192,22 @@ module OpenapiClient
 
       if attributes.key?(:'upper_limit')
         self.upper_limit = attributes[:'upper_limit']
+      end
+
+      if attributes.key?(:'duration_seconds')
+        self.duration_seconds = attributes[:'duration_seconds']
+      end
+
+      if attributes.key?(:'counts_down')
+        self.counts_down = attributes[:'counts_down']
+      else
+        self.counts_down = true
+      end
+
+      if attributes.key?(:'is_running')
+        self.is_running = attributes[:'is_running']
+      else
+        self.is_running = true
       end
 
       if attributes.key?(:'metrics')
@@ -268,7 +299,7 @@ module OpenapiClient
       return false if !@metrics.nil? && @metrics.length > 8
       return false if !@metrics.nil? && @metrics.length < 1
       return false if !@message.nil? && @message.to_s.length < 1
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       return false unless color_validator.valid?(@color)
@@ -358,7 +389,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end
@@ -397,6 +428,9 @@ module OpenapiClient
           percentage == o.percentage &&
           value == o.value &&
           upper_limit == o.upper_limit &&
+          duration_seconds == o.duration_seconds &&
+          counts_down == o.counts_down &&
+          is_running == o.is_running &&
           metrics == o.metrics &&
           message == o.message &&
           icon == o.icon &&
@@ -416,7 +450,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, metrics, message, icon, badge, type, color, step_color, step_colors].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, duration_seconds, counts_down, is_running, metrics, message, icon, badge, type, color, step_color, step_colors].hash
     end
 
     # Builds the object from hash

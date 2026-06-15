@@ -595,6 +595,11 @@ class ResourcesTest < Minitest::Test
         title: "Open Workflow",
         type: "open_url",
         url: "shortcuts://run-shortcut?name=Deploy%20Status"
+      },
+      secondary_action: {
+        title: "Deny",
+        type: "webhook",
+        url: "https://ops.example.com/hooks/deploy/deny"
       }
     }
 
@@ -614,6 +619,11 @@ class ResourcesTest < Minitest::Test
         body: {
           job_id: "reindex-2026-03-19"
         }
+      },
+      secondary_action: {
+        title: "Open Runbook",
+        type: "open_url",
+        url: "https://ops.example.com/runbooks/search-reindex"
       }
     }
 
@@ -629,6 +639,11 @@ class ResourcesTest < Minitest::Test
         title: "Open Workflow",
         type: "open_url",
         url: "shortcuts://run-shortcut?name=Deploy%20Status"
+      },
+      secondary_action: {
+        title: "Archive",
+        type: "webhook",
+        url: "https://ops.example.com/hooks/deploy/archive"
       }
     }
 

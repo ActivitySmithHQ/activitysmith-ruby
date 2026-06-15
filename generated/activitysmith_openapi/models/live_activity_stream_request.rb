@@ -20,6 +20,9 @@ module OpenapiClient
 
     attr_accessor :action
 
+    # Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+    attr_accessor :secondary_action
+
     attr_accessor :alert
 
     # Channel slugs. When omitted, API key scope determines recipients.
@@ -32,6 +35,7 @@ module OpenapiClient
       {
         :'content_state' => :'content_state',
         :'action' => :'action',
+        :'secondary_action' => :'secondary_action',
         :'alert' => :'alert',
         :'channels' => :'channels',
         :'target' => :'target'
@@ -48,6 +52,7 @@ module OpenapiClient
       {
         :'content_state' => :'StreamContentState',
         :'action' => :'LiveActivityAction',
+        :'secondary_action' => :'LiveActivityAction',
         :'alert' => :'AlertPayload',
         :'channels' => :'Array<String>',
         :'target' => :'ChannelTarget'
@@ -83,6 +88,10 @@ module OpenapiClient
 
       if attributes.key?(:'action')
         self.action = attributes[:'action']
+      end
+
+      if attributes.key?(:'secondary_action')
+        self.secondary_action = attributes[:'secondary_action']
       end
 
       if attributes.key?(:'alert')
@@ -146,6 +155,7 @@ module OpenapiClient
       self.class == o.class &&
           content_state == o.content_state &&
           action == o.action &&
+          secondary_action == o.secondary_action &&
           alert == o.alert &&
           channels == o.channels &&
           target == o.target
@@ -160,7 +170,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [content_state, action, alert, channels, target].hash
+      [content_state, action, secondary_action, alert, channels, target].hash
     end
 
     # Builds the object from hash

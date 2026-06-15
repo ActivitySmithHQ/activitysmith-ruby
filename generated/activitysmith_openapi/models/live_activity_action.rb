@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Optional single action button shown in the Live Activity UI.
+  # Optional action button shown in the Live Activity UI. Use action for the primary button, or secondary_action for a secondary button on alert, progress, and segmented_progress Live Activities.
   class LiveActivityAction
     # Button title displayed in the Live Activity UI.
     attr_accessor :title

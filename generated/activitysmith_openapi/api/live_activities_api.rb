@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # End a Live Activity (legacy manual lifecycle)
-    # Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+    # Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityEndResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # End a Live Activity (legacy manual lifecycle)
-    # Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start.
+    # Legacy manual lifecycle endpoint. For new integrations, use DELETE /live-activity/stream/{stream_key} to end a managed Live Activity stream. This endpoint remains supported for existing integrations and advanced lifecycle control. Ends a Live Activity and archives its lifecycle. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can send the latest number_of_steps here if the workflow changed after start. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param live_activity_end_request [LiveActivityEndRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityEndResponse, Integer, Hash)>] LiveActivityEndResponse data, response status code and response headers
@@ -88,7 +88,7 @@ module OpenapiClient
     end
 
     # End a stream
-    # Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+    # Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
     # @param [Hash] opts the optional parameters
     # @option opts [LiveActivityStreamDeleteRequest] :live_activity_stream_delete_request 
@@ -99,7 +99,7 @@ module OpenapiClient
     end
 
     # End a stream
-    # Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead.
+    # Use this endpoint when the process you are tracking is finished and you no longer want the Live Activity on your devices. ActivitySmith ends the current Live Activity for this stream and dismisses it from devices. If you need direct lifecycle control, use /live-activity/start, /live-activity/update, and /live-activity/end instead. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
     # @param [Hash] opts the optional parameters
     # @option opts [LiveActivityStreamDeleteRequest] :live_activity_stream_delete_request 
@@ -167,7 +167,7 @@ module OpenapiClient
     end
 
     # Start a new Live Activity or update an existing one
-    # Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window.
+    # Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
     # @param live_activity_stream_request [LiveActivityStreamRequest] 
     # @param [Hash] opts the optional parameters
@@ -178,7 +178,7 @@ module OpenapiClient
     end
 
     # Start a new Live Activity or update an existing one
-    # Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window.
+    # Use a stable stream_key for each ongoing thing you want to show as a Live Activity. Send the latest content_state whenever it changes, and ActivitySmith will keep the Live Activity in sync. For timer streams, send duration_seconds to start or reset the timer; omit duration_seconds on later updates to preserve the existing timer window. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param stream_key [String] Stable identifier for one ongoing thing. Allowed characters: letters, numbers, underscores, and hyphens.
     # @param live_activity_stream_request [LiveActivityStreamRequest] 
     # @param [Hash] opts the optional parameters
@@ -250,7 +250,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity (legacy manual lifecycle)
-    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityStartResponse]
@@ -260,7 +260,7 @@ module OpenapiClient
     end
 
     # Start a Live Activity (legacy manual lifecycle)
-    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes.
+    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Starts a Live Activity on devices matched by API key scope and optional target channels. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, number_of_steps can be changed later during update or end calls if the workflow changes. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param live_activity_start_request [LiveActivityStartRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityStartResponse, Integer, Hash)>] LiveActivityStartResponse data, response status code and response headers
@@ -318,7 +318,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity (legacy manual lifecycle)
-    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running.
+    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [LiveActivityUpdateResponse]
@@ -328,7 +328,7 @@ module OpenapiClient
     end
 
     # Update a Live Activity (legacy manual lifecycle)
-    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running.
+    # Legacy manual lifecycle endpoint. For new integrations, use PUT /live-activity/stream/{stream_key} so ActivitySmith can manage start, update, rotation, and end state for you. This endpoint remains supported for existing integrations and advanced lifecycle control. Updates an existing Live Activity. If the per-activity token is not registered yet, the update is queued. Supports segmented_progress, progress, metrics, stats, alert, and timer activity types. For segmented_progress activities, you can increase or decrease number_of_steps here as the workflow changes. For timer activities, send duration_seconds only when you want to reset the timer window; omit it to keep the current timer running. Use secondary_action for a second button on alert, progress, and segmented_progress Live Activities only.
     # @param live_activity_update_request [LiveActivityUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(LiveActivityUpdateResponse, Integer, Hash)>] LiveActivityUpdateResponse data, response status code and response headers

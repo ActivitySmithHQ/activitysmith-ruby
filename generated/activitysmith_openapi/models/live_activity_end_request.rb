@@ -22,12 +22,16 @@ module OpenapiClient
 
     attr_accessor :action
 
+    # Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+    attr_accessor :secondary_action
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'activity_id' => :'activity_id',
         :'content_state' => :'content_state',
-        :'action' => :'action'
+        :'action' => :'action',
+        :'secondary_action' => :'secondary_action'
       }
     end
 
@@ -41,7 +45,8 @@ module OpenapiClient
       {
         :'activity_id' => :'String',
         :'content_state' => :'ContentStateEnd',
-        :'action' => :'LiveActivityAction'
+        :'action' => :'LiveActivityAction',
+        :'secondary_action' => :'LiveActivityAction'
       }
     end
 
@@ -81,6 +86,10 @@ module OpenapiClient
       if attributes.key?(:'action')
         self.action = attributes[:'action']
       end
+
+      if attributes.key?(:'secondary_action')
+        self.secondary_action = attributes[:'secondary_action']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -115,7 +124,8 @@ module OpenapiClient
       self.class == o.class &&
           activity_id == o.activity_id &&
           content_state == o.content_state &&
-          action == o.action
+          action == o.action &&
+          secondary_action == o.secondary_action
     end
 
     # @see the `==` method
@@ -127,7 +137,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [activity_id, content_state, action].hash
+      [activity_id, content_state, action, secondary_action].hash
     end
 
     # Builds the object from hash

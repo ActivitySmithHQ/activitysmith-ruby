@@ -19,6 +19,14 @@ module ActivitySmith
       @notifications = Notifications.new(OpenapiClient::PushNotificationsApi.new(api_client))
       @live_activities = LiveActivities.new(OpenapiClient::LiveActivitiesApi.new(api_client))
       @metrics = Metrics.new(OpenapiClient::MetricsApi.new(api_client))
+      @app_icon_badges = OpenapiClient::AppIconBadgesApi.new(api_client)
+    end
+
+    def badge_count(value, channels: nil)
+      request = { badge: value }
+      normalized_channels = normalize_channels(channels)
+      request[:target] = { channels: normalized_channels } unless normalized_channels.empty?
+      @app_icon_badges.update_app_icon_badge_count(request)
     end
 
     private
@@ -44,7 +52,8 @@ module ActivitySmith
         "OpenapiClient::ApiClient",
         "OpenapiClient::PushNotificationsApi",
         "OpenapiClient::LiveActivitiesApi",
-        "OpenapiClient::MetricsApi"
+        "OpenapiClient::MetricsApi",
+        "OpenapiClient::AppIconBadgesApi"
       ].reject { |name| constant_defined?(name) }
 
       missing.empty?
@@ -55,6 +64,11 @@ module ActivitySmith
       true
     rescue NameError
       false
+    end
+
+    def normalize_channels(channels)
+      values = channels.is_a?(String) ? channels.split(",") : Array(channels)
+      values.map { |channel| channel.to_s.strip }.reject(&:empty?)
     end
   end
 end

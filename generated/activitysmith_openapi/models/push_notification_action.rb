@@ -52,7 +52,7 @@ module OpenapiClient
         :'type' => :'PushNotificationActionType',
         :'url' => :'String',
         :'method' => :'PushNotificationWebhookMethod',
-        :'body' => :'Hash<String, Object>'
+        :'body' => :'Object'
       }
     end
 
@@ -102,9 +102,7 @@ module OpenapiClient
       end
 
       if attributes.key?(:'body')
-        if (value = attributes[:'body']).is_a?(Hash)
-          self.body = value
-        end
+        self.body = attributes[:'body']
       end
     end
 

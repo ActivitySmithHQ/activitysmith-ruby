@@ -14,30 +14,28 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Optional action button shown in the Live Activity UI. Use action for the primary button, or secondary_action for a secondary button on alert, progress, and segmented_progress Live Activities.
-  class LiveActivityAction
-    # Button title displayed in the Live Activity UI.
-    attr_accessor :title
+  class AppIconBadgeCountUpdateResponse
+    attr_accessor :success
 
-    attr_accessor :type
+    attr_accessor :badge
 
-    # Action URL. For open_url, use an HTTPS URL or a shortcuts://run-shortcut?name=... URL that runs a specific iPhone Shortcut. For webhook, use an HTTPS URL called by the ActivitySmith backend.
-    attr_accessor :url
+    attr_accessor :devices_notified
 
-    # Webhook HTTP method. Used only when type=webhook.
-    attr_accessor :method
+    attr_accessor :users_notified
 
-    # Optional webhook payload body. Used only when type=webhook.
-    attr_accessor :body
+    attr_accessor :effective_channel_slugs
+
+    attr_accessor :timestamp
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'title' => :'title',
-        :'type' => :'type',
-        :'url' => :'url',
-        :'method' => :'method',
-        :'body' => :'body'
+        :'success' => :'success',
+        :'badge' => :'badge',
+        :'devices_notified' => :'devices_notified',
+        :'users_notified' => :'users_notified',
+        :'effective_channel_slugs' => :'effective_channel_slugs',
+        :'timestamp' => :'timestamp'
       }
     end
 
@@ -49,11 +47,12 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'title' => :'String',
-        :'type' => :'LiveActivityActionType',
-        :'url' => :'String',
-        :'method' => :'LiveActivityWebhookMethod',
-        :'body' => :'Object'
+        :'success' => :'Boolean',
+        :'badge' => :'Integer',
+        :'devices_notified' => :'Integer',
+        :'users_notified' => :'Integer',
+        :'effective_channel_slugs' => :'Array<String>',
+        :'timestamp' => :'Time'
       }
     end
 
@@ -67,43 +66,53 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityAction` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::AppIconBadgeCountUpdateResponse` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityAction`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::AppIconBadgeCountUpdateResponse`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'title')
-        self.title = attributes[:'title']
+      if attributes.key?(:'success')
+        self.success = attributes[:'success']
       else
-        self.title = nil
+        self.success = nil
       end
 
-      if attributes.key?(:'type')
-        self.type = attributes[:'type']
+      if attributes.key?(:'badge')
+        self.badge = attributes[:'badge']
       else
-        self.type = nil
+        self.badge = nil
       end
 
-      if attributes.key?(:'url')
-        self.url = attributes[:'url']
+      if attributes.key?(:'devices_notified')
+        self.devices_notified = attributes[:'devices_notified']
       else
-        self.url = nil
+        self.devices_notified = nil
       end
 
-      if attributes.key?(:'method')
-        self.method = attributes[:'method']
+      if attributes.key?(:'users_notified')
+        self.users_notified = attributes[:'users_notified']
       else
-        self.method = 'POST'
+        self.users_notified = nil
       end
 
-      if attributes.key?(:'body')
-        self.body = attributes[:'body']
+      if attributes.key?(:'effective_channel_slugs')
+        if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
+          self.effective_channel_slugs = value
+        end
+      else
+        self.effective_channel_slugs = nil
+      end
+
+      if attributes.key?(:'timestamp')
+        self.timestamp = attributes[:'timestamp']
+      else
+        self.timestamp = nil
       end
     end
 
@@ -112,16 +121,36 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @title.nil?
-        invalid_properties.push('invalid value for "title", title cannot be nil.')
+      if @success.nil?
+        invalid_properties.push('invalid value for "success", success cannot be nil.')
       end
 
-      if @type.nil?
-        invalid_properties.push('invalid value for "type", type cannot be nil.')
+      if @badge.nil?
+        invalid_properties.push('invalid value for "badge", badge cannot be nil.')
       end
 
-      if @url.nil?
-        invalid_properties.push('invalid value for "url", url cannot be nil.')
+      if @badge > 2147483647
+        invalid_properties.push('invalid value for "badge", must be smaller than or equal to 2147483647.')
+      end
+
+      if @badge < 0
+        invalid_properties.push('invalid value for "badge", must be greater than or equal to 0.')
+      end
+
+      if @devices_notified.nil?
+        invalid_properties.push('invalid value for "devices_notified", devices_notified cannot be nil.')
+      end
+
+      if @users_notified.nil?
+        invalid_properties.push('invalid value for "users_notified", users_notified cannot be nil.')
+      end
+
+      if @effective_channel_slugs.nil?
+        invalid_properties.push('invalid value for "effective_channel_slugs", effective_channel_slugs cannot be nil.')
+      end
+
+      if @timestamp.nil?
+        invalid_properties.push('invalid value for "timestamp", timestamp cannot be nil.')
       end
 
       invalid_properties
@@ -131,10 +160,33 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @title.nil?
-      return false if @type.nil?
-      return false if @url.nil?
+      return false if @success.nil?
+      return false if @badge.nil?
+      return false if @badge > 2147483647
+      return false if @badge < 0
+      return false if @devices_notified.nil?
+      return false if @users_notified.nil?
+      return false if @effective_channel_slugs.nil?
+      return false if @timestamp.nil?
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] badge Value to be assigned
+    def badge=(badge)
+      if badge.nil?
+        fail ArgumentError, 'badge cannot be nil'
+      end
+
+      if badge > 2147483647
+        fail ArgumentError, 'invalid value for "badge", must be smaller than or equal to 2147483647.'
+      end
+
+      if badge < 0
+        fail ArgumentError, 'invalid value for "badge", must be greater than or equal to 0.'
+      end
+
+      @badge = badge
     end
 
     # Checks equality by comparing each attribute.
@@ -142,11 +194,12 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          title == o.title &&
-          type == o.type &&
-          url == o.url &&
-          method == o.method &&
-          body == o.body
+          success == o.success &&
+          badge == o.badge &&
+          devices_notified == o.devices_notified &&
+          users_notified == o.users_notified &&
+          effective_channel_slugs == o.effective_channel_slugs &&
+          timestamp == o.timestamp
     end
 
     # @see the `==` method
@@ -158,7 +211,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, type, url, method, body].hash
+      [success, badge, devices_notified, users_notified, effective_channel_slugs, timestamp].hash
     end
 
     # Builds the object from hash

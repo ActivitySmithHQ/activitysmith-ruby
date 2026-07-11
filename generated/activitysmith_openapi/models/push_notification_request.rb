@@ -68,7 +68,7 @@ module OpenapiClient
         :'media' => :'String',
         :'redirection' => :'String',
         :'actions' => :'Array<PushNotificationAction>',
-        :'payload' => :'Hash<String, Object>',
+        :'payload' => :'Object',
         :'badge' => :'Integer',
         :'sound' => :'String',
         :'target' => :'ChannelTarget'
@@ -125,9 +125,7 @@ module OpenapiClient
       end
 
       if attributes.key?(:'payload')
-        if (value = attributes[:'payload']).is_a?(Hash)
-          self.payload = value
-        end
+        self.payload = attributes[:'payload']
       end
 
       if attributes.key?(:'badge')

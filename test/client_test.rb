@@ -44,6 +44,20 @@ module OpenapiClient
       @api_client = api_client
     end
   end
+
+  class AppIconBadgesApi
+    attr_reader :api_client, :calls
+
+    def initialize(api_client)
+      @api_client = api_client
+      @calls = []
+    end
+
+    def update_app_icon_badge_count(request, opts = {})
+      @calls << [request, opts]
+      request
+    end
+  end
 end
 
 class ClientTest < Minitest::Test
@@ -68,6 +82,7 @@ class ClientTest < Minitest::Test
     assert_respond_to client.live_activities, :end_stream
     refute_nil client.metrics
     assert_respond_to client.metrics, :update
+    assert_respond_to client, :badge_count
 
     metrics_api = client.metrics.instance_variable_get(:@api)
     assert_equal "ruby-v#{ActivitySmith::VERSION}", metrics_api.api_client.default_headers["X-ActivitySmith-SDK"]
@@ -76,5 +91,23 @@ class ClientTest < Minitest::Test
     skip "Generated OpenAPI client is not present yet." if error.message.include?("Generated Ruby client not found")
 
     raise
+  end
+
+  def test_badge_count_clears_and_targets_channels
+    client = ActivitySmith::Client.new(api_key: "test-api-key")
+    api = client.instance_variable_get(:@app_icon_badges)
+
+    assert_equal({ badge: 0 }, client.badge_count(0))
+    assert_equal(
+      { badge: 3, target: { channels: %w[sales customer-success] } },
+      client.badge_count(3, channels: "sales,customer-success")
+    )
+    assert_equal(
+      [
+        [{ badge: 0 }, {}],
+        [{ badge: 3, target: { channels: %w[sales customer-success] } }, {}]
+      ],
+      api.calls
+    )
   end
 end

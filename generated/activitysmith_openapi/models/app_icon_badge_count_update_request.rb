@@ -14,7 +14,6 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # App Icon Badge Count update. Send badge 0 to clear the count.
   class AppIconBadgeCountUpdateRequest
     # The count to show on the ActivitySmith app icon. Send 0 to clear it.
     attr_accessor :badge

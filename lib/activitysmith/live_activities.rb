@@ -38,8 +38,13 @@ module ActivitySmith
       @api = api
     end
 
-    def start(request, opts = {})
-      @api.start_live_activity(normalize_live_activity_request(normalize_channels_target(request)), opts)
+    def start(request = nil, opts = {}, tags: nil, **request_fields)
+      @api.start_live_activity(
+        normalize_live_activity_request(
+          normalize_channels_target(with_tags(combine_request(request, request_fields), tags))
+        ),
+        opts
+      )
     end
 
     def update(request, opts = {})
@@ -50,10 +55,12 @@ module ActivitySmith
       @api.end_live_activity(normalize_live_activity_request(request), opts)
     end
 
-    def stream(stream_key, request, opts = {})
+    def stream(stream_key, request = nil, opts = {}, tags: nil, **request_fields)
       @api.reconcile_live_activity_stream(
         stream_key,
-        normalize_live_activity_request(normalize_channels_target(request)),
+        normalize_live_activity_request(
+          normalize_channels_target(with_tags(combine_request(request, request_fields), tags))
+        ),
         opts
       )
     end
@@ -66,9 +73,9 @@ module ActivitySmith
     end
 
     # Backward-compatible aliases.
-    def start_live_activity(live_activity_start_request, opts = {})
+    def start_live_activity(live_activity_start_request, opts = {}, tags: nil)
       @api.start_live_activity(
-        normalize_live_activity_request(normalize_channels_target(live_activity_start_request)),
+        normalize_live_activity_request(normalize_channels_target(with_tags(live_activity_start_request, tags))),
         opts
       )
     end
@@ -81,10 +88,10 @@ module ActivitySmith
       @api.end_live_activity(normalize_live_activity_request(live_activity_end_request), opts)
     end
 
-    def reconcile_live_activity_stream(stream_key, live_activity_stream_request, opts = {})
+    def reconcile_live_activity_stream(stream_key, live_activity_stream_request, opts = {}, tags: nil)
       @api.reconcile_live_activity_stream(
         stream_key,
-        normalize_live_activity_request(normalize_channels_target(live_activity_stream_request)),
+        normalize_live_activity_request(normalize_channels_target(with_tags(live_activity_stream_request, tags))),
         opts
       )
     end
@@ -109,6 +116,21 @@ module ActivitySmith
     end
 
     private
+
+    def combine_request(request, request_fields)
+      return request if request_fields.empty?
+      return request_fields if request.nil?
+      raise ArgumentError, "ActivitySmith: keyword request fields can only be combined with a Hash request" unless request.is_a?(Hash)
+
+      request.merge(request_fields)
+    end
+
+    def with_tags(request, tags)
+      return request if tags.nil?
+      raise ArgumentError, "ActivitySmith: tags can only be combined with a Hash request" unless request.is_a?(Hash)
+
+      request.merge(tags: tags)
+    end
 
     def normalize_live_activity_request(request)
       return request unless request.is_a?(Hash)

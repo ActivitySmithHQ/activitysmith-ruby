@@ -6,15 +6,15 @@ module ActivitySmith
       @api = api
     end
 
-    def send(request, opts = {})
-      normalized = normalize_channels_target(request)
+    def send(request = nil, opts = {}, tags: nil, **request_fields)
+      normalized = normalize_channels_target(with_tags(combine_request(request, request_fields), tags))
       assert_valid_media_actions!(normalized)
       @api.send_push_notification(normalized, opts)
     end
 
     # Backward-compatible alias.
-    def send_push_notification(push_notification_request, opts = {})
-      normalized = normalize_channels_target(push_notification_request)
+    def send_push_notification(push_notification_request, opts = {}, tags: nil)
+      normalized = normalize_channels_target(with_tags(push_notification_request, tags))
       assert_valid_media_actions!(normalized)
       @api.send_push_notification(normalized, opts)
     end
@@ -30,6 +30,21 @@ module ActivitySmith
     end
 
     private
+
+    def combine_request(request, request_fields)
+      return request if request_fields.empty?
+      return request_fields if request.nil?
+      raise ArgumentError, "ActivitySmith: keyword request fields can only be combined with a Hash request" unless request.is_a?(Hash)
+
+      request.merge(request_fields)
+    end
+
+    def with_tags(request, tags)
+      return request if tags.nil?
+      raise ArgumentError, "ActivitySmith: tags can only be combined with a Hash request" unless request.is_a?(Hash)
+
+      request.merge(tags: tags)
+    end
 
     def normalize_channels_target(request)
       return request unless request.is_a?(Hash)

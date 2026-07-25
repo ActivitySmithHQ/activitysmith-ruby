@@ -22,7 +22,7 @@ module OpenapiClient
 
     attr_accessor :action
 
-    # Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+    # Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
     attr_accessor :secondary_action
 
     # Attribute mapping from ruby-style variable name to JSON key.

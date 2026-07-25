@@ -26,6 +26,9 @@ module OpenapiClient
 
     attr_accessor :effective_channel_slugs
 
+    # Optional tags to organize and filter notification history.
+    attr_accessor :tags
+
     attr_accessor :timestamp
 
     # Attribute mapping from ruby-style variable name to JSON key.
@@ -36,6 +39,7 @@ module OpenapiClient
         :'users_notified' => :'users_notified',
         :'activity_id' => :'activity_id',
         :'effective_channel_slugs' => :'effective_channel_slugs',
+        :'tags' => :'tags',
         :'timestamp' => :'timestamp'
       }
     end
@@ -53,6 +57,7 @@ module OpenapiClient
         :'users_notified' => :'Integer',
         :'activity_id' => :'String',
         :'effective_channel_slugs' => :'Array<String>',
+        :'tags' => :'Array<String>',
         :'timestamp' => :'Time'
       }
     end
@@ -104,6 +109,12 @@ module OpenapiClient
         end
       end
 
+      if attributes.key?(:'tags')
+        if (value = attributes[:'tags']).is_a?(Array)
+          self.tags = value
+        end
+      end
+
       if attributes.key?(:'timestamp')
         self.timestamp = attributes[:'timestamp']
       else
@@ -151,6 +162,7 @@ module OpenapiClient
           users_notified == o.users_notified &&
           activity_id == o.activity_id &&
           effective_channel_slugs == o.effective_channel_slugs &&
+          tags == o.tags &&
           timestamp == o.timestamp
     end
 
@@ -163,7 +175,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, devices_notified, users_notified, activity_id, effective_channel_slugs, timestamp].hash
+      [success, devices_notified, users_notified, activity_id, effective_channel_slugs, tags, timestamp].hash
     end
 
     # Builds the object from hash

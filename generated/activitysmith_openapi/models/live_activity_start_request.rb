@@ -20,12 +20,15 @@ module OpenapiClient
 
     attr_accessor :action
 
-    # Optional secondary action button. Supported only for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
+    # Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
     attr_accessor :secondary_action
 
     attr_accessor :alert
 
     attr_accessor :target
+
+    # Optional tags to organize and filter notification history.
+    attr_accessor :tags
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
@@ -34,7 +37,8 @@ module OpenapiClient
         :'action' => :'action',
         :'secondary_action' => :'secondary_action',
         :'alert' => :'alert',
-        :'target' => :'target'
+        :'target' => :'target',
+        :'tags' => :'tags'
       }
     end
 
@@ -50,7 +54,8 @@ module OpenapiClient
         :'action' => :'LiveActivityAction',
         :'secondary_action' => :'LiveActivityAction',
         :'alert' => :'AlertPayload',
-        :'target' => :'ChannelTarget'
+        :'target' => :'ChannelTarget',
+        :'tags' => :'Array<String>'
       }
     end
 
@@ -96,6 +101,12 @@ module OpenapiClient
       if attributes.key?(:'target')
         self.target = attributes[:'target']
       end
+
+      if attributes.key?(:'tags')
+        if (value = attributes[:'tags']).is_a?(Array)
+          self.tags = value
+        end
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -127,7 +138,8 @@ module OpenapiClient
           action == o.action &&
           secondary_action == o.secondary_action &&
           alert == o.alert &&
-          target == o.target
+          target == o.target &&
+          tags == o.tags
     end
 
     # @see the `==` method
@@ -139,7 +151,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [content_state, action, secondary_action, alert, target].hash
+      [content_state, action, secondary_action, alert, target, tags].hash
     end
 
     # Builds the object from hash

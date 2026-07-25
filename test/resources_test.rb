@@ -111,6 +111,32 @@ class ResourcesTest < Minitest::Test
     )
   end
 
+  def test_notifications_add_tags
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    resource.send(
+      { title: "Build Failed" },
+      tags: ["user:382", "environment:production"]
+    )
+    resource.send_push_notification(
+      { title: "Build Failed" },
+      tags: ["user:382", "environment:production"]
+    )
+
+    expected = {
+      title: "Build Failed",
+      tags: ["user:382", "environment:production"]
+    }
+    assert_equal(
+      [
+        [:send_push_notification, expected, {}],
+        [:send_push_notification, expected, {}]
+      ],
+      api.calls
+    )
+  end
+
   def test_notifications_preserve_media_and_redirection
     api = FakePushApi.new
     resource = ActivitySmith::Notifications.new(api)
@@ -287,6 +313,52 @@ class ResourcesTest < Minitest::Test
       [
         [:start_live_activity, expected, {}],
         [:start_live_activity, expected, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_live_activities_add_tags
+    api = FakeLiveApi.new
+    resource = ActivitySmith::LiveActivities.new(api)
+    payload = {
+      content_state: {
+        title: "Deploy",
+        number_of_steps: 4,
+        current_step: 1,
+        type: "segmented_progress"
+      }
+    }
+
+    resource.start(payload, tags: ["user:382", "deployment"])
+    resource.start_live_activity(payload, tags: ["user:382", "deployment"])
+    resource.stream(
+      "deploy",
+      payload,
+      tags: ["user:382", "environment:production"]
+    )
+    resource.reconcile_live_activity_stream(
+      "deploy",
+      payload,
+      tags: ["user:382", "environment:production"]
+    )
+
+    assert_equal(
+      [
+        [:start_live_activity, payload.merge(tags: ["user:382", "deployment"]), {}],
+        [:start_live_activity, payload.merge(tags: ["user:382", "deployment"]), {}],
+        [
+          :reconcile_live_activity_stream,
+          "deploy",
+          payload.merge(tags: ["user:382", "environment:production"]),
+          {}
+        ],
+        [
+          :reconcile_live_activity_stream,
+          "deploy",
+          payload.merge(tags: ["user:382", "environment:production"]),
+          {}
+        ]
       ],
       api.calls
     )

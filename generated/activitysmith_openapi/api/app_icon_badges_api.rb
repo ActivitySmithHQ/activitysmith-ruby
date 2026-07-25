@@ -19,8 +19,8 @@ module OpenapiClient
     def initialize(api_client = ApiClient.default)
       @api_client = api_client
     end
-    # Update App Icon Badge Count
-    # Updates the App Icon Badge Count on devices matched by API key scope and optional target channels. Send `badge: 0` to clear the count. Badge updates are independent of push notifications and do not create a push notification history item.
+    # Set App Icon Badge Count
+    # Shows a number on the ActivitySmith app icon.
     # @param app_icon_badge_count_update_request [AppIconBadgeCountUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [AppIconBadgeCountUpdateResponse]
@@ -29,8 +29,8 @@ module OpenapiClient
       data
     end
 
-    # Update App Icon Badge Count
-    # Updates the App Icon Badge Count on devices matched by API key scope and optional target channels. Send &#x60;badge: 0&#x60; to clear the count. Badge updates are independent of push notifications and do not create a push notification history item.
+    # Set App Icon Badge Count
+    # Shows a number on the ActivitySmith app icon.
     # @param app_icon_badge_count_update_request [AppIconBadgeCountUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(AppIconBadgeCountUpdateResponse, Integer, Hash)>] AppIconBadgeCountUpdateResponse data, response status code and response headers

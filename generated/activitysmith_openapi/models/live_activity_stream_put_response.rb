@@ -34,6 +34,9 @@ module OpenapiClient
 
     attr_accessor :effective_channel_slugs
 
+    # Optional tags to organize and filter notification history.
+    attr_accessor :tags
+
     attr_accessor :timestamp
 
     class EnumAttributeValidator
@@ -70,6 +73,7 @@ module OpenapiClient
         :'devices_queued' => :'devices_queued',
         :'users_notified' => :'users_notified',
         :'effective_channel_slugs' => :'effective_channel_slugs',
+        :'tags' => :'tags',
         :'timestamp' => :'timestamp'
       }
     end
@@ -91,6 +95,7 @@ module OpenapiClient
         :'devices_queued' => :'Integer',
         :'users_notified' => :'Integer',
         :'effective_channel_slugs' => :'Array<String>',
+        :'tags' => :'Array<String>',
         :'timestamp' => :'Time'
       }
     end
@@ -158,6 +163,12 @@ module OpenapiClient
       if attributes.key?(:'effective_channel_slugs')
         if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
           self.effective_channel_slugs = value
+        end
+      end
+
+      if attributes.key?(:'tags')
+        if (value = attributes[:'tags']).is_a?(Array)
+          self.tags = value
         end
       end
 
@@ -229,6 +240,7 @@ module OpenapiClient
           devices_queued == o.devices_queued &&
           users_notified == o.users_notified &&
           effective_channel_slugs == o.effective_channel_slugs &&
+          tags == o.tags &&
           timestamp == o.timestamp
     end
 
@@ -241,7 +253,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, operation, stream_key, activity_id, previous_activity_id, devices_notified, devices_queued, users_notified, effective_channel_slugs, timestamp].hash
+      [success, operation, stream_key, activity_id, previous_activity_id, devices_notified, devices_queued, users_notified, effective_channel_slugs, tags, timestamp].hash
     end
 
     # Builds the object from hash

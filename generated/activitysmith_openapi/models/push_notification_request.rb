@@ -24,7 +24,7 @@ module OpenapiClient
     # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
     attr_accessor :media
 
-    # Optional HTTPS URL or shortcuts://run-shortcut?name=... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=... to run a specific iPhone Shortcut that already exists on the user's device. Overrides the default tap target from `media` when both are provided.
+    # Optional HTTP URL, HTTPS URL, or shortcuts://run-shortcut?name=... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=... to run a specific iPhone Shortcut that already exists on the user's device. Overrides the default tap target from `media` when both are provided.
     attr_accessor :redirection
 
     # Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
@@ -38,6 +38,9 @@ module OpenapiClient
 
     attr_accessor :target
 
+    # Optional tags to organize and filter notification history.
+    attr_accessor :tags
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -50,7 +53,8 @@ module OpenapiClient
         :'payload' => :'payload',
         :'badge' => :'badge',
         :'sound' => :'sound',
-        :'target' => :'target'
+        :'target' => :'target',
+        :'tags' => :'tags'
       }
     end
 
@@ -71,7 +75,8 @@ module OpenapiClient
         :'payload' => :'Object',
         :'badge' => :'Integer',
         :'sound' => :'String',
-        :'target' => :'ChannelTarget'
+        :'target' => :'ChannelTarget',
+        :'tags' => :'Array<String>'
       }
     end
 
@@ -139,6 +144,12 @@ module OpenapiClient
       if attributes.key?(:'target')
         self.target = attributes[:'target']
       end
+
+      if attributes.key?(:'tags')
+        if (value = attributes[:'tags']).is_a?(Array)
+          self.tags = value
+        end
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -155,7 +166,7 @@ module OpenapiClient
         invalid_properties.push("invalid value for \"media\", must conform to the pattern #{pattern}.")
       end
 
-      pattern = Regexp.new(/^(https|shortcuts):\/\//)
+      pattern = Regexp.new(/^(http|https|shortcuts):\/\//)
       if !@redirection.nil? && @redirection !~ pattern
         invalid_properties.push("invalid value for \"redirection\", must conform to the pattern #{pattern}.")
       end
@@ -173,7 +184,7 @@ module OpenapiClient
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @title.nil?
       return false if !@media.nil? && @media !~ Regexp.new(/^https:\/\//)
-      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^(https|shortcuts):\/\//)
+      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^(http|https|shortcuts):\/\//)
       return false if !@actions.nil? && @actions.length > 4
       true
     end
@@ -200,7 +211,7 @@ module OpenapiClient
         fail ArgumentError, 'redirection cannot be nil'
       end
 
-      pattern = Regexp.new(/^(https|shortcuts):\/\//)
+      pattern = Regexp.new(/^(http|https|shortcuts):\/\//)
       if redirection !~ pattern
         fail ArgumentError, "invalid value for \"redirection\", must conform to the pattern #{pattern}."
       end
@@ -236,7 +247,8 @@ module OpenapiClient
           payload == o.payload &&
           badge == o.badge &&
           sound == o.sound &&
-          target == o.target
+          target == o.target &&
+          tags == o.tags
     end
 
     # @see the `==` method
@@ -248,7 +260,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, message, subtitle, media, redirection, actions, payload, badge, sound, target].hash
+      [title, message, subtitle, media, redirection, actions, payload, badge, sound, target, tags].hash
     end
 
     # Builds the object from hash

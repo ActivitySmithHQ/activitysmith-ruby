@@ -21,8 +21,8 @@ module OpenapiClient
 
     attr_accessor :limit
 
-    # Current number of active Live Activities.
-    attr_accessor :active
+    # Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold.
+    attr_accessor :blocked_devices
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
@@ -30,7 +30,7 @@ module OpenapiClient
         :'error' => :'error',
         :'message' => :'message',
         :'limit' => :'limit',
-        :'active' => :'active'
+        :'blocked_devices' => :'blocked_devices'
       }
     end
 
@@ -45,7 +45,7 @@ module OpenapiClient
         :'error' => :'String',
         :'message' => :'String',
         :'limit' => :'Integer',
-        :'active' => :'Integer'
+        :'blocked_devices' => :'Integer'
       }
     end
 
@@ -88,10 +88,10 @@ module OpenapiClient
         self.limit = nil
       end
 
-      if attributes.key?(:'active')
-        self.active = attributes[:'active']
+      if attributes.key?(:'blocked_devices')
+        self.blocked_devices = attributes[:'blocked_devices']
       else
-        self.active = nil
+        self.blocked_devices = nil
       end
     end
 
@@ -112,8 +112,8 @@ module OpenapiClient
         invalid_properties.push('invalid value for "limit", limit cannot be nil.')
       end
 
-      if @active.nil?
-        invalid_properties.push('invalid value for "active", active cannot be nil.')
+      if @blocked_devices.nil?
+        invalid_properties.push('invalid value for "blocked_devices", blocked_devices cannot be nil.')
       end
 
       invalid_properties
@@ -126,7 +126,7 @@ module OpenapiClient
       return false if @error.nil?
       return false if @message.nil?
       return false if @limit.nil?
-      return false if @active.nil?
+      return false if @blocked_devices.nil?
       true
     end
 
@@ -138,7 +138,7 @@ module OpenapiClient
           error == o.error &&
           message == o.message &&
           limit == o.limit &&
-          active == o.active
+          blocked_devices == o.blocked_devices
     end
 
     # @see the `==` method
@@ -150,7 +150,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [error, message, limit, active].hash
+      [error, message, limit, blocked_devices].hash
     end
 
     # Builds the object from hash

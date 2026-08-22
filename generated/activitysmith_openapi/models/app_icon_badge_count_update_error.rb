@@ -14,38 +14,60 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  class AppIconBadgeCountUpdateResponse
-    attr_accessor :success
+  class AppIconBadgeCountUpdateError
+    attr_accessor :error
+
+    attr_accessor :code
+
+    attr_accessor :message
 
     attr_accessor :badge
 
-    # Number of devices whose App Icon Badge Count was updated.
+    attr_accessor :devices_targeted
+
     attr_accessor :devices_updated
 
-    # Number of account users with at least one updated device.
     attr_accessor :users_updated
 
     # Deprecated compatibility alias for devices_updated.
     attr_accessor :devices_notified
 
-    # Deprecated compatibility alias for users_updated.
-    attr_accessor :users_notified
-
     attr_accessor :effective_channel_slugs
 
-    attr_accessor :timestamp
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'success' => :'success',
+        :'error' => :'error',
+        :'code' => :'code',
+        :'message' => :'message',
         :'badge' => :'badge',
+        :'devices_targeted' => :'devices_targeted',
         :'devices_updated' => :'devices_updated',
         :'users_updated' => :'users_updated',
         :'devices_notified' => :'devices_notified',
-        :'users_notified' => :'users_notified',
-        :'effective_channel_slugs' => :'effective_channel_slugs',
-        :'timestamp' => :'timestamp'
+        :'effective_channel_slugs' => :'effective_channel_slugs'
       }
     end
 
@@ -57,14 +79,15 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'success' => :'Boolean',
+        :'error' => :'String',
+        :'code' => :'String',
+        :'message' => :'String',
         :'badge' => :'Integer',
+        :'devices_targeted' => :'Integer',
         :'devices_updated' => :'Integer',
         :'users_updated' => :'Integer',
         :'devices_notified' => :'Integer',
-        :'users_notified' => :'Integer',
-        :'effective_channel_slugs' => :'Array<String>',
-        :'timestamp' => :'Time'
+        :'effective_channel_slugs' => :'Array<String>'
       }
     end
 
@@ -78,27 +101,43 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::AppIconBadgeCountUpdateResponse` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::AppIconBadgeCountUpdateError` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::AppIconBadgeCountUpdateResponse`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::AppIconBadgeCountUpdateError`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'success')
-        self.success = attributes[:'success']
+      if attributes.key?(:'error')
+        self.error = attributes[:'error']
       else
-        self.success = nil
+        self.error = nil
+      end
+
+      if attributes.key?(:'code')
+        self.code = attributes[:'code']
+      else
+        self.code = nil
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      else
+        self.message = nil
       end
 
       if attributes.key?(:'badge')
         self.badge = attributes[:'badge']
       else
         self.badge = nil
+      end
+
+      if attributes.key?(:'devices_targeted')
+        self.devices_targeted = attributes[:'devices_targeted']
       end
 
       if attributes.key?(:'devices_updated')
@@ -109,30 +148,16 @@ module OpenapiClient
 
       if attributes.key?(:'users_updated')
         self.users_updated = attributes[:'users_updated']
-      else
-        self.users_updated = nil
       end
 
       if attributes.key?(:'devices_notified')
         self.devices_notified = attributes[:'devices_notified']
       end
 
-      if attributes.key?(:'users_notified')
-        self.users_notified = attributes[:'users_notified']
-      end
-
       if attributes.key?(:'effective_channel_slugs')
         if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
           self.effective_channel_slugs = value
         end
-      else
-        self.effective_channel_slugs = nil
-      end
-
-      if attributes.key?(:'timestamp')
-        self.timestamp = attributes[:'timestamp']
-      else
-        self.timestamp = nil
       end
     end
 
@@ -141,8 +166,16 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @success.nil?
-        invalid_properties.push('invalid value for "success", success cannot be nil.')
+      if @error.nil?
+        invalid_properties.push('invalid value for "error", error cannot be nil.')
+      end
+
+      if @code.nil?
+        invalid_properties.push('invalid value for "code", code cannot be nil.')
+      end
+
+      if @message.nil?
+        invalid_properties.push('invalid value for "message", message cannot be nil.')
       end
 
       if @badge.nil?
@@ -161,18 +194,6 @@ module OpenapiClient
         invalid_properties.push('invalid value for "devices_updated", devices_updated cannot be nil.')
       end
 
-      if @users_updated.nil?
-        invalid_properties.push('invalid value for "users_updated", users_updated cannot be nil.')
-      end
-
-      if @effective_channel_slugs.nil?
-        invalid_properties.push('invalid value for "effective_channel_slugs", effective_channel_slugs cannot be nil.')
-      end
-
-      if @timestamp.nil?
-        invalid_properties.push('invalid value for "timestamp", timestamp cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -180,15 +201,26 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @success.nil?
+      return false if @error.nil?
+      return false if @code.nil?
+      code_validator = EnumAttributeValidator.new('String', ["badge_device_disconnected", "badge_update_failed"])
+      return false unless code_validator.valid?(@code)
+      return false if @message.nil?
       return false if @badge.nil?
       return false if @badge > 2147483647
       return false if @badge < 0
       return false if @devices_updated.nil?
-      return false if @users_updated.nil?
-      return false if @effective_channel_slugs.nil?
-      return false if @timestamp.nil?
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] code Object to be assigned
+    def code=(code)
+      validator = EnumAttributeValidator.new('String', ["badge_device_disconnected", "badge_update_failed"])
+      unless validator.valid?(code)
+        fail ArgumentError, "invalid value for \"code\", must be one of #{validator.allowable_values}."
+      end
+      @code = code
     end
 
     # Custom attribute writer method with validation
@@ -214,14 +246,15 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          success == o.success &&
+          error == o.error &&
+          code == o.code &&
+          message == o.message &&
           badge == o.badge &&
+          devices_targeted == o.devices_targeted &&
           devices_updated == o.devices_updated &&
           users_updated == o.users_updated &&
           devices_notified == o.devices_notified &&
-          users_notified == o.users_notified &&
-          effective_channel_slugs == o.effective_channel_slugs &&
-          timestamp == o.timestamp
+          effective_channel_slugs == o.effective_channel_slugs
     end
 
     # @see the `==` method
@@ -233,7 +266,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, badge, devices_updated, users_updated, devices_notified, users_notified, effective_channel_slugs, timestamp].hash
+      [error, code, message, badge, devices_targeted, devices_updated, users_updated, devices_notified, effective_channel_slugs].hash
     end
 
     # Builds the object from hash

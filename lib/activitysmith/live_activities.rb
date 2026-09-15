@@ -47,12 +47,12 @@ module ActivitySmith
       )
     end
 
-    def update(request, opts = {})
-      @api.update_live_activity(normalize_live_activity_request(request), opts)
+    def update(request = nil, opts = {}, tags: nil, **request_fields)
+      @api.update_live_activity(normalize_live_activity_request(with_tags(combine_request(request, request_fields), tags)), opts)
     end
 
-    def end(request, opts = {})
-      @api.end_live_activity(normalize_live_activity_request(request), opts)
+    def end(request = nil, opts = {}, tags: nil, **request_fields)
+      @api.end_live_activity(normalize_live_activity_request(with_tags(combine_request(request, request_fields), tags)), opts)
     end
 
     def stream(stream_key, request = nil, opts = {}, tags: nil, **request_fields)
@@ -65,10 +65,10 @@ module ActivitySmith
       )
     end
 
-    def end_stream(stream_key, request = nil, opts = {})
+    def end_stream(stream_key, request = nil, opts = {}, tags: nil, **request_fields)
       @api.end_live_activity_stream(
         stream_key,
-        { live_activity_stream_delete_request: normalize_live_activity_request(request) }.merge(opts)
+        { live_activity_stream_delete_request: normalize_live_activity_request(with_tags(combine_request(request, request_fields), tags)) }.merge(opts)
       )
     end
 

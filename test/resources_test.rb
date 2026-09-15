@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "test_helper"
+require "json"
 require File.expand_path("../generated/activitysmith_openapi/models/live_activity_action", __dir__)
 require File.expand_path("../generated/activitysmith_openapi/models/live_activity_action_type", __dir__)
 require File.expand_path("../generated/activitysmith_openapi/models/push_notification_action", __dir__)
@@ -741,5 +742,67 @@ class ResourcesTest < Minitest::Test
     live_api = FakeLiveApi.new
     live_activities = ActivitySmith::LiveActivities.new(live_api)
     assert_equal [:ok, 200, {}], live_activities.end_live_activity_with_http_info({ activity_id: "act-1" })
+  end
+end
+
+
+require File.expand_path("../generated/activitysmith_openapi/models/live_activity_update_request", __dir__)
+require File.expand_path("../generated/activitysmith_openapi/models/live_activity_end_request", __dir__)
+
+class LegacyTagsTest < Minitest::Test
+  def test_replacement_clearing_and_omission
+    [:update, :end].each do |method|
+      [nil, ["billing"], []].each do |tags|
+        api = FakeLiveApi.new
+        resource = ActivitySmith::LiveActivities.new(api)
+        resource.public_send(method, activity_id: "activity-1", content_state: {title: "Job"}, tags: tags)
+        request = api.calls.last[1]
+        assert_equal !tags.nil?, request.key?(:tags)
+        assert_equal tags, request[:tags] unless tags.nil?
+        model_class = method == :update ? OpenapiClient::LiveActivityUpdateRequest : OpenapiClient::LiveActivityEndRequest
+        model = model_class.new(request)
+        serialized = model.to_hash
+        assert_equal !tags.nil?, serialized.key?(:tags)
+        assert_equal tags, serialized[:tags] unless tags.nil?
+      end
+    end
+  end
+end
+
+
+class MetadataSerializationTest < Minitest::Test
+  def test_metadata_keeps_scalar_values_and_empty_objects
+    [:send, :start, :update, :end, :stream, :end_stream].each do |method|
+      [nil, {}, {order: "382", ready: false, count: 0, empty: "", ratio: 1.25}].each do |metadata|
+        api = method == :send ? FakePushApi.new : FakeLiveApi.new
+        resource = method == :send ? ActivitySmith::Notifications.new(api) : ActivitySmith::LiveActivities.new(api)
+        fields = method == :send ? {title: "Job"} : {activity_id: "a", content_state: {title: "Job"}}
+        fields[:metadata] = metadata unless metadata.nil?
+        [:stream, :end_stream].include?(method) ? resource.public_send(method, "job", **fields) : resource.public_send(method, **fields)
+        request = api.calls.last[[:stream, :end_stream].include?(method) ? 2 : 1]
+        request = request[:live_activity_stream_delete_request] if method == :end_stream
+        serialized = JSON.parse(JSON.generate(request))
+        assert_equal !metadata.nil?, serialized.key?("metadata")
+        assert_equal JSON.parse(JSON.generate(metadata)), serialized["metadata"] unless metadata.nil?
+      end
+    end
+  end
+end
+
+class ExternalPushURLsTest < Minitest::Test
+  def test_custom_schemes_and_stream_end_tags
+    ["http://example.com", "https://example.com", "shortcuts://run-shortcut?name=Test", "spotify://", "spotify:track:123"].each do |url|
+      model = OpenapiClient::PushNotificationRequest.new(title: "Job", redirection: url)
+      assert model.valid?
+      assert_equal url, model.to_hash[:redirection]
+    end
+    [nil, [], ["finished"]].each do |tags|
+      api = FakeLiveApi.new
+      ActivitySmith::LiveActivities.new(api).end_stream("job", tags: tags, metadata: {})
+      request = api.calls.last[2][:live_activity_stream_delete_request]
+      assert_equal !tags.nil?, request.key?(:tags)
+      assert_equal tags, request[:tags] unless tags.nil?
+      assert_equal({}, request[:metadata])
+    end
   end
 end

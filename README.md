@@ -632,7 +632,3 @@ end
 ### [RubyGems Package](https://rubygems.org/gems/activitysmith)
 
 Install the ActivitySmith Ruby SDK from RubyGems
-
-### [Source Code](https://github.com/ActivitySmithHQ/activitysmith-ruby)
-
-View the Ruby SDK source on GitHub

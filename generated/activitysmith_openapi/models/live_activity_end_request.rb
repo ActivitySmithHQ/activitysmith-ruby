@@ -16,7 +16,13 @@ require 'time'
 module OpenapiClient
   # End an existing Live Activity by activity_id.
   class LiveActivityEndRequest
+    # Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+    attr_accessor :metadata
+
     attr_accessor :activity_id
+
+    # Tags for notification history. Omit to keep existing Tags, supply an array to replace them, or send an empty array to clear them.
+    attr_accessor :tags
 
     attr_accessor :content_state
 
@@ -28,7 +34,9 @@ module OpenapiClient
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'metadata' => :'metadata',
         :'activity_id' => :'activity_id',
+        :'tags' => :'tags',
         :'content_state' => :'content_state',
         :'action' => :'action',
         :'secondary_action' => :'secondary_action'
@@ -43,7 +51,9 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'metadata' => :'Hash<String, MetadataValue>',
         :'activity_id' => :'String',
+        :'tags' => :'Array<String>',
         :'content_state' => :'ContentStateEnd',
         :'action' => :'LiveActivityAction',
         :'secondary_action' => :'LiveActivityAction'
@@ -71,10 +81,22 @@ module OpenapiClient
         h[k.to_sym] = v
       }
 
+      if attributes.key?(:'metadata')
+        if (value = attributes[:'metadata']).is_a?(Hash)
+          self.metadata = value
+        end
+      end
+
       if attributes.key?(:'activity_id')
         self.activity_id = attributes[:'activity_id']
       else
         self.activity_id = nil
+      end
+
+      if attributes.key?(:'tags')
+        if (value = attributes[:'tags']).is_a?(Array)
+          self.tags = value
+        end
       end
 
       if attributes.key?(:'content_state')
@@ -97,8 +119,16 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if !@metadata.nil? && @metadata.length > 50
+        invalid_properties.push('invalid value for "metadata", number of items must be less than or equal to 50.')
+      end
+
       if @activity_id.nil?
         invalid_properties.push('invalid value for "activity_id", activity_id cannot be nil.')
+      end
+
+      if !@tags.nil? && @tags.length > 20
+        invalid_properties.push('invalid value for "tags", number of items must be less than or equal to 20.')
       end
 
       if @content_state.nil?
@@ -112,9 +142,39 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if !@metadata.nil? && @metadata.length > 50
       return false if @activity_id.nil?
+      return false if !@tags.nil? && @tags.length > 20
       return false if @content_state.nil?
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] metadata Value to be assigned
+    def metadata=(metadata)
+      if metadata.nil?
+        fail ArgumentError, 'metadata cannot be nil'
+      end
+
+      if metadata.length > 50
+        fail ArgumentError, 'invalid value for "metadata", number of items must be less than or equal to 50.'
+      end
+
+      @metadata = metadata
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] tags Value to be assigned
+    def tags=(tags)
+      if tags.nil?
+        fail ArgumentError, 'tags cannot be nil'
+      end
+
+      if tags.length > 20
+        fail ArgumentError, 'invalid value for "tags", number of items must be less than or equal to 20.'
+      end
+
+      @tags = tags
     end
 
     # Checks equality by comparing each attribute.
@@ -122,7 +182,9 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          metadata == o.metadata &&
           activity_id == o.activity_id &&
+          tags == o.tags &&
           content_state == o.content_state &&
           action == o.action &&
           secondary_action == o.secondary_action
@@ -137,7 +199,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [activity_id, content_state, action, secondary_action].hash
+      [metadata, activity_id, tags, content_state, action, secondary_action].hash
     end
 
     # Builds the object from hash

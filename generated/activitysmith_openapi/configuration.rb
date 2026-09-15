@@ -252,6 +252,13 @@ module OpenapiClient
             key: 'Authorization',
             value: "Bearer #{access_token_with_refresh}"
           },
+        'mcpOAuth' =>
+          {
+            type: 'oauth2',
+            in: 'header',
+            key: 'Authorization',
+            value: "Bearer #{access_token_with_refresh}"
+          },
       }
     end
 

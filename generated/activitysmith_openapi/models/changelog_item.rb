@@ -14,39 +14,25 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Send the latest state for a managed Live Activity stream. channels is the streamlined form for stream targeting. target.channels is also accepted for compatibility. If both are provided, they must match.
-  class LiveActivityStreamRequest
-    # Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
-    attr_accessor :metadata
+  class ChangelogItem
+    attr_accessor :icon
 
-    attr_accessor :content_state
+    attr_accessor :title
 
-    attr_accessor :action
+    attr_accessor :body
 
-    # Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
-    attr_accessor :secondary_action
+    attr_accessor :image_url
 
-    attr_accessor :alert
-
-    # Channel slugs. When omitted, API key scope determines recipients.
-    attr_accessor :channels
-
-    attr_accessor :target
-
-    # Optional tags to organize and filter notification history.
-    attr_accessor :tags
+    attr_accessor :accent_color
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'metadata' => :'metadata',
-        :'content_state' => :'content_state',
-        :'action' => :'action',
-        :'secondary_action' => :'secondary_action',
-        :'alert' => :'alert',
-        :'channels' => :'channels',
-        :'target' => :'target',
-        :'tags' => :'tags'
+        :'icon' => :'icon',
+        :'title' => :'title',
+        :'body' => :'body',
+        :'image_url' => :'image_url',
+        :'accent_color' => :'accent_color'
       }
     end
 
@@ -58,20 +44,20 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'metadata' => :'Hash<String, MetadataValue>',
-        :'content_state' => :'StreamContentState',
-        :'action' => :'LiveActivityAction',
-        :'secondary_action' => :'LiveActivityAction',
-        :'alert' => :'AlertPayload',
-        :'channels' => :'Array<String>',
-        :'target' => :'ChannelTarget',
-        :'tags' => :'Array<String>'
+        :'icon' => :'String',
+        :'title' => :'String',
+        :'body' => :'String',
+        :'image_url' => :'String',
+        :'accent_color' => :'String'
       }
     end
 
     # List of attributes with nullable: true
     def self.openapi_nullable
       Set.new([
+        :'icon',
+        :'image_url',
+        :'accent_color'
       ])
     end
 
@@ -79,55 +65,39 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityStreamRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::ChangelogItem` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityStreamRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::ChangelogItem`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'metadata')
-        if (value = attributes[:'metadata']).is_a?(Hash)
-          self.metadata = value
-        end
+      if attributes.key?(:'icon')
+        self.icon = attributes[:'icon']
       end
 
-      if attributes.key?(:'content_state')
-        self.content_state = attributes[:'content_state']
+      if attributes.key?(:'title')
+        self.title = attributes[:'title']
       else
-        self.content_state = nil
+        self.title = nil
       end
 
-      if attributes.key?(:'action')
-        self.action = attributes[:'action']
+      if attributes.key?(:'body')
+        self.body = attributes[:'body']
+      else
+        self.body = nil
       end
 
-      if attributes.key?(:'secondary_action')
-        self.secondary_action = attributes[:'secondary_action']
+      if attributes.key?(:'image_url')
+        self.image_url = attributes[:'image_url']
       end
 
-      if attributes.key?(:'alert')
-        self.alert = attributes[:'alert']
-      end
-
-      if attributes.key?(:'channels')
-        if (value = attributes[:'channels']).is_a?(Array)
-          self.channels = value
-        end
-      end
-
-      if attributes.key?(:'target')
-        self.target = attributes[:'target']
-      end
-
-      if attributes.key?(:'tags')
-        if (value = attributes[:'tags']).is_a?(Array)
-          self.tags = value
-        end
+      if attributes.key?(:'accent_color')
+        self.accent_color = attributes[:'accent_color']
       end
     end
 
@@ -136,16 +106,12 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if !@metadata.nil? && @metadata.length > 50
-        invalid_properties.push('invalid value for "metadata", number of items must be less than or equal to 50.')
+      if @title.nil?
+        invalid_properties.push('invalid value for "title", title cannot be nil.')
       end
 
-      if @content_state.nil?
-        invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
-      end
-
-      if !@channels.nil? && @channels.length < 1
-        invalid_properties.push('invalid value for "channels", number of items must be greater than or equal to 1.')
+      if @body.nil?
+        invalid_properties.push('invalid value for "body", body cannot be nil.')
       end
 
       invalid_properties
@@ -155,38 +121,9 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if !@metadata.nil? && @metadata.length > 50
-      return false if @content_state.nil?
-      return false if !@channels.nil? && @channels.length < 1
+      return false if @title.nil?
+      return false if @body.nil?
       true
-    end
-
-    # Custom attribute writer method with validation
-    # @param [Object] metadata Value to be assigned
-    def metadata=(metadata)
-      if metadata.nil?
-        fail ArgumentError, 'metadata cannot be nil'
-      end
-
-      if metadata.length > 50
-        fail ArgumentError, 'invalid value for "metadata", number of items must be less than or equal to 50.'
-      end
-
-      @metadata = metadata
-    end
-
-    # Custom attribute writer method with validation
-    # @param [Object] channels Value to be assigned
-    def channels=(channels)
-      if channels.nil?
-        fail ArgumentError, 'channels cannot be nil'
-      end
-
-      if channels.length < 1
-        fail ArgumentError, 'invalid value for "channels", number of items must be greater than or equal to 1.'
-      end
-
-      @channels = channels
     end
 
     # Checks equality by comparing each attribute.
@@ -194,14 +131,11 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          metadata == o.metadata &&
-          content_state == o.content_state &&
-          action == o.action &&
-          secondary_action == o.secondary_action &&
-          alert == o.alert &&
-          channels == o.channels &&
-          target == o.target &&
-          tags == o.tags
+          icon == o.icon &&
+          title == o.title &&
+          body == o.body &&
+          image_url == o.image_url &&
+          accent_color == o.accent_color
     end
 
     # @see the `==` method
@@ -213,7 +147,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [metadata, content_state, action, secondary_action, alert, channels, target, tags].hash
+      [icon, title, body, image_url, accent_color].hash
     end
 
     # Builds the object from hash

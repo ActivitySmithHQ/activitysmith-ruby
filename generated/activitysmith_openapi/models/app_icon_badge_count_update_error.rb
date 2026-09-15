@@ -14,39 +14,60 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Send the latest state for a managed Live Activity stream. channels is the streamlined form for stream targeting. target.channels is also accepted for compatibility. If both are provided, they must match.
-  class LiveActivityStreamRequest
-    # Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
-    attr_accessor :metadata
+  class AppIconBadgeCountUpdateError
+    attr_accessor :error
 
-    attr_accessor :content_state
+    attr_accessor :code
 
-    attr_accessor :action
+    attr_accessor :message
 
-    # Optional secondary action button. Supported for alert, progress, and segmented_progress Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
-    attr_accessor :secondary_action
+    attr_accessor :badge
 
-    attr_accessor :alert
+    attr_accessor :devices_targeted
 
-    # Channel slugs. When omitted, API key scope determines recipients.
-    attr_accessor :channels
+    attr_accessor :devices_updated
 
-    attr_accessor :target
+    attr_accessor :users_updated
 
-    # Optional tags to organize and filter notification history.
-    attr_accessor :tags
+    # Deprecated compatibility alias for devices_updated.
+    attr_accessor :devices_notified
+
+    attr_accessor :effective_channel_slugs
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'metadata' => :'metadata',
-        :'content_state' => :'content_state',
-        :'action' => :'action',
-        :'secondary_action' => :'secondary_action',
-        :'alert' => :'alert',
-        :'channels' => :'channels',
-        :'target' => :'target',
-        :'tags' => :'tags'
+        :'error' => :'error',
+        :'code' => :'code',
+        :'message' => :'message',
+        :'badge' => :'badge',
+        :'devices_targeted' => :'devices_targeted',
+        :'devices_updated' => :'devices_updated',
+        :'users_updated' => :'users_updated',
+        :'devices_notified' => :'devices_notified',
+        :'effective_channel_slugs' => :'effective_channel_slugs'
       }
     end
 
@@ -58,14 +79,15 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'metadata' => :'Hash<String, MetadataValue>',
-        :'content_state' => :'StreamContentState',
-        :'action' => :'LiveActivityAction',
-        :'secondary_action' => :'LiveActivityAction',
-        :'alert' => :'AlertPayload',
-        :'channels' => :'Array<String>',
-        :'target' => :'ChannelTarget',
-        :'tags' => :'Array<String>'
+        :'error' => :'String',
+        :'code' => :'String',
+        :'message' => :'String',
+        :'badge' => :'Integer',
+        :'devices_targeted' => :'Integer',
+        :'devices_updated' => :'Integer',
+        :'users_updated' => :'Integer',
+        :'devices_notified' => :'Integer',
+        :'effective_channel_slugs' => :'Array<String>'
       }
     end
 
@@ -79,54 +101,62 @@ module OpenapiClient
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::LiveActivityStreamRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `OpenapiClient::AppIconBadgeCountUpdateError` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::LiveActivityStreamRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `OpenapiClient::AppIconBadgeCountUpdateError`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'metadata')
-        if (value = attributes[:'metadata']).is_a?(Hash)
-          self.metadata = value
-        end
-      end
-
-      if attributes.key?(:'content_state')
-        self.content_state = attributes[:'content_state']
+      if attributes.key?(:'error')
+        self.error = attributes[:'error']
       else
-        self.content_state = nil
+        self.error = nil
       end
 
-      if attributes.key?(:'action')
-        self.action = attributes[:'action']
+      if attributes.key?(:'code')
+        self.code = attributes[:'code']
+      else
+        self.code = nil
       end
 
-      if attributes.key?(:'secondary_action')
-        self.secondary_action = attributes[:'secondary_action']
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      else
+        self.message = nil
       end
 
-      if attributes.key?(:'alert')
-        self.alert = attributes[:'alert']
+      if attributes.key?(:'badge')
+        self.badge = attributes[:'badge']
+      else
+        self.badge = nil
       end
 
-      if attributes.key?(:'channels')
-        if (value = attributes[:'channels']).is_a?(Array)
-          self.channels = value
-        end
+      if attributes.key?(:'devices_targeted')
+        self.devices_targeted = attributes[:'devices_targeted']
       end
 
-      if attributes.key?(:'target')
-        self.target = attributes[:'target']
+      if attributes.key?(:'devices_updated')
+        self.devices_updated = attributes[:'devices_updated']
+      else
+        self.devices_updated = nil
       end
 
-      if attributes.key?(:'tags')
-        if (value = attributes[:'tags']).is_a?(Array)
-          self.tags = value
+      if attributes.key?(:'users_updated')
+        self.users_updated = attributes[:'users_updated']
+      end
+
+      if attributes.key?(:'devices_notified')
+        self.devices_notified = attributes[:'devices_notified']
+      end
+
+      if attributes.key?(:'effective_channel_slugs')
+        if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
+          self.effective_channel_slugs = value
         end
       end
     end
@@ -136,16 +166,32 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if !@metadata.nil? && @metadata.length > 50
-        invalid_properties.push('invalid value for "metadata", number of items must be less than or equal to 50.')
+      if @error.nil?
+        invalid_properties.push('invalid value for "error", error cannot be nil.')
       end
 
-      if @content_state.nil?
-        invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
+      if @code.nil?
+        invalid_properties.push('invalid value for "code", code cannot be nil.')
       end
 
-      if !@channels.nil? && @channels.length < 1
-        invalid_properties.push('invalid value for "channels", number of items must be greater than or equal to 1.')
+      if @message.nil?
+        invalid_properties.push('invalid value for "message", message cannot be nil.')
+      end
+
+      if @badge.nil?
+        invalid_properties.push('invalid value for "badge", badge cannot be nil.')
+      end
+
+      if @badge > 2147483647
+        invalid_properties.push('invalid value for "badge", must be smaller than or equal to 2147483647.')
+      end
+
+      if @badge < 0
+        invalid_properties.push('invalid value for "badge", must be greater than or equal to 0.')
+      end
+
+      if @devices_updated.nil?
+        invalid_properties.push('invalid value for "devices_updated", devices_updated cannot be nil.')
       end
 
       invalid_properties
@@ -155,38 +201,44 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if !@metadata.nil? && @metadata.length > 50
-      return false if @content_state.nil?
-      return false if !@channels.nil? && @channels.length < 1
+      return false if @error.nil?
+      return false if @code.nil?
+      code_validator = EnumAttributeValidator.new('String', ["badge_device_disconnected", "badge_update_failed"])
+      return false unless code_validator.valid?(@code)
+      return false if @message.nil?
+      return false if @badge.nil?
+      return false if @badge > 2147483647
+      return false if @badge < 0
+      return false if @devices_updated.nil?
       true
     end
 
-    # Custom attribute writer method with validation
-    # @param [Object] metadata Value to be assigned
-    def metadata=(metadata)
-      if metadata.nil?
-        fail ArgumentError, 'metadata cannot be nil'
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] code Object to be assigned
+    def code=(code)
+      validator = EnumAttributeValidator.new('String', ["badge_device_disconnected", "badge_update_failed"])
+      unless validator.valid?(code)
+        fail ArgumentError, "invalid value for \"code\", must be one of #{validator.allowable_values}."
       end
-
-      if metadata.length > 50
-        fail ArgumentError, 'invalid value for "metadata", number of items must be less than or equal to 50.'
-      end
-
-      @metadata = metadata
+      @code = code
     end
 
     # Custom attribute writer method with validation
-    # @param [Object] channels Value to be assigned
-    def channels=(channels)
-      if channels.nil?
-        fail ArgumentError, 'channels cannot be nil'
+    # @param [Object] badge Value to be assigned
+    def badge=(badge)
+      if badge.nil?
+        fail ArgumentError, 'badge cannot be nil'
       end
 
-      if channels.length < 1
-        fail ArgumentError, 'invalid value for "channels", number of items must be greater than or equal to 1.'
+      if badge > 2147483647
+        fail ArgumentError, 'invalid value for "badge", must be smaller than or equal to 2147483647.'
       end
 
-      @channels = channels
+      if badge < 0
+        fail ArgumentError, 'invalid value for "badge", must be greater than or equal to 0.'
+      end
+
+      @badge = badge
     end
 
     # Checks equality by comparing each attribute.
@@ -194,14 +246,15 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          metadata == o.metadata &&
-          content_state == o.content_state &&
-          action == o.action &&
-          secondary_action == o.secondary_action &&
-          alert == o.alert &&
-          channels == o.channels &&
-          target == o.target &&
-          tags == o.tags
+          error == o.error &&
+          code == o.code &&
+          message == o.message &&
+          badge == o.badge &&
+          devices_targeted == o.devices_targeted &&
+          devices_updated == o.devices_updated &&
+          users_updated == o.users_updated &&
+          devices_notified == o.devices_notified &&
+          effective_channel_slugs == o.effective_channel_slugs
     end
 
     # @see the `==` method
@@ -213,7 +266,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [metadata, content_state, action, secondary_action, alert, channels, target, tags].hash
+      [error, code, message, badge, devices_targeted, devices_updated, users_updated, devices_notified, effective_channel_slugs].hash
     end
 
     # Builds the object from hash

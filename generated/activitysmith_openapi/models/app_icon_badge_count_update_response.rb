@@ -19,8 +19,16 @@ module OpenapiClient
 
     attr_accessor :badge
 
+    # Number of devices whose App Icon Badge Count was updated.
+    attr_accessor :devices_updated
+
+    # Number of account users with at least one updated device.
+    attr_accessor :users_updated
+
+    # Deprecated compatibility alias for devices_updated.
     attr_accessor :devices_notified
 
+    # Deprecated compatibility alias for users_updated.
     attr_accessor :users_notified
 
     attr_accessor :effective_channel_slugs
@@ -32,6 +40,8 @@ module OpenapiClient
       {
         :'success' => :'success',
         :'badge' => :'badge',
+        :'devices_updated' => :'devices_updated',
+        :'users_updated' => :'users_updated',
         :'devices_notified' => :'devices_notified',
         :'users_notified' => :'users_notified',
         :'effective_channel_slugs' => :'effective_channel_slugs',
@@ -49,6 +59,8 @@ module OpenapiClient
       {
         :'success' => :'Boolean',
         :'badge' => :'Integer',
+        :'devices_updated' => :'Integer',
+        :'users_updated' => :'Integer',
         :'devices_notified' => :'Integer',
         :'users_notified' => :'Integer',
         :'effective_channel_slugs' => :'Array<String>',
@@ -89,16 +101,24 @@ module OpenapiClient
         self.badge = nil
       end
 
+      if attributes.key?(:'devices_updated')
+        self.devices_updated = attributes[:'devices_updated']
+      else
+        self.devices_updated = nil
+      end
+
+      if attributes.key?(:'users_updated')
+        self.users_updated = attributes[:'users_updated']
+      else
+        self.users_updated = nil
+      end
+
       if attributes.key?(:'devices_notified')
         self.devices_notified = attributes[:'devices_notified']
-      else
-        self.devices_notified = nil
       end
 
       if attributes.key?(:'users_notified')
         self.users_notified = attributes[:'users_notified']
-      else
-        self.users_notified = nil
       end
 
       if attributes.key?(:'effective_channel_slugs')
@@ -137,12 +157,12 @@ module OpenapiClient
         invalid_properties.push('invalid value for "badge", must be greater than or equal to 0.')
       end
 
-      if @devices_notified.nil?
-        invalid_properties.push('invalid value for "devices_notified", devices_notified cannot be nil.')
+      if @devices_updated.nil?
+        invalid_properties.push('invalid value for "devices_updated", devices_updated cannot be nil.')
       end
 
-      if @users_notified.nil?
-        invalid_properties.push('invalid value for "users_notified", users_notified cannot be nil.')
+      if @users_updated.nil?
+        invalid_properties.push('invalid value for "users_updated", users_updated cannot be nil.')
       end
 
       if @effective_channel_slugs.nil?
@@ -164,8 +184,8 @@ module OpenapiClient
       return false if @badge.nil?
       return false if @badge > 2147483647
       return false if @badge < 0
-      return false if @devices_notified.nil?
-      return false if @users_notified.nil?
+      return false if @devices_updated.nil?
+      return false if @users_updated.nil?
       return false if @effective_channel_slugs.nil?
       return false if @timestamp.nil?
       true
@@ -196,6 +216,8 @@ module OpenapiClient
       self.class == o.class &&
           success == o.success &&
           badge == o.badge &&
+          devices_updated == o.devices_updated &&
+          users_updated == o.users_updated &&
           devices_notified == o.devices_notified &&
           users_notified == o.users_notified &&
           effective_channel_slugs == o.effective_channel_slugs &&
@@ -211,7 +233,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, badge, devices_notified, users_notified, effective_channel_slugs, timestamp].hash
+      [success, badge, devices_updated, users_updated, devices_notified, users_notified, effective_channel_slugs, timestamp].hash
     end
 
     # Builds the object from hash

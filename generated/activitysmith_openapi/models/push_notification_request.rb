@@ -15,6 +15,9 @@ require 'time'
 
 module OpenapiClient
   class PushNotificationRequest
+    # Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+    attr_accessor :metadata
+
     attr_accessor :title
 
     attr_accessor :message
@@ -24,7 +27,7 @@ module OpenapiClient
     # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
     attr_accessor :media
 
-    # Optional HTTP URL, HTTPS URL, or shortcuts://run-shortcut?name=... URL opened when the user taps the notification body. Use shortcuts://run-shortcut?name=... to run a specific iPhone Shortcut that already exists on the user's device. Overrides the default tap target from `media` when both are provided.
+    # Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
     attr_accessor :redirection
 
     # Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
@@ -44,6 +47,7 @@ module OpenapiClient
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'metadata' => :'metadata',
         :'title' => :'title',
         :'message' => :'message',
         :'subtitle' => :'subtitle',
@@ -66,6 +70,7 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'metadata' => :'Hash<String, MetadataValue>',
         :'title' => :'String',
         :'message' => :'String',
         :'subtitle' => :'String',
@@ -100,6 +105,12 @@ module OpenapiClient
         end
         h[k.to_sym] = v
       }
+
+      if attributes.key?(:'metadata')
+        if (value = attributes[:'metadata']).is_a?(Hash)
+          self.metadata = value
+        end
+      end
 
       if attributes.key?(:'title')
         self.title = attributes[:'title']
@@ -157,6 +168,10 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if !@metadata.nil? && @metadata.length > 50
+        invalid_properties.push('invalid value for "metadata", number of items must be less than or equal to 50.')
+      end
+
       if @title.nil?
         invalid_properties.push('invalid value for "title", title cannot be nil.')
       end
@@ -166,7 +181,11 @@ module OpenapiClient
         invalid_properties.push("invalid value for \"media\", must conform to the pattern #{pattern}.")
       end
 
-      pattern = Regexp.new(/^(http|https|shortcuts):\/\//)
+      if !@redirection.nil? && @redirection.to_s.length > 2048
+        invalid_properties.push('invalid value for "redirection", the character length must be smaller than or equal to 2048.')
+      end
+
+      pattern = Regexp.new(/^[A-Za-z][A-Za-z0-9+.-]*:/)
       if !@redirection.nil? && @redirection !~ pattern
         invalid_properties.push("invalid value for \"redirection\", must conform to the pattern #{pattern}.")
       end
@@ -182,11 +201,27 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if !@metadata.nil? && @metadata.length > 50
       return false if @title.nil?
       return false if !@media.nil? && @media !~ Regexp.new(/^https:\/\//)
-      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^(http|https|shortcuts):\/\//)
+      return false if !@redirection.nil? && @redirection.to_s.length > 2048
+      return false if !@redirection.nil? && @redirection !~ Regexp.new(/^[A-Za-z][A-Za-z0-9+.-]*:/)
       return false if !@actions.nil? && @actions.length > 4
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] metadata Value to be assigned
+    def metadata=(metadata)
+      if metadata.nil?
+        fail ArgumentError, 'metadata cannot be nil'
+      end
+
+      if metadata.length > 50
+        fail ArgumentError, 'invalid value for "metadata", number of items must be less than or equal to 50.'
+      end
+
+      @metadata = metadata
     end
 
     # Custom attribute writer method with validation
@@ -211,7 +246,11 @@ module OpenapiClient
         fail ArgumentError, 'redirection cannot be nil'
       end
 
-      pattern = Regexp.new(/^(http|https|shortcuts):\/\//)
+      if redirection.to_s.length > 2048
+        fail ArgumentError, 'invalid value for "redirection", the character length must be smaller than or equal to 2048.'
+      end
+
+      pattern = Regexp.new(/^[A-Za-z][A-Za-z0-9+.-]*:/)
       if redirection !~ pattern
         fail ArgumentError, "invalid value for \"redirection\", must conform to the pattern #{pattern}."
       end
@@ -238,6 +277,7 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          metadata == o.metadata &&
           title == o.title &&
           message == o.message &&
           subtitle == o.subtitle &&
@@ -260,7 +300,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, message, subtitle, media, redirection, actions, payload, badge, sound, target, tags].hash
+      [metadata, title, message, subtitle, media, redirection, actions, payload, badge, sound, target, tags].hash
     end
 
     # Builds the object from hash

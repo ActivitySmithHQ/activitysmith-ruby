@@ -21,8 +21,14 @@ module OpenapiClient
 
     attr_accessor :limit
 
-    # Current number of active Live Activities.
+    # Highest number of active Live Activities among the targeted devices.
     attr_accessor :active
+
+    # Number of targeted devices that have reached the enforced iOS Live Activity concurrency threshold. Included only when targeted devices have mixed capacity.
+    attr_accessor :blocked_devices
+
+    # Total number of targeted devices. Included only when targeted devices have mixed capacity.
+    attr_accessor :targeted_devices
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
@@ -30,7 +36,9 @@ module OpenapiClient
         :'error' => :'error',
         :'message' => :'message',
         :'limit' => :'limit',
-        :'active' => :'active'
+        :'active' => :'active',
+        :'blocked_devices' => :'blocked_devices',
+        :'targeted_devices' => :'targeted_devices'
       }
     end
 
@@ -45,7 +53,9 @@ module OpenapiClient
         :'error' => :'String',
         :'message' => :'String',
         :'limit' => :'Integer',
-        :'active' => :'Integer'
+        :'active' => :'Integer',
+        :'blocked_devices' => :'Integer',
+        :'targeted_devices' => :'Integer'
       }
     end
 
@@ -93,6 +103,14 @@ module OpenapiClient
       else
         self.active = nil
       end
+
+      if attributes.key?(:'blocked_devices')
+        self.blocked_devices = attributes[:'blocked_devices']
+      end
+
+      if attributes.key?(:'targeted_devices')
+        self.targeted_devices = attributes[:'targeted_devices']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -138,7 +156,9 @@ module OpenapiClient
           error == o.error &&
           message == o.message &&
           limit == o.limit &&
-          active == o.active
+          active == o.active &&
+          blocked_devices == o.blocked_devices &&
+          targeted_devices == o.targeted_devices
     end
 
     # @see the `==` method
@@ -150,7 +170,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [error, message, limit, active].hash
+      [error, message, limit, active, blocked_devices, targeted_devices].hash
     end
 
     # Builds the object from hash

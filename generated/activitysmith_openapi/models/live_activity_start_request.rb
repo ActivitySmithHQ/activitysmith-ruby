@@ -16,6 +16,9 @@ require 'time'
 module OpenapiClient
   # Start a new Live Activity. The response includes activity_id for later update and end calls.
   class LiveActivityStartRequest
+    # Additional information shown in notification and Live Activity details in ActivitySmith. Not displayed in the Push Notification or Live Activity on the device. Values must be strings, finite numbers, or booleans. At most 50 entries and 16 KB of serialized UTF-8 JSON. Omit on updates to preserve existing Metadata; send {} to clear it.
+    attr_accessor :metadata
+
     attr_accessor :content_state
 
     attr_accessor :action
@@ -33,6 +36,7 @@ module OpenapiClient
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'metadata' => :'metadata',
         :'content_state' => :'content_state',
         :'action' => :'action',
         :'secondary_action' => :'secondary_action',
@@ -50,6 +54,7 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'metadata' => :'Hash<String, MetadataValue>',
         :'content_state' => :'ContentStateStart',
         :'action' => :'LiveActivityAction',
         :'secondary_action' => :'LiveActivityAction',
@@ -79,6 +84,12 @@ module OpenapiClient
         end
         h[k.to_sym] = v
       }
+
+      if attributes.key?(:'metadata')
+        if (value = attributes[:'metadata']).is_a?(Hash)
+          self.metadata = value
+        end
+      end
 
       if attributes.key?(:'content_state')
         self.content_state = attributes[:'content_state']
@@ -114,6 +125,10 @@ module OpenapiClient
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if !@metadata.nil? && @metadata.length > 50
+        invalid_properties.push('invalid value for "metadata", number of items must be less than or equal to 50.')
+      end
+
       if @content_state.nil?
         invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
       end
@@ -125,8 +140,23 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if !@metadata.nil? && @metadata.length > 50
       return false if @content_state.nil?
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] metadata Value to be assigned
+    def metadata=(metadata)
+      if metadata.nil?
+        fail ArgumentError, 'metadata cannot be nil'
+      end
+
+      if metadata.length > 50
+        fail ArgumentError, 'invalid value for "metadata", number of items must be less than or equal to 50.'
+      end
+
+      @metadata = metadata
     end
 
     # Checks equality by comparing each attribute.
@@ -134,6 +164,7 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          metadata == o.metadata &&
           content_state == o.content_state &&
           action == o.action &&
           secondary_action == o.secondary_action &&
@@ -151,7 +182,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [content_state, action, secondary_action, alert, target, tags].hash
+      [metadata, content_state, action, secondary_action, alert, target, tags].hash
     end
 
     # Builds the object from hash

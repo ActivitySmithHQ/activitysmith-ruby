@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For alert include message. For timer, omit duration_seconds to preserve and freeze the latest timer state. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, and segmented_progress. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
+  # End payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer, omit duration_seconds to preserve and freeze the latest timer state. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. Type is optional when ending an existing activity. You can send an updated number_of_steps here if the workflow changed after start.
   class ContentStateEnd
     attr_accessor :title
 
@@ -29,7 +29,7 @@ module OpenapiClient
     # Progress percentage (0–100). Use for type=progress. Takes precedence over value/upper_limit if both are provided.
     attr_accessor :percentage
 
-    # Current progress value. Use with upper_limit for type=progress.
+    # For type=value, the required prominent readout (string or finite number); strings preserve exact formatting. For type=progress, a numeric progress value used with upper_limit.
     attr_accessor :value
 
     # Maximum progress value. Use with value for type=progress.
@@ -50,16 +50,16 @@ module OpenapiClient
     # Alert message. Use for type=alert.
     attr_accessor :message
 
-    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, and timer.
+    # Optional SF Symbol icon. Supported by alert, progress, segmented_progress, metrics, stats, timer, and value.
     attr_accessor :icon
 
-    # Optional badge. Supported by alert, progress, and segmented_progress.
+    # Optional badge. Supported by alert, progress, segmented_progress, and value.
     attr_accessor :badge
 
     # Optional. When omitted, the API uses the existing Live Activity type.
     attr_accessor :type
 
-    # Optional. Accent color for progress, segmented_progress, metrics, and timer Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included.
+    # Optional. Accent color for progress, segmented_progress, metrics, timer, and value Live Activities. For Alert Live Activities, this tints action and secondary_action buttons when included.
     attr_accessor :color
 
     # Optional. Overrides color for the current step. Only applies to type=segmented_progress.
@@ -70,28 +70,6 @@ module OpenapiClient
 
     # Optional. Minutes before the ended Live Activity is dismissed. Default 3. Set 0 for immediate dismissal. iOS will dismiss ended Live Activities after ~4 hours max.
     attr_accessor :auto_dismiss_minutes
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
@@ -131,7 +109,7 @@ module OpenapiClient
         :'number_of_steps' => :'Integer',
         :'current_step' => :'Integer',
         :'percentage' => :'Float',
-        :'value' => :'Float',
+        :'value' => :'String',
         :'upper_limit' => :'Float',
         :'duration_seconds' => :'Float',
         :'counts_down' => :'Boolean',
@@ -314,7 +292,7 @@ module OpenapiClient
       return false if !@metrics.nil? && @metrics.length > 8
       return false if !@metrics.nil? && @metrics.length < 1
       return false if !@message.nil? && @message.to_s.length < 1
-      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"])
+      type_validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer", "value"])
       return false unless type_validator.valid?(@type)
       color_validator = EnumAttributeValidator.new('String', ["lime", "green", "cyan", "blue", "purple", "magenta", "red", "orange", "yellow", "gray"])
       return false unless color_validator.valid?(@color)
@@ -405,7 +383,7 @@ module OpenapiClient
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] type Object to be assigned
     def type=(type)
-      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer"])
+      validator = EnumAttributeValidator.new('String', ["segmented_progress", "progress", "metrics", "stats", "alert", "timer", "value"])
       unless validator.valid?(type)
         fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
       end

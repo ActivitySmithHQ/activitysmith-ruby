@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # Update a widget metric value
-    # Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key.
+    # Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
     # @param key [String] Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
     # @param metric_value_update_request [MetricValueUpdateRequest] 
     # @param [Hash] opts the optional parameters
@@ -31,7 +31,7 @@ module OpenapiClient
     end
 
     # Update a widget metric value
-    # Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key.
+    # Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
     # @param key [String] Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
     # @param metric_value_update_request [MetricValueUpdateRequest] 
     # @param [Hash] opts the optional parameters

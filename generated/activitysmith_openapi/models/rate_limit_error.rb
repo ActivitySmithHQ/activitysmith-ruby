@@ -15,13 +15,38 @@ require 'time'
 
 module OpenapiClient
   class RateLimitError
+    attr_accessor :code
+
     attr_accessor :error
 
     attr_accessor :message
 
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'code' => :'code',
         :'error' => :'error',
         :'message' => :'message'
       }
@@ -35,6 +60,7 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'code' => :'String',
         :'error' => :'String',
         :'message' => :'String'
       }
@@ -60,6 +86,10 @@ module OpenapiClient
         end
         h[k.to_sym] = v
       }
+
+      if attributes.key?(:'code')
+        self.code = attributes[:'code']
+      end
 
       if attributes.key?(:'error')
         self.error = attributes[:'error']
@@ -94,9 +124,21 @@ module OpenapiClient
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      code_validator = EnumAttributeValidator.new('String', ["rate_limited"])
+      return false unless code_validator.valid?(@code)
       return false if @error.nil?
       return false if @message.nil?
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] code Object to be assigned
+    def code=(code)
+      validator = EnumAttributeValidator.new('String', ["rate_limited"])
+      unless validator.valid?(code)
+        fail ArgumentError, "invalid value for \"code\", must be one of #{validator.allowable_values}."
+      end
+      @code = code
     end
 
     # Checks equality by comparing each attribute.
@@ -104,6 +146,7 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          code == o.code &&
           error == o.error &&
           message == o.message
     end
@@ -117,7 +160,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [error, message].hash
+      [code, error, message].hash
     end
 
     # Builds the object from hash

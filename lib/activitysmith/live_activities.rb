@@ -8,6 +8,7 @@ module ActivitySmith
     TYPE_STATS = "stats"
     TYPE_ALERT = "alert"
     TYPE_TIMER = "timer"
+    TYPE_VALUE = "value"
 
     class << self
       def content_state(title:, type: nil, subtitle: nil, message: nil, icon: nil, badge: nil, color: nil, duration_seconds: nil, counts_down: nil, **fields)

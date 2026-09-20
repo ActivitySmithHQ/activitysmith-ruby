@@ -806,3 +806,22 @@ class ExternalPushURLsTest < Minitest::Test
     end
   end
 end
+
+class ValueSerializationTest < Minitest::Test
+  def test_formatted_values_and_zero
+    ["$1,240", "0007", "", 0, -12.75].each do |value|
+      api = FakeLiveApi.new
+      resource = ActivitySmith::LiveActivities.new(api)
+      state = ActivitySmith::LiveActivities.content_state(title: "Revenue", type: ActivitySmith::LiveActivities::TYPE_VALUE, value: value)
+      [:start, :update, :end, :stream, :end_stream].each do |method|
+        request = { content_state: state }
+        args = [:stream, :end_stream].include?(method) ? ["revenue", request] : [request]
+        resource.public_send(method, *args)
+        captured = api.calls.last
+        payload = method == :stream ? captured[2] : method == :end_stream ? captured[2][:live_activity_stream_delete_request] : captured[1]
+        body = JSON.parse(JSON.generate(payload))
+        assert_equal value, body["content_state"]["value"]
+      end
+    end
+  end
+end

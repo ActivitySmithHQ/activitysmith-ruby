@@ -11,5 +11,5 @@ Generator version: 7.7.0
 =end
 
 module OpenapiClient
-  VERSION = '1.12.0'
+  VERSION = '1.13.0'
 end

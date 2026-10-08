@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # Send a push notification
-    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`. Optional tags to organize and filter notification history.
+    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`. Optional `icon` shows a custom image, such as a service logo or avatar, next to a smaller app icon. Optional `interruption_level` sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [PushNotificationResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # Send a push notification
-    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. &#x60;media&#x60; cannot be combined with &#x60;actions&#x60;. Optional tags to organize and filter notification history.
+    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. &#x60;media&#x60; cannot be combined with &#x60;actions&#x60;. Optional &#x60;icon&#x60; shows a custom image, such as a service logo or avatar, next to a smaller app icon. Optional &#x60;interruption_level&#x60; sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(PushNotificationResponse, Integer, Hash)>] PushNotificationResponse data, response status code and response headers

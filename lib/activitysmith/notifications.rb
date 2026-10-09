@@ -9,14 +9,13 @@ module ActivitySmith
     def send(request = nil, opts = {}, tags: nil, **request_fields)
       normalized = normalize_channels_target(with_tags(combine_request(request, request_fields), tags))
       assert_valid_media_actions!(normalized)
+      assert_valid_interruption_level!(normalized)
       @api.send_push_notification(normalized, opts)
     end
 
     # Backward-compatible alias.
-    def send_push_notification(push_notification_request, opts = {}, tags: nil)
-      normalized = normalize_channels_target(with_tags(push_notification_request, tags))
-      assert_valid_media_actions!(normalized)
-      @api.send_push_notification(normalized, opts)
+    def send_push_notification(push_notification_request = nil, opts = {}, tags: nil, **request_fields)
+      send(push_notification_request, opts, tags: tags, **request_fields)
     end
 
     def method_missing(name, *args, &block)
@@ -78,6 +77,13 @@ module ActivitySmith
       return unless has_media && has_actions
 
       raise ArgumentError, "ActivitySmith: media cannot be combined with actions"
+    end
+
+    def assert_valid_interruption_level!(request)
+      level = request_value(request, :interruption_level)
+      return if level.nil? || PushInterruptionLevel::VALUES.include?(level.to_s)
+
+      raise ArgumentError, "ActivitySmith: interruption_level must be passive, active, or time-sensitive"
     end
 
     def request_value(request, key)

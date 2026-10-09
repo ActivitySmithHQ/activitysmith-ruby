@@ -24,6 +24,12 @@ module OpenapiClient
 
     attr_accessor :subtitle
 
+    # Optional HTTPS image URL without credentials for a custom notification icon. If the image cannot be loaded, the app icon is used. iOS may omit subtitle when displaying a custom icon.
+    attr_accessor :icon
+
+    # Optional. How urgently iOS presents the notification: `passive` (quiet, no sound or screen wake), `active` (default), or `time-sensitive` (can break through Focus and Scheduled Summary when allowed). Omit for normal delivery.
+    attr_accessor :interruption_level
+
     # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
     attr_accessor :media
 
@@ -44,6 +50,28 @@ module OpenapiClient
     # Optional tags to organize and filter notification history.
     attr_accessor :tags
 
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -51,6 +79,8 @@ module OpenapiClient
         :'title' => :'title',
         :'message' => :'message',
         :'subtitle' => :'subtitle',
+        :'icon' => :'icon',
+        :'interruption_level' => :'interruption_level',
         :'media' => :'media',
         :'redirection' => :'redirection',
         :'actions' => :'actions',
@@ -74,6 +104,8 @@ module OpenapiClient
         :'title' => :'String',
         :'message' => :'String',
         :'subtitle' => :'String',
+        :'icon' => :'String',
+        :'interruption_level' => :'PushInterruptionLevel',
         :'media' => :'String',
         :'redirection' => :'String',
         :'actions' => :'Array<PushNotificationAction>',
@@ -124,6 +156,14 @@ module OpenapiClient
 
       if attributes.key?(:'subtitle')
         self.subtitle = attributes[:'subtitle']
+      end
+
+      if attributes.key?(:'icon')
+        self.icon = attributes[:'icon']
+      end
+
+      if attributes.key?(:'interruption_level')
+        self.interruption_level = attributes[:'interruption_level']
       end
 
       if attributes.key?(:'media')
@@ -177,6 +217,11 @@ module OpenapiClient
       end
 
       pattern = Regexp.new(/^https:\/\//)
+      if !@icon.nil? && @icon !~ pattern
+        invalid_properties.push("invalid value for \"icon\", must conform to the pattern #{pattern}.")
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
       if !@media.nil? && @media !~ pattern
         invalid_properties.push("invalid value for \"media\", must conform to the pattern #{pattern}.")
       end
@@ -203,6 +248,7 @@ module OpenapiClient
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if !@metadata.nil? && @metadata.length > 50
       return false if @title.nil?
+      return false if !@icon.nil? && @icon !~ Regexp.new(/^https:\/\//)
       return false if !@media.nil? && @media !~ Regexp.new(/^https:\/\//)
       return false if !@redirection.nil? && @redirection.to_s.length > 2048
       return false if !@redirection.nil? && @redirection !~ Regexp.new(/^[A-Za-z][A-Za-z0-9+.-]*:/)
@@ -222,6 +268,21 @@ module OpenapiClient
       end
 
       @metadata = metadata
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] icon Value to be assigned
+    def icon=(icon)
+      if icon.nil?
+        fail ArgumentError, 'icon cannot be nil'
+      end
+
+      pattern = Regexp.new(/^https:\/\//)
+      if icon !~ pattern
+        fail ArgumentError, "invalid value for \"icon\", must conform to the pattern #{pattern}."
+      end
+
+      @icon = icon
     end
 
     # Custom attribute writer method with validation
@@ -281,6 +342,8 @@ module OpenapiClient
           title == o.title &&
           message == o.message &&
           subtitle == o.subtitle &&
+          icon == o.icon &&
+          interruption_level == o.interruption_level &&
           media == o.media &&
           redirection == o.redirection &&
           actions == o.actions &&
@@ -300,7 +363,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [metadata, title, message, subtitle, media, redirection, actions, payload, badge, sound, target, tags].hash
+      [metadata, title, message, subtitle, icon, interruption_level, media, redirection, actions, payload, badge, sound, target, tags].hash
     end
 
     # Builds the object from hash

@@ -37,6 +37,9 @@ module OpenapiClient
     # Optional tags to organize and filter notification history.
     attr_accessor :tags
 
+    # Present on `updated` responses when the current Live Activity has received more than 12 updates and has averaged more than one update every 2 minutes since it started. The update is still sent, but iOS may throttle Live Activities that update this often.
+    attr_accessor :warning
+
     attr_accessor :timestamp
 
     class EnumAttributeValidator
@@ -74,6 +77,7 @@ module OpenapiClient
         :'users_notified' => :'users_notified',
         :'effective_channel_slugs' => :'effective_channel_slugs',
         :'tags' => :'tags',
+        :'warning' => :'warning',
         :'timestamp' => :'timestamp'
       }
     end
@@ -96,6 +100,7 @@ module OpenapiClient
         :'users_notified' => :'Integer',
         :'effective_channel_slugs' => :'Array<String>',
         :'tags' => :'Array<String>',
+        :'warning' => :'String',
         :'timestamp' => :'Time'
       }
     end
@@ -172,6 +177,10 @@ module OpenapiClient
         end
       end
 
+      if attributes.key?(:'warning')
+        self.warning = attributes[:'warning']
+      end
+
       if attributes.key?(:'timestamp')
         self.timestamp = attributes[:'timestamp']
       else
@@ -241,6 +250,7 @@ module OpenapiClient
           users_notified == o.users_notified &&
           effective_channel_slugs == o.effective_channel_slugs &&
           tags == o.tags &&
+          warning == o.warning &&
           timestamp == o.timestamp
     end
 
@@ -253,7 +263,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, operation, stream_key, activity_id, previous_activity_id, devices_notified, devices_queued, users_notified, effective_channel_slugs, tags, timestamp].hash
+      [success, operation, stream_key, activity_id, previous_activity_id, devices_notified, devices_queued, users_notified, effective_channel_slugs, tags, warning, timestamp].hash
     end
 
     # Builds the object from hash

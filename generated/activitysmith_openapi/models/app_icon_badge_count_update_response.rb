@@ -35,6 +35,15 @@ module OpenapiClient
 
     attr_accessor :timestamp
 
+    # Number of device tokens targeted.
+    attr_accessor :devices_targeted
+
+    # Number of device tokens deactivated because APNs reported them unregistered.
+    attr_accessor :devices_deactivated
+
+    # Number of targeted device tokens APNs reported as unregistered.
+    attr_accessor :devices_unregistered
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -45,7 +54,10 @@ module OpenapiClient
         :'devices_notified' => :'devices_notified',
         :'users_notified' => :'users_notified',
         :'effective_channel_slugs' => :'effective_channel_slugs',
-        :'timestamp' => :'timestamp'
+        :'timestamp' => :'timestamp',
+        :'devices_targeted' => :'devices_targeted',
+        :'devices_deactivated' => :'devices_deactivated',
+        :'devices_unregistered' => :'devices_unregistered'
       }
     end
 
@@ -64,7 +76,10 @@ module OpenapiClient
         :'devices_notified' => :'Integer',
         :'users_notified' => :'Integer',
         :'effective_channel_slugs' => :'Array<String>',
-        :'timestamp' => :'Time'
+        :'timestamp' => :'Time',
+        :'devices_targeted' => :'Integer',
+        :'devices_deactivated' => :'Integer',
+        :'devices_unregistered' => :'Integer'
       }
     end
 
@@ -133,6 +148,18 @@ module OpenapiClient
         self.timestamp = attributes[:'timestamp']
       else
         self.timestamp = nil
+      end
+
+      if attributes.key?(:'devices_targeted')
+        self.devices_targeted = attributes[:'devices_targeted']
+      end
+
+      if attributes.key?(:'devices_deactivated')
+        self.devices_deactivated = attributes[:'devices_deactivated']
+      end
+
+      if attributes.key?(:'devices_unregistered')
+        self.devices_unregistered = attributes[:'devices_unregistered']
       end
     end
 
@@ -221,7 +248,10 @@ module OpenapiClient
           devices_notified == o.devices_notified &&
           users_notified == o.users_notified &&
           effective_channel_slugs == o.effective_channel_slugs &&
-          timestamp == o.timestamp
+          timestamp == o.timestamp &&
+          devices_targeted == o.devices_targeted &&
+          devices_deactivated == o.devices_deactivated &&
+          devices_unregistered == o.devices_unregistered
     end
 
     # @see the `==` method
@@ -233,7 +263,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, badge, devices_updated, users_updated, devices_notified, users_notified, effective_channel_slugs, timestamp].hash
+      [success, badge, devices_updated, users_updated, devices_notified, users_notified, effective_channel_slugs, timestamp, devices_targeted, devices_deactivated, devices_unregistered].hash
     end
 
     # Builds the object from hash

@@ -31,6 +31,14 @@ module OpenapiClient
 
     attr_accessor :timestamp
 
+    # Present when starting this Live Activity ended an older one to stay within the device limit.
+    attr_accessor :ended_activity_id
+
+    attr_accessor :message
+
+    # Per-device delivery errors when some devices could not be reached.
+    attr_accessor :errors
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -40,7 +48,10 @@ module OpenapiClient
         :'activity_id' => :'activity_id',
         :'effective_channel_slugs' => :'effective_channel_slugs',
         :'tags' => :'tags',
-        :'timestamp' => :'timestamp'
+        :'timestamp' => :'timestamp',
+        :'ended_activity_id' => :'ended_activity_id',
+        :'message' => :'message',
+        :'errors' => :'errors'
       }
     end
 
@@ -58,7 +69,10 @@ module OpenapiClient
         :'activity_id' => :'String',
         :'effective_channel_slugs' => :'Array<String>',
         :'tags' => :'Array<String>',
-        :'timestamp' => :'Time'
+        :'timestamp' => :'Time',
+        :'ended_activity_id' => :'String',
+        :'message' => :'String',
+        :'errors' => :'Array<String>'
       }
     end
 
@@ -120,6 +134,20 @@ module OpenapiClient
       else
         self.timestamp = nil
       end
+
+      if attributes.key?(:'ended_activity_id')
+        self.ended_activity_id = attributes[:'ended_activity_id']
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      end
+
+      if attributes.key?(:'errors')
+        if (value = attributes[:'errors']).is_a?(Array)
+          self.errors = value
+        end
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -163,7 +191,10 @@ module OpenapiClient
           activity_id == o.activity_id &&
           effective_channel_slugs == o.effective_channel_slugs &&
           tags == o.tags &&
-          timestamp == o.timestamp
+          timestamp == o.timestamp &&
+          ended_activity_id == o.ended_activity_id &&
+          message == o.message &&
+          errors == o.errors
     end
 
     # @see the `==` method
@@ -175,7 +206,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, devices_notified, users_notified, activity_id, effective_channel_slugs, tags, timestamp].hash
+      [success, devices_notified, users_notified, activity_id, effective_channel_slugs, tags, timestamp, ended_activity_id, message, errors].hash
     end
 
     # Builds the object from hash

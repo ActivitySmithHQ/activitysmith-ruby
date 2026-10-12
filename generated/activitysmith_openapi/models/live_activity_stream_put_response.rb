@@ -37,7 +37,20 @@ module OpenapiClient
     # Optional tags to organize and filter notification history.
     attr_accessor :tags
 
+    # Present on `updated` responses when the current Live Activity has received more than 12 updates and has averaged more than one update every 2 minutes since it started. The update is still sent, but iOS may throttle Live Activities that update this often.
+    attr_accessor :warning
+
     attr_accessor :timestamp
+
+    # True when the request had no effect.
+    attr_accessor :ignored
+
+    attr_accessor :remote_push_sent
+
+    attr_accessor :message
+
+    # Per-device delivery errors when some devices could not be reached.
+    attr_accessor :errors
 
     class EnumAttributeValidator
       attr_reader :datatype
@@ -74,7 +87,12 @@ module OpenapiClient
         :'users_notified' => :'users_notified',
         :'effective_channel_slugs' => :'effective_channel_slugs',
         :'tags' => :'tags',
-        :'timestamp' => :'timestamp'
+        :'warning' => :'warning',
+        :'timestamp' => :'timestamp',
+        :'ignored' => :'ignored',
+        :'remote_push_sent' => :'remote_push_sent',
+        :'message' => :'message',
+        :'errors' => :'errors'
       }
     end
 
@@ -96,7 +114,12 @@ module OpenapiClient
         :'users_notified' => :'Integer',
         :'effective_channel_slugs' => :'Array<String>',
         :'tags' => :'Array<String>',
-        :'timestamp' => :'Time'
+        :'warning' => :'String',
+        :'timestamp' => :'Time',
+        :'ignored' => :'Boolean',
+        :'remote_push_sent' => :'Boolean',
+        :'message' => :'String',
+        :'errors' => :'Array<String>'
       }
     end
 
@@ -172,10 +195,32 @@ module OpenapiClient
         end
       end
 
+      if attributes.key?(:'warning')
+        self.warning = attributes[:'warning']
+      end
+
       if attributes.key?(:'timestamp')
         self.timestamp = attributes[:'timestamp']
       else
         self.timestamp = nil
+      end
+
+      if attributes.key?(:'ignored')
+        self.ignored = attributes[:'ignored']
+      end
+
+      if attributes.key?(:'remote_push_sent')
+        self.remote_push_sent = attributes[:'remote_push_sent']
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      end
+
+      if attributes.key?(:'errors')
+        if (value = attributes[:'errors']).is_a?(Array)
+          self.errors = value
+        end
       end
     end
 
@@ -241,7 +286,12 @@ module OpenapiClient
           users_notified == o.users_notified &&
           effective_channel_slugs == o.effective_channel_slugs &&
           tags == o.tags &&
-          timestamp == o.timestamp
+          warning == o.warning &&
+          timestamp == o.timestamp &&
+          ignored == o.ignored &&
+          remote_push_sent == o.remote_push_sent &&
+          message == o.message &&
+          errors == o.errors
     end
 
     # @see the `==` method
@@ -253,7 +303,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, operation, stream_key, activity_id, previous_activity_id, devices_notified, devices_queued, users_notified, effective_channel_slugs, tags, timestamp].hash
+      [success, operation, stream_key, activity_id, previous_activity_id, devices_notified, devices_queued, users_notified, effective_channel_slugs, tags, warning, timestamp, ignored, remote_push_sent, message, errors].hash
     end
 
     # Builds the object from hash

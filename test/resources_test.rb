@@ -20,6 +20,11 @@ class FakePushApi
     { ok: true }
   end
 
+  def replace_push_notification(notification_id, request, opts = {})
+    @calls << [:replace_push_notification, notification_id, request, opts]
+    { ok: true }
+  end
+
   def send_push_notification_with_http_info(request, opts = {})
     @calls << [:send_push_notification_with_http_info, request, opts]
     [:ok, 200, {}]
@@ -93,6 +98,35 @@ class ResourcesTest < Minitest::Test
       ],
       api.calls
     )
+  end
+
+  def test_notifications_replace_and_alias
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    assert_equal({ ok: true }, resource.replace("pn1", title: "Answered from desk", tags: []))
+    assert_equal({ ok: true }, resource.replace_push_notification("pn1", { title: "Again" }))
+
+    assert_equal(
+      [
+        [:replace_push_notification, "pn1", { title: "Answered from desk", tags: [] }, {}],
+        [:replace_push_notification, "pn1", { title: "Again" }, {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_notifications_replace_rejects_media_and_actions
+    resource = ActivitySmith::Notifications.new(FakePushApi.new)
+    error = assert_raises(ArgumentError) do
+      resource.replace(
+        "pn1",
+        title: "Done",
+        media: "https://cdn.activitysmith.com/voice_over.mp3",
+        actions: [{ title: "Open", type: "open_url", url: "https://example.com" }]
+      )
+    end
+    assert_equal "ActivitySmith: media cannot be combined with actions", error.message
   end
 
   def test_notifications_map_channels_to_target

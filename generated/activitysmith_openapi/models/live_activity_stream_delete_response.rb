@@ -30,6 +30,18 @@ module OpenapiClient
 
     attr_accessor :timestamp
 
+    # True when the stream was already ended and the request had no effect.
+    attr_accessor :ignored
+
+    attr_accessor :message
+
+    attr_accessor :forced_completion
+
+    attr_accessor :warning
+
+    # Per-device delivery errors when some devices could not be reached.
+    attr_accessor :errors
+
     class EnumAttributeValidator
       attr_reader :datatype
       attr_reader :allowable_values
@@ -61,7 +73,12 @@ module OpenapiClient
         :'activity_id' => :'activity_id',
         :'devices_queued' => :'devices_queued',
         :'devices_notified' => :'devices_notified',
-        :'timestamp' => :'timestamp'
+        :'timestamp' => :'timestamp',
+        :'ignored' => :'ignored',
+        :'message' => :'message',
+        :'forced_completion' => :'forced_completion',
+        :'warning' => :'warning',
+        :'errors' => :'errors'
       }
     end
 
@@ -79,7 +96,12 @@ module OpenapiClient
         :'activity_id' => :'String',
         :'devices_queued' => :'Integer',
         :'devices_notified' => :'Integer',
-        :'timestamp' => :'Time'
+        :'timestamp' => :'Time',
+        :'ignored' => :'Boolean',
+        :'message' => :'String',
+        :'forced_completion' => :'Boolean',
+        :'warning' => :'String',
+        :'errors' => :'Array<String>'
       }
     end
 
@@ -139,6 +161,28 @@ module OpenapiClient
         self.timestamp = attributes[:'timestamp']
       else
         self.timestamp = nil
+      end
+
+      if attributes.key?(:'ignored')
+        self.ignored = attributes[:'ignored']
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      end
+
+      if attributes.key?(:'forced_completion')
+        self.forced_completion = attributes[:'forced_completion']
+      end
+
+      if attributes.key?(:'warning')
+        self.warning = attributes[:'warning']
+      end
+
+      if attributes.key?(:'errors')
+        if (value = attributes[:'errors']).is_a?(Array)
+          self.errors = value
+        end
       end
     end
 
@@ -200,7 +244,12 @@ module OpenapiClient
           activity_id == o.activity_id &&
           devices_queued == o.devices_queued &&
           devices_notified == o.devices_notified &&
-          timestamp == o.timestamp
+          timestamp == o.timestamp &&
+          ignored == o.ignored &&
+          message == o.message &&
+          forced_completion == o.forced_completion &&
+          warning == o.warning &&
+          errors == o.errors
     end
 
     # @see the `==` method
@@ -212,7 +261,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, operation, stream_key, activity_id, devices_queued, devices_notified, timestamp].hash
+      [success, operation, stream_key, activity_id, devices_queued, devices_notified, timestamp, ignored, message, forced_completion, warning, errors].hash
     end
 
     # Builds the object from hash

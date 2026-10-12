@@ -36,6 +36,24 @@ class PushOptionsTest < Minitest::Test
     end
   end
 
+  def test_replace_serializes_put_and_parses_response
+    ActivitySmith::Client.new(api_key: 'mock-only')
+    [:replace, :replace_push_notification].each do |method|
+      captured = []
+      api_client = OpenapiClient::ApiClient.new
+      api_client.define_singleton_method(:call_api) do |http_method, path, opts = {}|
+        request = build_request(http_method, path, opts)
+        captured << [http_method, path, JSON.parse(request.options[:body])]
+        body = '{"success":true,"notification_id":"pn1","devices_notified":1,"future_field":true,"timestamp":"2026-10-12T00:00:00Z"}'
+        [deserialize(Struct.new(:body, :headers).new(body, {'Content-Type' => 'application/json'}), opts[:return_type]), 200, {}]
+      end
+      notifications = ActivitySmith::Notifications.new(OpenapiClient::PushNotificationsApi.new(api_client))
+      response = notifications.public_send(method, 'pn1', {title: 'Answered from desk', tags: [], metadata: {attempts: 0, resolved: false}})
+      assert_equal [:PUT, '/push-notification/pn1', {'title' => 'Answered from desk', 'tags' => [], 'metadata' => {'attempts' => 0, 'resolved' => false}}], captured.last
+      assert_equal 'pn1', response.notification_id
+    end
+  end
+
   def test_invalid_level_rejected
     api = Object.new
     assert_raises(ArgumentError) { ActivitySmith::Notifications.new(api).send(title: 'Test', interruption_level: 'timeSensitive') }

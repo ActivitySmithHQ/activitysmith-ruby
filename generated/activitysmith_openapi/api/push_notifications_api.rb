@@ -19,8 +19,86 @@ module OpenapiClient
     def initialize(api_client = ApiClient.default)
       @api_client = api_client
     end
+    # Replace a push notification
+    # Replaces a Push Notification you already sent, using the `notification_id` from the send response. The replacement takes the original's place on the Lock Screen and in Notification Center instead of appearing as a second notification. It is delivered silently, with no sound or screen wake, to the same recipients as the original. Notification history is updated in place.
+    # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.
+    # @param push_notification_replace_request [PushNotificationReplaceRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [PushNotificationReplaceResponse]
+    def replace_push_notification(notification_id, push_notification_replace_request, opts = {})
+      data, _status_code, _headers = replace_push_notification_with_http_info(notification_id, push_notification_replace_request, opts)
+      data
+    end
+
+    # Replace a push notification
+    # Replaces a Push Notification you already sent, using the &#x60;notification_id&#x60; from the send response. The replacement takes the original&#39;s place on the Lock Screen and in Notification Center instead of appearing as a second notification. It is delivered silently, with no sound or screen wake, to the same recipients as the original. Notification history is updated in place.
+    # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.
+    # @param push_notification_replace_request [PushNotificationReplaceRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(PushNotificationReplaceResponse, Integer, Hash)>] PushNotificationReplaceResponse data, response status code and response headers
+    def replace_push_notification_with_http_info(notification_id, push_notification_replace_request, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: PushNotificationsApi.replace_push_notification ...'
+      end
+      # verify the required parameter 'notification_id' is set
+      if @api_client.config.client_side_validation && notification_id.nil?
+        fail ArgumentError, "Missing the required parameter 'notification_id' when calling PushNotificationsApi.replace_push_notification"
+      end
+      if @api_client.config.client_side_validation && notification_id.to_s.length < 1
+        fail ArgumentError, 'invalid value for "notification_id" when calling PushNotificationsApi.replace_push_notification, the character length must be great than or equal to 1.'
+      end
+
+      # verify the required parameter 'push_notification_replace_request' is set
+      if @api_client.config.client_side_validation && push_notification_replace_request.nil?
+        fail ArgumentError, "Missing the required parameter 'push_notification_replace_request' when calling PushNotificationsApi.replace_push_notification"
+      end
+      # resource path
+      local_var_path = '/push-notification/{notification_id}'.sub('{' + 'notification_id' + '}', CGI.escape(notification_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(push_notification_replace_request)
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'PushNotificationReplaceResponse'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || ['apiKeyAuth']
+
+      new_options = opts.merge(
+        :operation => :"PushNotificationsApi.replace_push_notification",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:PUT, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: PushNotificationsApi#replace_push_notification\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Send a push notification
-    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`. Optional `icon` shows a custom image, such as a service logo or avatar, next to a smaller app icon. Optional `interruption_level` sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
+    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. `media` cannot be combined with `actions`. Optional `icon` shows a custom image, such as a logo or avatar, next to a smaller app icon. Optional `interruption_level` sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [PushNotificationResponse]
@@ -30,7 +108,7 @@ module OpenapiClient
     end
 
     # Send a push notification
-    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. &#x60;media&#x60; cannot be combined with &#x60;actions&#x60;. Optional &#x60;icon&#x60; shows a custom image, such as a service logo or avatar, next to a smaller app icon. Optional &#x60;interruption_level&#x60; sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
+    # Sends a push notification to devices matched by API key scope and optional target channels. Supports optional redirection URL, optional media preview or playback when the notification is expanded, and up to 4 interactive actions. &#x60;media&#x60; cannot be combined with &#x60;actions&#x60;. Optional &#x60;icon&#x60; shows a custom image, such as a logo or avatar, next to a smaller app icon. Optional &#x60;interruption_level&#x60; sets how urgently iOS presents the notification. Optional tags to organize and filter notification history.
     # @param push_notification_request [PushNotificationRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(PushNotificationResponse, Integer, Hash)>] PushNotificationResponse data, response status code and response headers

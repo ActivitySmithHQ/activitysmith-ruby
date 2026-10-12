@@ -18,6 +18,18 @@ module ActivitySmith
       send(push_notification_request, opts, tags: tags, **request_fields)
     end
 
+    # Silently replaces a sent Push Notification, using the notification_id returned by send.
+    def replace(notification_id, request = nil, opts = {}, tags: nil, **request_fields)
+      normalized = with_tags(combine_request(request, request_fields), tags)
+      assert_valid_media_actions!(normalized)
+      @api.replace_push_notification(notification_id, normalized, opts)
+    end
+
+    # Generated-style alias.
+    def replace_push_notification(notification_id, push_notification_replace_request = nil, opts = {}, tags: nil, **request_fields)
+      replace(notification_id, push_notification_replace_request, opts, tags: tags, **request_fields)
+    end
+
     def method_missing(name, *args, &block)
       return @api.public_send(name, *args, &block) if @api.respond_to?(name)
 

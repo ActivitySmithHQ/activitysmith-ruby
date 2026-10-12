@@ -26,6 +26,21 @@ module OpenapiClient
 
     attr_accessor :timestamp
 
+    # True when the Live Activity had already ended and the request had no effect.
+    attr_accessor :ignored
+
+    attr_accessor :message
+
+    attr_accessor :end_reason
+
+    # True when the Live Activity was marked complete without a confirmed APNs end delivery.
+    attr_accessor :forced_completion
+
+    attr_accessor :warning
+
+    # Per-device delivery errors when some devices could not be reached.
+    attr_accessor :errors
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -33,7 +48,13 @@ module OpenapiClient
         :'activity_id' => :'activity_id',
         :'devices_queued' => :'devices_queued',
         :'devices_notified' => :'devices_notified',
-        :'timestamp' => :'timestamp'
+        :'timestamp' => :'timestamp',
+        :'ignored' => :'ignored',
+        :'message' => :'message',
+        :'end_reason' => :'end_reason',
+        :'forced_completion' => :'forced_completion',
+        :'warning' => :'warning',
+        :'errors' => :'errors'
       }
     end
 
@@ -49,13 +70,20 @@ module OpenapiClient
         :'activity_id' => :'String',
         :'devices_queued' => :'Integer',
         :'devices_notified' => :'Integer',
-        :'timestamp' => :'Time'
+        :'timestamp' => :'Time',
+        :'ignored' => :'Boolean',
+        :'message' => :'String',
+        :'end_reason' => :'String',
+        :'forced_completion' => :'Boolean',
+        :'warning' => :'String',
+        :'errors' => :'Array<String>'
       }
     end
 
     # List of attributes with nullable: true
     def self.openapi_nullable
       Set.new([
+        :'end_reason',
       ])
     end
 
@@ -99,6 +127,32 @@ module OpenapiClient
       else
         self.timestamp = nil
       end
+
+      if attributes.key?(:'ignored')
+        self.ignored = attributes[:'ignored']
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      end
+
+      if attributes.key?(:'end_reason')
+        self.end_reason = attributes[:'end_reason']
+      end
+
+      if attributes.key?(:'forced_completion')
+        self.forced_completion = attributes[:'forced_completion']
+      end
+
+      if attributes.key?(:'warning')
+        self.warning = attributes[:'warning']
+      end
+
+      if attributes.key?(:'errors')
+        if (value = attributes[:'errors']).is_a?(Array)
+          self.errors = value
+        end
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -140,7 +194,13 @@ module OpenapiClient
           activity_id == o.activity_id &&
           devices_queued == o.devices_queued &&
           devices_notified == o.devices_notified &&
-          timestamp == o.timestamp
+          timestamp == o.timestamp &&
+          ignored == o.ignored &&
+          message == o.message &&
+          end_reason == o.end_reason &&
+          forced_completion == o.forced_completion &&
+          warning == o.warning &&
+          errors == o.errors
     end
 
     # @see the `==` method
@@ -152,7 +212,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, activity_id, devices_queued, devices_notified, timestamp].hash
+      [success, activity_id, devices_queued, devices_notified, timestamp, ignored, message, end_reason, forced_completion, warning, errors].hash
     end
 
     # Builds the object from hash

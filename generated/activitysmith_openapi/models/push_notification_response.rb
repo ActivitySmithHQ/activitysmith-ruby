@@ -19,6 +19,9 @@ module OpenapiClient
     # True when APNs accepts the notification for at least one targeted device.
     attr_accessor :success
 
+    # ID of this Push Notification. Pass it to `PUT /push-notification/{notification_id}` to replace the notification later.
+    attr_accessor :notification_id
+
     # Number of device tokens for which APNs accepted the notification, without confirming on-device delivery.
     attr_accessor :devices_notified
 
@@ -31,15 +34,35 @@ module OpenapiClient
 
     attr_accessor :timestamp
 
+    # Number of device tokens targeted.
+    attr_accessor :devices_targeted
+
+    # Number of device tokens deactivated because APNs reported them unregistered.
+    attr_accessor :devices_deactivated
+
+    # Number of targeted device tokens APNs reported as unregistered.
+    attr_accessor :devices_unregistered
+
+    # True when the request was an integration connection test and no paired devices were available.
+    attr_accessor :credential_test
+
+    attr_accessor :message
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'success' => :'success',
+        :'notification_id' => :'notification_id',
         :'devices_notified' => :'devices_notified',
         :'users_notified' => :'users_notified',
         :'effective_channel_slugs' => :'effective_channel_slugs',
         :'tags' => :'tags',
-        :'timestamp' => :'timestamp'
+        :'timestamp' => :'timestamp',
+        :'devices_targeted' => :'devices_targeted',
+        :'devices_deactivated' => :'devices_deactivated',
+        :'devices_unregistered' => :'devices_unregistered',
+        :'credential_test' => :'credential_test',
+        :'message' => :'message'
       }
     end
 
@@ -52,11 +75,17 @@ module OpenapiClient
     def self.openapi_types
       {
         :'success' => :'Boolean',
+        :'notification_id' => :'String',
         :'devices_notified' => :'Integer',
         :'users_notified' => :'Integer',
         :'effective_channel_slugs' => :'Array<String>',
         :'tags' => :'Array<String>',
-        :'timestamp' => :'Time'
+        :'timestamp' => :'Time',
+        :'devices_targeted' => :'Integer',
+        :'devices_deactivated' => :'Integer',
+        :'devices_unregistered' => :'Integer',
+        :'credential_test' => :'Boolean',
+        :'message' => :'String'
       }
     end
 
@@ -87,6 +116,10 @@ module OpenapiClient
         self.success = nil
       end
 
+      if attributes.key?(:'notification_id')
+        self.notification_id = attributes[:'notification_id']
+      end
+
       if attributes.key?(:'devices_notified')
         self.devices_notified = attributes[:'devices_notified']
       end
@@ -111,6 +144,26 @@ module OpenapiClient
         self.timestamp = attributes[:'timestamp']
       else
         self.timestamp = nil
+      end
+
+      if attributes.key?(:'devices_targeted')
+        self.devices_targeted = attributes[:'devices_targeted']
+      end
+
+      if attributes.key?(:'devices_deactivated')
+        self.devices_deactivated = attributes[:'devices_deactivated']
+      end
+
+      if attributes.key?(:'devices_unregistered')
+        self.devices_unregistered = attributes[:'devices_unregistered']
+      end
+
+      if attributes.key?(:'credential_test')
+        self.credential_test = attributes[:'credential_test']
+      end
+
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
       end
     end
 
@@ -145,11 +198,17 @@ module OpenapiClient
       return true if self.equal?(o)
       self.class == o.class &&
           success == o.success &&
+          notification_id == o.notification_id &&
           devices_notified == o.devices_notified &&
           users_notified == o.users_notified &&
           effective_channel_slugs == o.effective_channel_slugs &&
           tags == o.tags &&
-          timestamp == o.timestamp
+          timestamp == o.timestamp &&
+          devices_targeted == o.devices_targeted &&
+          devices_deactivated == o.devices_deactivated &&
+          devices_unregistered == o.devices_unregistered &&
+          credential_test == o.credential_test &&
+          message == o.message
     end
 
     # @see the `==` method
@@ -161,7 +220,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, devices_notified, users_notified, effective_channel_slugs, tags, timestamp].hash
+      [success, notification_id, devices_notified, users_notified, effective_channel_slugs, tags, timestamp, devices_targeted, devices_deactivated, devices_unregistered, credential_test, message].hash
     end
 
     # Builds the object from hash

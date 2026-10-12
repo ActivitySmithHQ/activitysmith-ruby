@@ -26,6 +26,23 @@ module OpenapiClient
 
     attr_accessor :timestamp
 
+    attr_accessor :users_notified
+
+    attr_accessor :effective_channel_slugs
+
+    # Optional tags to organize and filter notification history.
+    attr_accessor :tags
+
+    # Present when the update started a new Live Activity for a managed stream.
+    attr_accessor :operation
+
+    attr_accessor :stream_key
+
+    attr_accessor :previous_activity_id
+
+    # Per-device delivery errors when some devices could not be reached.
+    attr_accessor :errors
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -33,7 +50,14 @@ module OpenapiClient
         :'activity_id' => :'activity_id',
         :'devices_queued' => :'devices_queued',
         :'devices_notified' => :'devices_notified',
-        :'timestamp' => :'timestamp'
+        :'timestamp' => :'timestamp',
+        :'users_notified' => :'users_notified',
+        :'effective_channel_slugs' => :'effective_channel_slugs',
+        :'tags' => :'tags',
+        :'operation' => :'operation',
+        :'stream_key' => :'stream_key',
+        :'previous_activity_id' => :'previous_activity_id',
+        :'errors' => :'errors'
       }
     end
 
@@ -49,7 +73,14 @@ module OpenapiClient
         :'activity_id' => :'String',
         :'devices_queued' => :'Integer',
         :'devices_notified' => :'Integer',
-        :'timestamp' => :'Time'
+        :'timestamp' => :'Time',
+        :'users_notified' => :'Integer',
+        :'effective_channel_slugs' => :'Array<String>',
+        :'tags' => :'Array<String>',
+        :'operation' => :'String',
+        :'stream_key' => :'String',
+        :'previous_activity_id' => :'String',
+        :'errors' => :'Array<String>'
       }
     end
 
@@ -99,6 +130,40 @@ module OpenapiClient
       else
         self.timestamp = nil
       end
+
+      if attributes.key?(:'users_notified')
+        self.users_notified = attributes[:'users_notified']
+      end
+
+      if attributes.key?(:'effective_channel_slugs')
+        if (value = attributes[:'effective_channel_slugs']).is_a?(Array)
+          self.effective_channel_slugs = value
+        end
+      end
+
+      if attributes.key?(:'tags')
+        if (value = attributes[:'tags']).is_a?(Array)
+          self.tags = value
+        end
+      end
+
+      if attributes.key?(:'operation')
+        self.operation = attributes[:'operation']
+      end
+
+      if attributes.key?(:'stream_key')
+        self.stream_key = attributes[:'stream_key']
+      end
+
+      if attributes.key?(:'previous_activity_id')
+        self.previous_activity_id = attributes[:'previous_activity_id']
+      end
+
+      if attributes.key?(:'errors')
+        if (value = attributes[:'errors']).is_a?(Array)
+          self.errors = value
+        end
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -140,7 +205,14 @@ module OpenapiClient
           activity_id == o.activity_id &&
           devices_queued == o.devices_queued &&
           devices_notified == o.devices_notified &&
-          timestamp == o.timestamp
+          timestamp == o.timestamp &&
+          users_notified == o.users_notified &&
+          effective_channel_slugs == o.effective_channel_slugs &&
+          tags == o.tags &&
+          operation == o.operation &&
+          stream_key == o.stream_key &&
+          previous_activity_id == o.previous_activity_id &&
+          errors == o.errors
     end
 
     # @see the `==` method
@@ -152,7 +224,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, activity_id, devices_queued, devices_notified, timestamp].hash
+      [success, activity_id, devices_queued, devices_notified, timestamp, users_notified, effective_channel_slugs, tags, operation, stream_key, previous_activity_id, errors].hash
     end
 
     # Builds the object from hash

@@ -17,7 +17,13 @@ module OpenapiClient
   class NoRecipientsError
     attr_accessor :error
 
+    # Machine-readable reason. no_paired_devices: the account has no active paired iOS devices; pair an iPhone with the ActivitySmith app. no_recipients_found: devices are paired, but none matched the targeted channels. Treat unknown values as a generic no-delivery error.
+    attr_accessor :code
+
     attr_accessor :message
+
+    # ActivitySmith App Store link. Present when code is no_paired_devices.
+    attr_accessor :app_store_url
 
     attr_accessor :effective_channel_slugs
 
@@ -25,7 +31,9 @@ module OpenapiClient
     def self.attribute_map
       {
         :'error' => :'error',
+        :'code' => :'code',
         :'message' => :'message',
+        :'app_store_url' => :'app_store_url',
         :'effective_channel_slugs' => :'effective_channel_slugs'
       }
     end
@@ -39,7 +47,9 @@ module OpenapiClient
     def self.openapi_types
       {
         :'error' => :'String',
+        :'code' => :'String',
         :'message' => :'String',
+        :'app_store_url' => :'String',
         :'effective_channel_slugs' => :'Array<String>'
       }
     end
@@ -71,10 +81,18 @@ module OpenapiClient
         self.error = nil
       end
 
+      if attributes.key?(:'code')
+        self.code = attributes[:'code']
+      end
+
       if attributes.key?(:'message')
         self.message = attributes[:'message']
       else
         self.message = nil
+      end
+
+      if attributes.key?(:'app_store_url')
+        self.app_store_url = attributes[:'app_store_url']
       end
 
       if attributes.key?(:'effective_channel_slugs')
@@ -115,7 +133,9 @@ module OpenapiClient
       return true if self.equal?(o)
       self.class == o.class &&
           error == o.error &&
+          code == o.code &&
           message == o.message &&
+          app_store_url == o.app_store_url &&
           effective_channel_slugs == o.effective_channel_slugs
     end
 
@@ -128,7 +148,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [error, message, effective_channel_slugs].hash
+      [error, code, message, app_store_url, effective_channel_slugs].hash
     end
 
     # Builds the object from hash

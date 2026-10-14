@@ -37,6 +37,10 @@ module OpenapiClient
 
     attr_accessor :forced_completion
 
+    # Present when the stream had a current Live Activity. True when the end was sent to at least one device, or queued for a device that has not registered yet. False when no device received it, so the Live Activity may stay on the Lock Screen until iOS removes it or someone dismisses it.
+    attr_accessor :delivered
+
+    # Explains why the end may not have removed the Live Activity, for example because iOS had already ended a Live Activity that started more than 8 hours ago.
     attr_accessor :warning
 
     # Per-device delivery errors when some devices could not be reached.
@@ -77,6 +81,7 @@ module OpenapiClient
         :'ignored' => :'ignored',
         :'message' => :'message',
         :'forced_completion' => :'forced_completion',
+        :'delivered' => :'delivered',
         :'warning' => :'warning',
         :'errors' => :'errors'
       }
@@ -100,6 +105,7 @@ module OpenapiClient
         :'ignored' => :'Boolean',
         :'message' => :'String',
         :'forced_completion' => :'Boolean',
+        :'delivered' => :'Boolean',
         :'warning' => :'String',
         :'errors' => :'Array<String>'
       }
@@ -175,6 +181,10 @@ module OpenapiClient
         self.forced_completion = attributes[:'forced_completion']
       end
 
+      if attributes.key?(:'delivered')
+        self.delivered = attributes[:'delivered']
+      end
+
       if attributes.key?(:'warning')
         self.warning = attributes[:'warning']
       end
@@ -248,6 +258,7 @@ module OpenapiClient
           ignored == o.ignored &&
           message == o.message &&
           forced_completion == o.forced_completion &&
+          delivered == o.delivered &&
           warning == o.warning &&
           errors == o.errors
     end
@@ -261,7 +272,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success, operation, stream_key, activity_id, devices_queued, devices_notified, timestamp, ignored, message, forced_completion, warning, errors].hash
+      [success, operation, stream_key, activity_id, devices_queued, devices_notified, timestamp, ignored, message, forced_completion, delivered, warning, errors].hash
     end
 
     # Builds the object from hash

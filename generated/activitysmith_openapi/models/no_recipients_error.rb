@@ -17,15 +17,45 @@ module OpenapiClient
   class NoRecipientsError
     attr_accessor :error
 
+    # no_paired_devices: the account has no active paired iOS devices; pair an iPhone with the ActivitySmith app. no_recipients_found: devices are paired, but none matched the targeted channels.
+    attr_accessor :code
+
     attr_accessor :message
 
+    # ActivitySmith App Store link. Present when code is no_paired_devices.
+    attr_accessor :app_store_url
+
     attr_accessor :effective_channel_slugs
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'error' => :'error',
+        :'code' => :'code',
         :'message' => :'message',
+        :'app_store_url' => :'app_store_url',
         :'effective_channel_slugs' => :'effective_channel_slugs'
       }
     end
@@ -39,7 +69,9 @@ module OpenapiClient
     def self.openapi_types
       {
         :'error' => :'String',
+        :'code' => :'String',
         :'message' => :'String',
+        :'app_store_url' => :'String',
         :'effective_channel_slugs' => :'Array<String>'
       }
     end
@@ -71,10 +103,18 @@ module OpenapiClient
         self.error = nil
       end
 
+      if attributes.key?(:'code')
+        self.code = attributes[:'code']
+      end
+
       if attributes.key?(:'message')
         self.message = attributes[:'message']
       else
         self.message = nil
+      end
+
+      if attributes.key?(:'app_store_url')
+        self.app_store_url = attributes[:'app_store_url']
       end
 
       if attributes.key?(:'effective_channel_slugs')
@@ -105,8 +145,20 @@ module OpenapiClient
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @error.nil?
+      code_validator = EnumAttributeValidator.new('String', ["no_paired_devices", "no_recipients_found"])
+      return false unless code_validator.valid?(@code)
       return false if @message.nil?
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] code Object to be assigned
+    def code=(code)
+      validator = EnumAttributeValidator.new('String', ["no_paired_devices", "no_recipients_found"])
+      unless validator.valid?(code)
+        fail ArgumentError, "invalid value for \"code\", must be one of #{validator.allowable_values}."
+      end
+      @code = code
     end
 
     # Checks equality by comparing each attribute.
@@ -115,7 +167,9 @@ module OpenapiClient
       return true if self.equal?(o)
       self.class == o.class &&
           error == o.error &&
+          code == o.code &&
           message == o.message &&
+          app_store_url == o.app_store_url &&
           effective_channel_slugs == o.effective_channel_slugs
     end
 
@@ -128,7 +182,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [error, message, effective_channel_slugs].hash
+      [error, code, message, app_store_url, effective_channel_slugs].hash
     end
 
     # Builds the object from hash

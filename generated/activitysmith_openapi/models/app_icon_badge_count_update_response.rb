@@ -19,7 +19,7 @@ module OpenapiClient
 
     attr_accessor :badge
 
-    # Number of devices whose App Icon Badge Count was updated.
+    # Number of devices whose App Icon Badge was updated.
     attr_accessor :devices_updated
 
     # Number of account users with at least one updated device.

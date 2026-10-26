@@ -17,10 +17,14 @@ module OpenapiClient
   class MetricValueUpdateResponse
     attr_accessor :success
 
+    # true when this request created the metric because no metric used the key yet.
+    attr_accessor :created
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'success' => :'success'
+        :'success' => :'success',
+        :'created' => :'created'
       }
     end
 
@@ -32,7 +36,8 @@ module OpenapiClient
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'success' => :'Boolean'
+        :'success' => :'Boolean',
+        :'created' => :'Boolean'
       }
     end
 
@@ -62,6 +67,10 @@ module OpenapiClient
       else
         self.success = nil
       end
+
+      if attributes.key?(:'created')
+        self.created = attributes[:'created']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -89,7 +98,8 @@ module OpenapiClient
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          success == o.success
+          success == o.success &&
+          created == o.created
     end
 
     # @see the `==` method
@@ -101,7 +111,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [success].hash
+      [success, created].hash
     end
 
     # Builds the object from hash

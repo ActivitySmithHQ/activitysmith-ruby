@@ -19,8 +19,8 @@ module OpenapiClient
     def initialize(api_client = ApiClient.default)
       @api_client = api_client
     end
-    # Set App Icon Badge Count
-    # Shows a number on the ActivitySmith app icon.
+    # Set App Icon Badge
+    # Shows a number on the ActivitySmith app icon. Requires Push Notifications enabled for ActivitySmith on the device.
     # @param app_icon_badge_count_update_request [AppIconBadgeCountUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [AppIconBadgeCountUpdateResponse]
@@ -29,8 +29,8 @@ module OpenapiClient
       data
     end
 
-    # Set App Icon Badge Count
-    # Shows a number on the ActivitySmith app icon.
+    # Set App Icon Badge
+    # Shows a number on the ActivitySmith app icon. Requires Push Notifications enabled for ActivitySmith on the device.
     # @param app_icon_badge_count_update_request [AppIconBadgeCountUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(AppIconBadgeCountUpdateResponse, Integer, Hash)>] AppIconBadgeCountUpdateResponse data, response status code and response headers

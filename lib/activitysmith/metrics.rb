@@ -10,7 +10,21 @@ module ActivitySmith
       @api.update_metric_value(key, metric_value_request(value_or_request, timestamp), opts)
     end
 
-    # Backward-compatible generated-style alias.
+    # Creates the metric, or updates the fields sent for an existing one.
+    # Omitted fields keep their current values, so it is safe to call on every start.
+    def create(key, definition = nil, label: nil, format: nil, currency_code: nil, unit: nil, unit_spacing: nil, **opts)
+      fields = { label: label, format: format, currency_code: currency_code, unit: unit, unit_spacing: unit_spacing }.compact
+      request = fields.empty? ? definition : (definition || {}).to_h.merge(fields)
+      request = nil if request.respond_to?(:empty?) && request.empty?
+      opts = opts.merge(metric_upsert_request: request) unless request.nil?
+      @api.upsert_metric(key, opts)
+    end
+
+    # Backward-compatible generated-style aliases.
+    def upsert_metric(key, opts = {})
+      @api.upsert_metric(key, opts)
+    end
+
     def update_metric_value(key, metric_value_update_request, opts = {})
       @api.update_metric_value(key, metric_value_update_request, opts)
     end

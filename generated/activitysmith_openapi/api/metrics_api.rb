@@ -20,8 +20,8 @@ module OpenapiClient
       @api_client = api_client
     end
     # Update a widget metric value
-    # Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
-    # @param key [String] Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+    # Updates the latest value for a metric displayed in ActivitySmith widgets. If no metric uses the key yet, the first value creates one: the label comes from the key, numeric values get the number format, and text values get the string format. To choose a currency, percent, or unit format, create the metric first with PUT /metrics/{key} or in the web app. A deleted metric is not recreated by new values; the request returns 404 with code metric_deleted. Each account can have up to 100 metrics created through the API. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
+    # @param key [String] Metric key. A key that has never been used creates the metric. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
     # @param metric_value_update_request [MetricValueUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [MetricValueUpdateResponse]
@@ -31,8 +31,8 @@ module OpenapiClient
     end
 
     # Update a widget metric value
-    # Updates the latest value for a metric displayed in ActivitySmith widgets. Create the metric in the web app first, then update its value using the key. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
-    # @param key [String] Metric key configured in the web app. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+    # Updates the latest value for a metric displayed in ActivitySmith widgets. If no metric uses the key yet, the first value creates one: the label comes from the key, numeric values get the number format, and text values get the string format. To choose a currency, percent, or unit format, create the metric first with PUT /metrics/{key} or in the web app. A deleted metric is not recreated by new values; the request returns 404 with code metric_deleted. Each account can have up to 100 metrics created through the API. Metric updates have an independent 300-requests-per-minute account allowance. They do not consume the Push Notification, badge, or Live Activity allowances.
+    # @param key [String] Metric key. A key that has never been used creates the metric. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
     # @param metric_value_update_request [MetricValueUpdateRequest] 
     # @param [Hash] opts the optional parameters
     # @return [Array<(MetricValueUpdateResponse, Integer, Hash)>] MetricValueUpdateResponse data, response status code and response headers
@@ -102,6 +102,89 @@ module OpenapiClient
       data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: MetricsApi#update_metric_value\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Create or update a widget metric
+    # Creates a metric for widgets, or updates the fields sent for an existing metric. Omitted fields keep their current values, so repeating the same request does not change the metric. Changing between the string format and a numeric format clears the latest value. Shares the metric account allowance of 300 requests per minute and is not a billable metric update.
+    # @param key [String] Metric key. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+    # @param [Hash] opts the optional parameters
+    # @option opts [MetricUpsertRequest] :metric_upsert_request 
+    # @return [MetricResponse]
+    def upsert_metric(key, opts = {})
+      data, _status_code, _headers = upsert_metric_with_http_info(key, opts)
+      data
+    end
+
+    # Create or update a widget metric
+    # Creates a metric for widgets, or updates the fields sent for an existing metric. Omitted fields keep their current values, so repeating the same request does not change the metric. Changing between the string format and a numeric format clears the latest value. Shares the metric account allowance of 300 requests per minute and is not a billable metric update.
+    # @param key [String] Metric key. Lowercase letters, numbers, dots, underscores, and dashes are allowed.
+    # @param [Hash] opts the optional parameters
+    # @option opts [MetricUpsertRequest] :metric_upsert_request 
+    # @return [Array<(MetricResponse, Integer, Hash)>] MetricResponse data, response status code and response headers
+    def upsert_metric_with_http_info(key, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: MetricsApi.upsert_metric ...'
+      end
+      # verify the required parameter 'key' is set
+      if @api_client.config.client_side_validation && key.nil?
+        fail ArgumentError, "Missing the required parameter 'key' when calling MetricsApi.upsert_metric"
+      end
+      if @api_client.config.client_side_validation && key.to_s.length > 64
+        fail ArgumentError, 'invalid value for "key" when calling MetricsApi.upsert_metric, the character length must be smaller than or equal to 64.'
+      end
+
+      if @api_client.config.client_side_validation && key.to_s.length < 1
+        fail ArgumentError, 'invalid value for "key" when calling MetricsApi.upsert_metric, the character length must be great than or equal to 1.'
+      end
+
+      pattern = Regexp.new(/^[a-z0-9][a-z0-9_.-]{0,63}$/)
+      if @api_client.config.client_side_validation && key !~ pattern
+        fail ArgumentError, "invalid value for 'key' when calling MetricsApi.upsert_metric, must conform to the pattern #{pattern}."
+      end
+
+      # resource path
+      local_var_path = '/metrics/{key}'.sub('{' + 'key' + '}', CGI.escape(key.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(opts[:'metric_upsert_request'])
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'MetricResponse'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || ['apiKeyAuth']
+
+      new_options = opts.merge(
+        :operation => :"MetricsApi.upsert_metric",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:PUT, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: MetricsApi#upsert_metric\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end

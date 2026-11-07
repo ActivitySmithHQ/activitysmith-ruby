@@ -30,6 +30,17 @@ module ActivitySmith
       replace(notification_id, push_notification_replace_request, opts, tags: tags, **request_fields)
     end
 
+    # Clears a sent Push Notification from the Lock Screen and Notification Center,
+    # using the notification_id returned by send. History keeps it.
+    def dismiss(notification_id, opts = {})
+      @api.dismiss_push_notification(notification_id, opts)
+    end
+
+    # Generated-style alias.
+    def dismiss_push_notification(notification_id, opts = {})
+      dismiss(notification_id, opts)
+    end
+
     def method_missing(name, *args, &block)
       return @api.public_send(name, *args, &block) if @api.respond_to?(name)
 

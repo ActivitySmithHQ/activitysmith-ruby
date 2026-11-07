@@ -25,6 +25,11 @@ class FakePushApi
     { ok: true }
   end
 
+  def dismiss_push_notification(notification_id, opts = {})
+    @calls << [:dismiss_push_notification, notification_id, opts]
+    { success: true, notification_id: notification_id }
+  end
+
   def send_push_notification_with_http_info(request, opts = {})
     @calls << [:send_push_notification_with_http_info, request, opts]
     [:ok, 200, {}]
@@ -82,7 +87,56 @@ class FakeMetricsApi
   end
 end
 
+class FakeDevicesApi
+  attr_reader :calls
+
+  def initialize
+    @calls = []
+  end
+
+  def list_account_devices(opts = {})
+    @calls << [:list_account_devices, opts]
+    { devices: [] }
+  end
+end
+
 class ResourcesTest < Minitest::Test
+  def test_notifications_dismiss_and_alias
+    api = FakePushApi.new
+    resource = ActivitySmith::Notifications.new(api)
+
+    assert_equal({ success: true, notification_id: "pn1" }, resource.dismiss("pn1"))
+    resource.dismiss_push_notification("pn2")
+
+    assert_equal(
+      [
+        [:dismiss_push_notification, "pn1", {}],
+        [:dismiss_push_notification, "pn2", {}]
+      ],
+      api.calls
+    )
+  end
+
+  def test_devices_list_and_alias
+    api = FakeDevicesApi.new
+    resource = ActivitySmith::Devices.new(api)
+
+    assert_equal({ devices: [] }, resource.list)
+    resource.list(include_inactive: true, limit: 10)
+    resource.list(include_inactive: false, offset: 0)
+    resource.list_account_devices(limit: 5)
+
+    assert_equal(
+      [
+        [:list_account_devices, {}],
+        [:list_account_devices, { limit: 10, include_inactive: true }],
+        [:list_account_devices, { offset: 0, include_inactive: false }],
+        [:list_account_devices, { limit: 5 }]
+      ],
+      api.calls
+    )
+  end
+
   def test_notifications_short_and_legacy_methods
     api = FakePushApi.new
     resource = ActivitySmith::Notifications.new(api)

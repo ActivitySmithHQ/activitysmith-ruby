@@ -2,7 +2,7 @@
 
 module ActivitySmith
   class Client
-    attr_reader :notifications, :live_activities, :metrics
+    attr_reader :notifications, :live_activities, :metrics, :devices
 
     def initialize(api_key:)
       raise ArgumentError, "ActivitySmith: api_key is required" if api_key.to_s.strip.empty?
@@ -19,6 +19,7 @@ module ActivitySmith
       @notifications = Notifications.new(OpenapiClient::PushNotificationsApi.new(api_client))
       @live_activities = LiveActivities.new(OpenapiClient::LiveActivitiesApi.new(api_client))
       @metrics = Metrics.new(OpenapiClient::MetricsApi.new(api_client))
+      @devices = Devices.new(OpenapiClient::DevicesApi.new(api_client))
       @app_icon_badges = OpenapiClient::AppIconBadgesApi.new(api_client)
     end
 
@@ -53,6 +54,7 @@ module ActivitySmith
         "OpenapiClient::PushNotificationsApi",
         "OpenapiClient::LiveActivitiesApi",
         "OpenapiClient::MetricsApi",
+        "OpenapiClient::DevicesApi",
         "OpenapiClient::AppIconBadgesApi"
       ].reject { |name| constant_defined?(name) }
 

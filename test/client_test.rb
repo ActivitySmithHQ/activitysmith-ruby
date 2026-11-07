@@ -45,6 +45,14 @@ module OpenapiClient
     end
   end
 
+  class DevicesApi
+    attr_reader :api_client
+
+    def initialize(api_client)
+      @api_client = api_client
+    end
+  end
+
   class AppIconBadgesApi
     attr_reader :api_client, :calls
 
@@ -82,6 +90,9 @@ class ClientTest < Minitest::Test
     assert_respond_to client.live_activities, :end_stream
     refute_nil client.metrics
     assert_respond_to client.metrics, :update
+    refute_nil client.devices
+    assert_respond_to client.devices, :list
+    assert_respond_to client.notifications, :dismiss
     assert_respond_to client, :badge_count
 
     metrics_api = client.metrics.instance_variable_get(:@api)

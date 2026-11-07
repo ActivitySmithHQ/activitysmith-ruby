@@ -19,6 +19,73 @@ module OpenapiClient
     def initialize(api_client = ApiClient.default)
       @api_client = api_client
     end
+    # Dismiss a push notification
+    # Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the `notification_id` from the send response. Notification history keeps it.  Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet. Devices running an ActivitySmith app version before 1.17.0 show a silent notification titled \"Push Notification dismissed\" in its place until the user clears it.  Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
+    # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.
+    # @param [Hash] opts the optional parameters
+    # @return [PushNotificationDismissResponse]
+    def dismiss_push_notification(notification_id, opts = {})
+      data, _status_code, _headers = dismiss_push_notification_with_http_info(notification_id, opts)
+      data
+    end
+
+    # Dismiss a push notification
+    # Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the &#x60;notification_id&#x60; from the send response. Notification history keeps it.  Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet. Devices running an ActivitySmith app version before 1.17.0 show a silent notification titled \&quot;Push Notification dismissed\&quot; in its place until the user clears it.  Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
+    # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(PushNotificationDismissResponse, Integer, Hash)>] PushNotificationDismissResponse data, response status code and response headers
+    def dismiss_push_notification_with_http_info(notification_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: PushNotificationsApi.dismiss_push_notification ...'
+      end
+      # verify the required parameter 'notification_id' is set
+      if @api_client.config.client_side_validation && notification_id.nil?
+        fail ArgumentError, "Missing the required parameter 'notification_id' when calling PushNotificationsApi.dismiss_push_notification"
+      end
+      if @api_client.config.client_side_validation && notification_id.to_s.length < 1
+        fail ArgumentError, 'invalid value for "notification_id" when calling PushNotificationsApi.dismiss_push_notification, the character length must be great than or equal to 1.'
+      end
+
+      # resource path
+      local_var_path = '/push-notification/{notification_id}/dismiss'.sub('{' + 'notification_id' + '}', CGI.escape(notification_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'PushNotificationDismissResponse'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || ['apiKeyAuth']
+
+      new_options = opts.merge(
+        :operation => :"PushNotificationsApi.dismiss_push_notification",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: PushNotificationsApi#dismiss_push_notification\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Replace a push notification
     # Replaces a Push Notification you already sent, using the `notification_id` from the send response. The replacement takes the original's place on the Lock Screen and in Notification Center instead of appearing as a second notification. It is delivered silently, with no sound or screen wake, to the same recipients as the original. Notification history is updated in place.
     # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.

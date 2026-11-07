@@ -17,6 +17,9 @@ require 'activitysmith_openapi/version'
 require 'activitysmith_openapi/configuration'
 
 # Models
+require 'activitysmith_openapi/models/account_device'
+require 'activitysmith_openapi/models/account_device_list_response'
+require 'activitysmith_openapi/models/account_device_list_response_meta'
 require 'activitysmith_openapi/models/activity_metric'
 require 'activitysmith_openapi/models/activity_metric_value'
 require 'activitysmith_openapi/models/alert_payload'
@@ -74,6 +77,7 @@ require 'activitysmith_openapi/models/update_app_icon_badge_count422_response'
 
 # APIs
 require 'activitysmith_openapi/api/app_icon_badges_api'
+require 'activitysmith_openapi/api/devices_api'
 require 'activitysmith_openapi/api/live_activities_api'
 require 'activitysmith_openapi/api/metrics_api'
 require 'activitysmith_openapi/api/push_notifications_api'

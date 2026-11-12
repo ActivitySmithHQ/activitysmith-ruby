@@ -16,6 +16,7 @@ require 'time'
 module OpenapiClient
   # Update payload requires title. For segmented_progress include current_step and optionally number_of_steps. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer, omit duration_seconds to preserve the current timer window or send duration_seconds to reset the timer from the update request time. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. Type is optional when updating an existing activity. You can increase or decrease number_of_steps during updates.
   class ContentStateUpdate
+    # Title shown on the Live Activity. Send an empty string to show no title.
     attr_accessor :title
 
     attr_accessor :subtitle

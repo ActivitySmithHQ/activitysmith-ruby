@@ -16,6 +16,7 @@ require 'time'
 module OpenapiClient
   # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer include duration_seconds for countdowns, or set counts_down false without duration_seconds for an open-ended elapsed timer. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
   class ContentStateStart
+    # Title shown on the Live Activity. Send an empty string to show no title.
     attr_accessor :title
 
     attr_accessor :subtitle

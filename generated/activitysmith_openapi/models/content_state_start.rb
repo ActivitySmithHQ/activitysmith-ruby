@@ -14,8 +14,9 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer include duration_seconds for countdowns, or set counts_down false without duration_seconds for an open-ended elapsed timer. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
+  # Start payload requires title and type. For segmented_progress include number_of_steps and current_step. For progress include percentage or value with upper_limit. For metrics and stats include a non-empty metrics array. For value include a string or number in value; strings preserve currency, units, and other formatting. For alert include message. For timer include duration_seconds or timer_end_at for countdowns, or set counts_down false without them for an open-ended elapsed timer. Add timer_start_at for a timer that started earlier. Optional icon is supported by all Live Activity types. Optional badge is supported by alert, progress, segmented_progress, and value. For segmented_progress, number_of_steps is not locked and can be changed in later update or end calls.
   class ContentStateStart
+    # Title shown on the Live Activity. Send an empty string to show no title.
     attr_accessor :title
 
     attr_accessor :subtitle
@@ -35,8 +36,14 @@ module OpenapiClient
     # Maximum progress value. Use with value for type=progress.
     attr_accessor :upper_limit
 
-    # Timer duration in seconds. For type=timer countdowns, required on start when counts_down is true or omitted.
+    # Timer duration in seconds. For type=timer countdowns, required on start when counts_down is true or omitted, unless you send timer_end_at. Counts from timer_start_at when you send it.
     attr_accessor :duration_seconds
+
+    # Use with type=timer. ISO 8601 date and time when the timer started. It can be in the past, so a countdown that started earlier shows the time already gone in its progress bar. Defaults to the request time. Must not be in the future.
+    attr_accessor :timer_start_at
+
+    # Use with type=timer. ISO 8601 date and time when the countdown ends. Must be after timer_start_at, or in the future when timer_start_at is omitted. Send duration_seconds or timer_end_at, not both.
+    attr_accessor :timer_end_at
 
     # Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
     attr_accessor :counts_down
@@ -100,6 +107,8 @@ module OpenapiClient
         :'value' => :'value',
         :'upper_limit' => :'upper_limit',
         :'duration_seconds' => :'duration_seconds',
+        :'timer_start_at' => :'timer_start_at',
+        :'timer_end_at' => :'timer_end_at',
         :'counts_down' => :'counts_down',
         :'is_running' => :'is_running',
         :'metrics' => :'metrics',
@@ -129,6 +138,8 @@ module OpenapiClient
         :'value' => :'LiveActivityValue',
         :'upper_limit' => :'Float',
         :'duration_seconds' => :'Float',
+        :'timer_start_at' => :'Time',
+        :'timer_end_at' => :'Time',
         :'counts_down' => :'Boolean',
         :'is_running' => :'Boolean',
         :'metrics' => :'Array<ActivityMetric>',
@@ -195,6 +206,14 @@ module OpenapiClient
 
       if attributes.key?(:'duration_seconds')
         self.duration_seconds = attributes[:'duration_seconds']
+      end
+
+      if attributes.key?(:'timer_start_at')
+        self.timer_start_at = attributes[:'timer_start_at']
+      end
+
+      if attributes.key?(:'timer_end_at')
+        self.timer_end_at = attributes[:'timer_end_at']
       end
 
       if attributes.key?(:'counts_down')
@@ -435,6 +454,8 @@ module OpenapiClient
           value == o.value &&
           upper_limit == o.upper_limit &&
           duration_seconds == o.duration_seconds &&
+          timer_start_at == o.timer_start_at &&
+          timer_end_at == o.timer_end_at &&
           counts_down == o.counts_down &&
           is_running == o.is_running &&
           metrics == o.metrics &&
@@ -456,7 +477,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, duration_seconds, counts_down, is_running, metrics, message, icon, badge, type, color, step_color, step_colors].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, duration_seconds, timer_start_at, timer_end_at, counts_down, is_running, metrics, message, icon, badge, type, color, step_color, step_colors].hash
     end
 
     # Builds the object from hash

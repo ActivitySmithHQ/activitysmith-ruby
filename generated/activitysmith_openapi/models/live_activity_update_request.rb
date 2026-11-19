@@ -31,6 +31,9 @@ module OpenapiClient
     # Optional secondary action button. Supported for alert, progress, segmented_progress, and value Live Activities. Uses the same open_url, shortcuts://, and webhook shapes as action.
     attr_accessor :secondary_action
 
+    # Optional sound for this update. Updates are silent unless you set one. A sound also expands the Live Activity on the Lock Screen. Sounds bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked on the device, or `none` for no sound.
+    attr_accessor :sound
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -39,7 +42,8 @@ module OpenapiClient
         :'tags' => :'tags',
         :'content_state' => :'content_state',
         :'action' => :'action',
-        :'secondary_action' => :'secondary_action'
+        :'secondary_action' => :'secondary_action',
+        :'sound' => :'sound'
       }
     end
 
@@ -56,7 +60,8 @@ module OpenapiClient
         :'tags' => :'Array<String>',
         :'content_state' => :'ContentStateUpdate',
         :'action' => :'LiveActivityAction',
-        :'secondary_action' => :'LiveActivityAction'
+        :'secondary_action' => :'LiveActivityAction',
+        :'sound' => :'String'
       }
     end
 
@@ -112,6 +117,10 @@ module OpenapiClient
       if attributes.key?(:'secondary_action')
         self.secondary_action = attributes[:'secondary_action']
       end
+
+      if attributes.key?(:'sound')
+        self.sound = attributes[:'sound']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -135,6 +144,14 @@ module OpenapiClient
         invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
       end
 
+      if !@sound.nil? && @sound.to_s.length > 50
+        invalid_properties.push('invalid value for "sound", the character length must be smaller than or equal to 50.')
+      end
+
+      if !@sound.nil? && @sound.to_s.length < 1
+        invalid_properties.push('invalid value for "sound", the character length must be great than or equal to 1.')
+      end
+
       invalid_properties
     end
 
@@ -146,6 +163,8 @@ module OpenapiClient
       return false if @activity_id.nil?
       return false if !@tags.nil? && @tags.length > 20
       return false if @content_state.nil?
+      return false if !@sound.nil? && @sound.to_s.length > 50
+      return false if !@sound.nil? && @sound.to_s.length < 1
       true
     end
 
@@ -177,6 +196,24 @@ module OpenapiClient
       @tags = tags
     end
 
+    # Custom attribute writer method with validation
+    # @param [Object] sound Value to be assigned
+    def sound=(sound)
+      if sound.nil?
+        fail ArgumentError, 'sound cannot be nil'
+      end
+
+      if sound.to_s.length > 50
+        fail ArgumentError, 'invalid value for "sound", the character length must be smaller than or equal to 50.'
+      end
+
+      if sound.to_s.length < 1
+        fail ArgumentError, 'invalid value for "sound", the character length must be great than or equal to 1.'
+      end
+
+      @sound = sound
+    end
+
     # Checks equality by comparing each attribute.
     # @param [Object] Object to be compared
     def ==(o)
@@ -187,7 +224,8 @@ module OpenapiClient
           tags == o.tags &&
           content_state == o.content_state &&
           action == o.action &&
-          secondary_action == o.secondary_action
+          secondary_action == o.secondary_action &&
+          sound == o.sound
     end
 
     # @see the `==` method
@@ -199,7 +237,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [metadata, activity_id, tags, content_state, action, secondary_action].hash
+      [metadata, activity_id, tags, content_state, action, secondary_action, sound].hash
     end
 
     # Builds the object from hash

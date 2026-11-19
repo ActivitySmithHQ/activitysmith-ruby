@@ -33,7 +33,7 @@ module OpenapiClient
     # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
     attr_accessor :media
 
-    # Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
+    # Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
     attr_accessor :redirection
 
     # Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.
@@ -43,6 +43,7 @@ module OpenapiClient
 
     attr_accessor :badge
 
+    # Optional sound for this Push Notification. Omit it to play the Push Notifications sound picked on the device. Passive Push Notifications play no sound. Sounds bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked on the device, or `none` for no sound.
     attr_accessor :sound
 
     attr_accessor :target
@@ -239,6 +240,14 @@ module OpenapiClient
         invalid_properties.push('invalid value for "actions", number of items must be less than or equal to 4.')
       end
 
+      if !@sound.nil? && @sound.to_s.length > 50
+        invalid_properties.push('invalid value for "sound", the character length must be smaller than or equal to 50.')
+      end
+
+      if !@sound.nil? && @sound.to_s.length < 1
+        invalid_properties.push('invalid value for "sound", the character length must be great than or equal to 1.')
+      end
+
       invalid_properties
     end
 
@@ -253,6 +262,8 @@ module OpenapiClient
       return false if !@redirection.nil? && @redirection.to_s.length > 2048
       return false if !@redirection.nil? && @redirection !~ Regexp.new(/^[A-Za-z][A-Za-z0-9+.-]*:/)
       return false if !@actions.nil? && @actions.length > 4
+      return false if !@sound.nil? && @sound.to_s.length > 50
+      return false if !@sound.nil? && @sound.to_s.length < 1
       true
     end
 
@@ -331,6 +342,24 @@ module OpenapiClient
       end
 
       @actions = actions
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] sound Value to be assigned
+    def sound=(sound)
+      if sound.nil?
+        fail ArgumentError, 'sound cannot be nil'
+      end
+
+      if sound.to_s.length > 50
+        fail ArgumentError, 'invalid value for "sound", the character length must be smaller than or equal to 50.'
+      end
+
+      if sound.to_s.length < 1
+        fail ArgumentError, 'invalid value for "sound", the character length must be great than or equal to 1.'
+      end
+
+      @sound = sound
     end
 
     # Checks equality by comparing each attribute.

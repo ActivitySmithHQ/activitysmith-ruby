@@ -14,8 +14,9 @@ require 'date'
 require 'time'
 
 module OpenapiClient
-  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, timer, and value types. For timer, send duration_seconds to start or reset a bounded timer; omit duration_seconds on later updates to preserve the existing timer window.
+  # Current state for a managed Live Activity stream. Include type on the first PUT, and whenever the stream may need to start a fresh activity. Supports segmented_progress, progress, metrics, stats, alert, timer, and value types. For timer, send duration_seconds or timer_end_at to start or reset a bounded timer, and timer_start_at for a timer that started earlier. Omit them on later updates to preserve the existing timer window.
   class StreamContentState
+    # Title shown on the Live Activity. Send an empty string to show no title.
     attr_accessor :title
 
     attr_accessor :subtitle
@@ -35,8 +36,14 @@ module OpenapiClient
     # Maximum progress value. Use with value for progress.
     attr_accessor :upper_limit
 
-    # Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window; omit it on later stream updates to preserve the existing timer window.
+    # Timer duration in seconds. For type=timer, send duration_seconds to start or reset the timer window, counted from timer_start_at when you send it. Omit it on later stream updates to preserve the existing timer window.
     attr_accessor :duration_seconds
+
+    # Use with type=timer. ISO 8601 date and time when the timer started. It can be in the past, so a countdown that started earlier shows the time already gone in its progress bar. Defaults to the request time. Must not be in the future.
+    attr_accessor :timer_start_at
+
+    # Use with type=timer. ISO 8601 date and time when the countdown ends. Must be after timer_start_at, or in the future when timer_start_at is omitted. Send duration_seconds or timer_end_at, not both. On later stream updates, send timer_end_at alone to move the end and keep the current start.
+    attr_accessor :timer_end_at
 
     # Use with type=timer. When true or omitted, the timer counts down from duration_seconds. Set false for an elapsed timer; omit duration_seconds for an open-ended elapsed timer.
     attr_accessor :counts_down
@@ -107,6 +114,8 @@ module OpenapiClient
         :'value' => :'value',
         :'upper_limit' => :'upper_limit',
         :'duration_seconds' => :'duration_seconds',
+        :'timer_start_at' => :'timer_start_at',
+        :'timer_end_at' => :'timer_end_at',
         :'counts_down' => :'counts_down',
         :'is_running' => :'is_running',
         :'type' => :'type',
@@ -138,6 +147,8 @@ module OpenapiClient
         :'value' => :'LiveActivityValue',
         :'upper_limit' => :'Float',
         :'duration_seconds' => :'Float',
+        :'timer_start_at' => :'Time',
+        :'timer_end_at' => :'Time',
         :'counts_down' => :'Boolean',
         :'is_running' => :'Boolean',
         :'type' => :'String',
@@ -206,6 +217,14 @@ module OpenapiClient
 
       if attributes.key?(:'duration_seconds')
         self.duration_seconds = attributes[:'duration_seconds']
+      end
+
+      if attributes.key?(:'timer_start_at')
+        self.timer_start_at = attributes[:'timer_start_at']
+      end
+
+      if attributes.key?(:'timer_end_at')
+        self.timer_end_at = attributes[:'timer_end_at']
       end
 
       if attributes.key?(:'counts_down')
@@ -485,6 +504,8 @@ module OpenapiClient
           value == o.value &&
           upper_limit == o.upper_limit &&
           duration_seconds == o.duration_seconds &&
+          timer_start_at == o.timer_start_at &&
+          timer_end_at == o.timer_end_at &&
           counts_down == o.counts_down &&
           is_running == o.is_running &&
           type == o.type &&
@@ -508,7 +529,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, duration_seconds, counts_down, is_running, type, color, step_color, step_colors, metrics, message, icon, badge, auto_dismiss_seconds, auto_dismiss_minutes].hash
+      [title, subtitle, number_of_steps, current_step, percentage, value, upper_limit, duration_seconds, timer_start_at, timer_end_at, counts_down, is_running, type, color, step_color, step_colors, metrics, message, icon, badge, auto_dismiss_seconds, auto_dismiss_minutes].hash
     end
 
     # Builds the object from hash

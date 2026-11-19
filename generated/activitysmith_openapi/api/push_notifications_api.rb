@@ -20,7 +20,7 @@ module OpenapiClient
       @api_client = api_client
     end
     # Dismiss a push notification
-    # Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the `notification_id` from the send response. Notification history keeps it.  Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet. Devices running an ActivitySmith app version before 1.17.0 show a silent notification titled \"Push Notification dismissed\" in its place until the user clears it.  Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
+    # Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the `notification_id` from the send response. Notification history keeps it.  Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet.  Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
     # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.
     # @param [Hash] opts the optional parameters
     # @return [PushNotificationDismissResponse]
@@ -30,7 +30,7 @@ module OpenapiClient
     end
 
     # Dismiss a push notification
-    # Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the &#x60;notification_id&#x60; from the send response. Notification history keeps it.  Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet. Devices running an ActivitySmith app version before 1.17.0 show a silent notification titled \&quot;Push Notification dismissed\&quot; in its place until the user clears it.  Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
+    # Clears a Push Notification you already sent from the Lock Screen and Notification Center on every device it was sent to, using the &#x60;notification_id&#x60; from the send response. Notification history keeps it.  Devices clear the notification in the background, which can take a moment or wait until the ActivitySmith app next opens. A successful response means the dismissal was recorded, not that every device has cleared it yet.  Calling this again for the same notification returns the same response and sends nothing. A dismissed notification cannot be replaced.
     # @param notification_id [String] The &#x60;notification_id&#x60; returned when the Push Notification was sent.
     # @param [Hash] opts the optional parameters
     # @return [Array<(PushNotificationDismissResponse, Integer, Hash)>] PushNotificationDismissResponse data, response status code and response headers

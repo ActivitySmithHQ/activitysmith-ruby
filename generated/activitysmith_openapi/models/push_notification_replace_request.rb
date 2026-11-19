@@ -31,7 +31,7 @@ module OpenapiClient
     # Optional HTTPS URL for an image, audio file, or video that users can preview or play when they expand the notification. If `redirection` is omitted, tapping the notification opens this URL. Cannot be combined with `actions`.
     attr_accessor :media
 
-    # Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require iOS 1.13.4 build 2 or later and an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
+    # Optional HTTP, HTTPS, Shortcuts, or installed app URL opened when the user taps the notification body. Custom schemes such as spotify:// and spotify:track:123 require an installed handler; no web fallback is provided. Internal and executable schemes are blocked. Overrides the default tap target from media.
     attr_accessor :redirection
 
     # Optional interactive actions shown when users expand the notification. Cannot be combined with `media`.

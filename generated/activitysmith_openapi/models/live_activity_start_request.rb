@@ -33,6 +33,9 @@ module OpenapiClient
     # Optional tags to organize and filter notification history.
     attr_accessor :tags
 
+    # Optional sound for the start. Omit it to play the Live Activities sound picked on the device. Sounds bundled with the ActivitySmith app: `arrive`, `bell`, `bells`, `bitflip`, `bloom`, `callout`, `chime`, `coin`, `corrupt`, `crest`, `cue`, `ding`, `drop`, `ember`, `emblem`, `flourish`, `glimmer`, `glint`, `glitch`, `lantern`, `nightfall`, `nudge`, `pixel`, `pop`, `signal`, `streak`, `tally`, `wand`, `whoosh`, `zip`. Use `default` for the sound picked on the device, or `none` for no sound. Bundled sounds and `none` need iOS app 1.19.0 or later. Older apps play the iOS default sound instead.
+    attr_accessor :sound
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -42,7 +45,8 @@ module OpenapiClient
         :'secondary_action' => :'secondary_action',
         :'alert' => :'alert',
         :'target' => :'target',
-        :'tags' => :'tags'
+        :'tags' => :'tags',
+        :'sound' => :'sound'
       }
     end
 
@@ -60,7 +64,8 @@ module OpenapiClient
         :'secondary_action' => :'LiveActivityAction',
         :'alert' => :'AlertPayload',
         :'target' => :'ChannelTarget',
-        :'tags' => :'Array<String>'
+        :'tags' => :'Array<String>',
+        :'sound' => :'String'
       }
     end
 
@@ -118,6 +123,10 @@ module OpenapiClient
           self.tags = value
         end
       end
+
+      if attributes.key?(:'sound')
+        self.sound = attributes[:'sound']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -133,6 +142,14 @@ module OpenapiClient
         invalid_properties.push('invalid value for "content_state", content_state cannot be nil.')
       end
 
+      if !@sound.nil? && @sound.to_s.length > 50
+        invalid_properties.push('invalid value for "sound", the character length must be smaller than or equal to 50.')
+      end
+
+      if !@sound.nil? && @sound.to_s.length < 1
+        invalid_properties.push('invalid value for "sound", the character length must be great than or equal to 1.')
+      end
+
       invalid_properties
     end
 
@@ -142,6 +159,8 @@ module OpenapiClient
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if !@metadata.nil? && @metadata.length > 50
       return false if @content_state.nil?
+      return false if !@sound.nil? && @sound.to_s.length > 50
+      return false if !@sound.nil? && @sound.to_s.length < 1
       true
     end
 
@@ -159,6 +178,24 @@ module OpenapiClient
       @metadata = metadata
     end
 
+    # Custom attribute writer method with validation
+    # @param [Object] sound Value to be assigned
+    def sound=(sound)
+      if sound.nil?
+        fail ArgumentError, 'sound cannot be nil'
+      end
+
+      if sound.to_s.length > 50
+        fail ArgumentError, 'invalid value for "sound", the character length must be smaller than or equal to 50.'
+      end
+
+      if sound.to_s.length < 1
+        fail ArgumentError, 'invalid value for "sound", the character length must be great than or equal to 1.'
+      end
+
+      @sound = sound
+    end
+
     # Checks equality by comparing each attribute.
     # @param [Object] Object to be compared
     def ==(o)
@@ -170,7 +207,8 @@ module OpenapiClient
           secondary_action == o.secondary_action &&
           alert == o.alert &&
           target == o.target &&
-          tags == o.tags
+          tags == o.tags &&
+          sound == o.sound
     end
 
     # @see the `==` method
@@ -182,7 +220,7 @@ module OpenapiClient
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [metadata, content_state, action, secondary_action, alert, target, tags].hash
+      [metadata, content_state, action, secondary_action, alert, target, tags, sound].hash
     end
 
     # Builds the object from hash

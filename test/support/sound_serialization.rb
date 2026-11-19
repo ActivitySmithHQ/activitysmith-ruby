@@ -91,4 +91,25 @@ class SoundSerializationTest < Minitest::Test
     live_activities.end_live_activity_stream('deploy-main', { sound: 'default' })
     assert_equal [:DELETE, '/live-activity/stream/deploy-main', { 'sound' => 'default' }], captured.last
   end
+
+  def test_timer_window_fields_serialize
+    captured = []
+    live_activities = mocked_client(captured).live_activities
+    state = ActivitySmith::LiveActivities.content_state(
+      title: 'Nightly backup', type: 'timer',
+      timer_start_at: '2026-11-19T01:00:00Z', timer_end_at: '2026-11-19T02:00:00Z'
+    )
+
+    live_activities.start(content_state: state)
+    live_activities.update(activity_id: 'la_1', content_state: state)
+    live_activities.stream('backup', content_state: state)
+    live_activities.end_stream('backup', content_state: state)
+
+    captured.each do |(_method, _path, body)|
+      sent = body.fetch('content_state')
+      assert_equal Time.utc(2026, 11, 19, 1), Time.parse(sent.fetch('timer_start_at'))
+      assert_equal Time.utc(2026, 11, 19, 2), Time.parse(sent.fetch('timer_end_at'))
+    end
+    assert_equal 4, captured.size
+  end
 end
